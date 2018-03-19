@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ParkMe</string>
+    <string name="title_activity_view_map">Map</string>
+</resources>
