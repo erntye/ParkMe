@@ -1,12 +1,15 @@
 package com.example.chiilek.parkme;
 
 
-public class ViewMapViewModel extends ViewModel{
-    private LiveData<Destination> destination;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.ViewModel;
 
-    public LiveData<Destination> getDestination() {
+public class ViewMapViewModel extends ViewModel{
+    private MutableLiveData<Destination> destination;
+
+    public MutableLiveData<Destination> getDestination() {
         if (destination == null) {
-            destination = new LiveData<Destination>();
+            destination = new MutableLiveData<Destination>();
             loadDestination();
         }
         return destination;

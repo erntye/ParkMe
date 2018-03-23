@@ -1,7 +1,11 @@
 package com.example.chiilek.parkme;
 
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+
+import android.arch.lifecycle.ViewModelProviders;
+import android.arch.lifecycle.Observer;
 
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -24,11 +28,15 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+
         //Create a view model and allow re-created activities to get the same view model instance
         ViewMapViewModel model = ViewModelProviders.of(this).get(ViewMapViewModel.class);
         model.getDestination().observe(this, new Observer() {
+            @Override
+            public void onChanged(@Nullable Object o) {
 
-            });
+            }
+        });
 
     }
 
