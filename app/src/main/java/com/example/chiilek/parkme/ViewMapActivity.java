@@ -3,6 +3,7 @@ package com.example.chiilek.parkme;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -22,6 +23,13 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        //Create a view model and allow re-created activities to get the same view model instance
+        ViewMapViewModel model = ViewModelProviders.of(this).get(ViewMapViewModel.class);
+        model.getDestination().observe(this, new Observer() {
+
+            });
+
     }
 
 
