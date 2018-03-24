@@ -26,8 +26,13 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
-    //for lifecycle and LiveData and ViewModel
+    // for lifecycle and LiveData and ViewModel
     compile 'android.arch.lifecycle:runtime:1.1.1'
     compile 'android.arch.lifecycle:extensions:1.1.1'
     annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
+
+    // for retrofit, repository and room
+    compile 'com.squareup.retrofit2:retrofit:2.4.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.4.0'
+
 }
