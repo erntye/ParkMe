@@ -28,11 +28,11 @@ import java.util.List;
 
 public class CarParkDatum {
 
-    @SerializedName("car_park_info")
+    @SerializedName("carpark_info")
     @Expose
     private List<CarParkInfo> carParkInfo = null;
 
-    @SerializedName("car_park_number")
+    @SerializedName("carpark_number")
     @Expose
     private String carParkNumber;
 

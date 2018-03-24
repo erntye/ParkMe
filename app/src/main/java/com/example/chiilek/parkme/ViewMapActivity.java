@@ -42,6 +42,7 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
         });
         APIController controller = new APIController();
         controller.makeCall();
+
     }
 
 

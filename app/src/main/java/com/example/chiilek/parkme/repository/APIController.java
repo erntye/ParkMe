@@ -17,7 +17,26 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Created by chiilek on 23/3/2018.
+ * @author chiilek
+ * @since 24/3/2018.
+ *
+ * This is the main API controller class.
+ * The only class that needs to be instantiated is makeCall().
+ *
+ *  Example:
+ *      APIController controller = new APIController();
+ *      controller.makeCall();
+ *
+ *      controller.onResponse(Call<Envelope> call, Response<Envelope> response){
+ *          // Whatever you want to do with the data from the API can be done here.
+ *          // Examples are below.
+ *      }
+ *
+ *      controller.onFailure(Call<Envelope> call, Throwable t){
+ *          // Whatever you want to do when the call fails can be implemented here.
+ *          // Examples are below.
+ *      }
+ *
  */
 
 public class APIController implements Callback<Envelope> {
@@ -76,6 +95,10 @@ public class APIController implements Callback<Envelope> {
             Log.d("SUCCESS", "*****************************************************");
             if (envelope.getItem() != null){
                 Log.d("UpdateDateTime", envelope.getItem().getTimestamp());
+                Log.d("CarParkNumber", envelope.getItem().getCarParkData().get(0).getUpdateDatetime());
+                Log.d("Avail", Integer.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getLotsAvailable()));
+                Log.d("Total", Integer.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getTotalLots()));
+                Log.d("Type", Character.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getLotType()));
             } else {
                 Log.d("Update time is null", "No object pulled: " + response.body().toString());
             }
