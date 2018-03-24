@@ -3,6 +3,7 @@ package com.example.chiilek.parkme.repository;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.chiilek.parkme.data_classes.Envelope;
 import com.example.chiilek.parkme.data_classes.Item;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,7 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by chiilek on 23/3/2018.
  */
 
-public class APIController implements Callback<Item> {
+public class APIController implements Callback<Envelope> {
 
     static final private String BASE_URL = "https://api.data.gov.sg/v1/transport/";
 
@@ -36,7 +37,7 @@ public class APIController implements Callback<Item> {
 
         CarParkAvailabilityAPI carParkAvailabilityAPI = retrofit.create(CarParkAvailabilityAPI.class);
         Log.d("Check", BASE_URL + "carpark-availability?date_time=" + formatDateTime());
-        Call<Item> call = carParkAvailabilityAPI.getAvailability(formatDateTime());
+        Call<Envelope> call = carParkAvailabilityAPI.getAvailability(formatDateTime());
         call.enqueue(this);
     }
 
@@ -66,29 +67,29 @@ public class APIController implements Callback<Item> {
     }
 
     @Override
-    public void onResponse(@NonNull Call<Item> call, @NonNull Response<Item> response) {
-        Item item = response.body();
+    public void onResponse(@NonNull Call<Envelope> call, @NonNull Response<Envelope> response) {
+        Envelope envelope = response.body();
 
         Log.d("asdasd is not null", "asd");
-        if (item != null){
+        if (envelope != null){
 
             Log.d("SUCCESS", "*****************************************************");
-            if (item.getTimestamp() != null){
-                Log.d("UpdateDateTime", item.getTimestamp());
+            if (envelope.getItem() != null){
+                Log.d("UpdateDateTime", envelope.getItem().getTimestamp());
+            } else {
+                Log.d("Update time is null", "No object pulled: " + response.body().toString());
             }
-            if (item.getCarParkData() != null){
-                Log.d("CarParkDate", item.getCarParkData().toString());
+            if (envelope.getItem() != null){
+                Log.d("CarParkDate", envelope.getItem().toString());
             }
         }
         else {
-            String responseee = response.toString();
-            Log.d("CarPark is Null", "No object pulled");
-            Log.d("CarPark is Null2", responseee);
+            Log.d("CarPark is Null", "No object pulled: " + response.toString());
         }
     }
 
     @Override
-    public void onFailure(@NonNull Call<Item> call, @NonNull Throwable t) {
+    public void onFailure(@NonNull Call<Envelope> call, @NonNull Throwable t) {
         Log.d("YOU FAILEDDDDDDDDDDDD********@#$%^&*", t.getMessage());
         t.getStackTrace();
     }

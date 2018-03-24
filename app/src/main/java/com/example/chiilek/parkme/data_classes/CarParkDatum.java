@@ -6,7 +6,24 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * Created by chiilek on 24/3/2018.
+ * @author chiilek
+ * @since 24/3/2018.
+ * This class contains this portion of the JSON file:
+ *
+ *  {
+ *      "carpark_info": [
+ *          {
+ *              "total_lots": "104",
+ *              "lot_type": "C",
+ *              "lots_available": "0"
+ *          }
+ *      ],
+ *      "carpark_number": "HE12",
+ *      "update_datetime": "2018-02-12T08:57:48"
+ *  }
+ *
+ * Contains only get methods.
+ *
  */
 
 public class CarParkDatum {

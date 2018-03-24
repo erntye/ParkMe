@@ -1,5 +1,6 @@
 package com.example.chiilek.parkme.repository;
 
+import com.example.chiilek.parkme.data_classes.Envelope;
 import com.example.chiilek.parkme.data_classes.Item;
 
 
@@ -15,5 +16,5 @@ public interface CarParkAvailabilityAPI {
 
     // Our API call to pass current datetime in string format
     @GET("carpark-availability")
-    Call<Item> getAvailability(@Query(value = "date_time", encoded = true) String datetime);
+    Call<Envelope> getAvailability(@Query(value = "date_time", encoded = true) String datetime);
 }

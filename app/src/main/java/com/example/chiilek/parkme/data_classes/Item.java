@@ -6,7 +6,10 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 /**
- * Created by chiilek on 24/3/2018.
+ * @author chiilek
+ * @since 24/3/2018.
+ *
+ * Upon unwrapping the main envelope. This is the item class that the API uses to define its response body.
  */
 
 public class Item {

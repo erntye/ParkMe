@@ -4,32 +4,42 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by chiilek on 24/3/2018.
+ * @author chiilek
+ * @since 24/3/2018.
+ * This class contains this portion of the JSON file:
+ *
+ *  {
+ *      "total_lots": "104",
+ *      "lot_type": "C",
+ *      "lots_available": "0"
+ *  }
+ *
+ * Contains only get methods.
  */
 
 public class CarParkInfo {
 
     @SerializedName("total_lots")
     @Expose
-    private String totalLots;
+    private int totalLots;
 
     @SerializedName("lot_type")
     @Expose
-    private String lotType;
+    private char lotType;
 
     @SerializedName("lots_available")
     @Expose
-    private String lotsAvailable;
+    private int lotsAvailable;
 
-    public String getTotalLots() {
+    public int getTotalLots() {
         return totalLots;
     }
 
-    public String getLotType() {
+    public char getLotType() {
         return lotType;
     }
 
-    public String getLotsAvailable() {
+    public int getLotsAvailable() {
         return lotsAvailable;
     }
 }
