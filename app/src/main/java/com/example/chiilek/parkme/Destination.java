@@ -1,9 +1,15 @@
 package com.example.chiilek.parkme;
 
 
+import java.util.ArrayList;
 
 public class Destination extends Location{
-    public Destination(double xCoord, double yCoord, boolean isXY){
-        super(xCoord,yCoord, isXY);
+
+    //private ArrayList<CarPark> topFiveCarParks;
+
+    public Destination(double longitude, double latitude){
+        super(longitude,latitude);
     }
+
 }
+

@@ -15,22 +15,13 @@ public class Location {
      *      EPSG:3414 (SVY21 / Singapore TM)
      * Lat/Long coordinates used by google maps (lon-lat):
      *      EPSG:4326 (WGS 84)
-     * @param xCoord X Coordinate or Longitude Coordinate
-     * @param yCoord Y Coordinate or Latitude Coordinate
-     * @param isXY Boolean. True if coordinates are in XY, false if in lon-lat
+     * Coordinates should be converted before constructing Location objects
+     * @param longitude Longitude Coordinate
+     * @param latitude Latitude Coordinate
      */
-    public Location(double xCoord, double yCoord, boolean isXY){
-        if(isXY){
-            convertAndSetCoords(xCoord, yCoord);
-        }else{
-            this.longitude = xCoord;
-            this.latitude = yCoord;
-        }
-    }
-
-    private void convertAndSetCoords(double xCoord, double yCoord) {
-        //convert xy coords to lon-lat
-
+    public Location(double longitude, double latitude){
+            this.longitude = longitude;
+            this.latitude = latitude;
     }
 
     public double getLongitude(){ return longitude; }
