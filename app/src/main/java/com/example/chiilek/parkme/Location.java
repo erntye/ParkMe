@@ -1,8 +1,10 @@
 package com.example.chiilek.parkme;
 
+
 /**
  * Created by Quek Yufei on 25/3/18.
  */
+
 
 public class Location {
     private double longitude;
@@ -30,4 +32,7 @@ public class Location {
         //convert xy coords to lon-lat
 
     }
+
+    public double getLongitude(){ return longitude; }
+    public double getLatitude(){ return latitude; }
 }
