@@ -1,10 +1,9 @@
-package com.example.chiilek.parkme.repository;
+package com.example.chiilek.parkme.apirepository;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.chiilek.parkme.data_classes.Envelope;
-import com.example.chiilek.parkme.data_classes.Item;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -89,31 +88,30 @@ public class APIController implements Callback<Envelope> {
     public void onResponse(@NonNull Call<Envelope> call, @NonNull Response<Envelope> response) {
         Envelope envelope = response.body();
 
-        Log.d("asdasd is not null", "asd");
         if (envelope != null){
 
             Log.d("SUCCESS", "*****************************************************");
             if (envelope.getItem() != null){
-                Log.d("UpdateDateTime", envelope.getItem().getTimestamp());
-                Log.d("CarParkNumber", envelope.getItem().getCarParkData().get(0).getUpdateDatetime());
-                Log.d("Avail", Integer.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getLotsAvailable()));
-                Log.d("Total", Integer.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getTotalLots()));
-                Log.d("Type", Character.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getLotType()));
+                Log.d("Repo_UpdateDateTime", envelope.getItem().getTimestamp());
+                Log.d("Repo_CarParkNumber", envelope.getItem().getCarParkData().get(0).getUpdateDatetime());
+                Log.d("Repo_Avail", Integer.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getLotsAvailable()));
+                Log.d("Repo_Total", Integer.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getTotalLots()));
+                Log.d("Repo_Type", Character.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getLotType()));
             } else {
-                Log.d("Update time is null", "No object pulled: " + response.body().toString());
+                Log.d("Repo_Update time is null", "No object pulled: " + response.body().toString());
             }
             if (envelope.getItem() != null){
-                Log.d("CarParkDate", envelope.getItem().toString());
+                Log.d("Repo_CarParkDate", envelope.getItem().toString());
             }
         }
         else {
-            Log.d("CarPark is Null", "No object pulled: " + response.toString());
+            Log.d("Repo_CarPark is Null", "No object pulled: " + response.toString());
         }
     }
 
     @Override
     public void onFailure(@NonNull Call<Envelope> call, @NonNull Throwable t) {
-        Log.d("YOU FAILEDDDDDDDDDDDD********@#$%^&*", t.getMessage());
+        Log.d("Repo_YOU FAILEDDDDDDDDDDDD********@#$%^&*", t.getMessage());
         t.getStackTrace();
     }
 }

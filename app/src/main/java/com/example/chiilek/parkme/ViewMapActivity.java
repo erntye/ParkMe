@@ -8,15 +8,13 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.arch.lifecycle.Observer;
 
 
-import com.example.chiilek.parkme.repository.APIController;
+import com.example.chiilek.parkme.apirepository.APIController;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import static com.example.chiilek.parkme.repository.APIController.*;
 
 public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallback {
 

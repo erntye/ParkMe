@@ -1,7 +1,6 @@
-package com.example.chiilek.parkme.repository;
+package com.example.chiilek.parkme.apirepository;
 
 import com.example.chiilek.parkme.data_classes.Envelope;
-import com.example.chiilek.parkme.data_classes.Item;
 
 
 import retrofit2.Call;
