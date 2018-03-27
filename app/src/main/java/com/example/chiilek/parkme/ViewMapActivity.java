@@ -32,12 +32,13 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
 
         //Create a view model and allow re-created activities to get the same view model instance
         ViewMapViewModel model = ViewModelProviders.of(this).get(ViewMapViewModel.class);
-        model.getDestination().observe(this, new Observer() {
+        model.getSearchTerm().observe(this, new Observer() {
             @Override
             public void onChanged(@Nullable Object o) {
 
             }
         });
+
         APIController controller = new APIController();
         controller.makeCall();
 
