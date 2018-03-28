@@ -3,6 +3,7 @@ package com.example.chiilek.parkme.data_classes;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 /**
  * Created by QuekYufei on 27/3/18.
@@ -13,6 +14,7 @@ public class CarParkStaticInfo {
 
     //declaring variables (columns in table)
     @PrimaryKey
+    @NonNull
     @ColumnInfo(name="car_park_no")
     private String CPNumber;
 
@@ -40,15 +42,10 @@ public class CarParkStaticInfo {
     private String nightParking;
 
 
-
-
     //Getters and Setters
+    @NonNull
     public String getCPNumber() {
         return CPNumber;
-    }
-
-    public void setCPNumber(String CPNumber) {
-        this.CPNumber = CPNumber;
     }
 
     public String getAddress() {
