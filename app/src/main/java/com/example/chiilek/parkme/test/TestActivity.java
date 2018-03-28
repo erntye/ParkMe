@@ -1,6 +1,5 @@
-package com.example.chiilek.parkme;
+package com.example.chiilek.parkme.test;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
@@ -8,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.example.chiilek.parkme.R;
 
 
 public class TestActivity extends AppCompatActivity {

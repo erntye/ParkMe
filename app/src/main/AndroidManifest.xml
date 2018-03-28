@@ -40,7 +40,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TestActivity">
+            android:name=".test.TestActivity">
             <intent-filter>r
                 <action android:name="android.intent.action.MAIN" />
 
