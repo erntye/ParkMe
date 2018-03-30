@@ -24,4 +24,7 @@ public interface CarParkStaticInfoDao {
             "WHERE (CAST (x_coord AS REAL) BETWEEN (:xCoord-:xCoordOffset) AND (:xCoord+:xCoordOffest)) " +
             "AND (CAST (y_coord AS REAL) BETWEEN (:yCoord-:yCoordOffset) AND (:yCoord+:yCoordOffset))")
     List<CarParkStaticInfo> getNearestCarParks(double xCoord, double yCoord);
+
+    @Query("SELECT * FROM CarParkInfo WHERE car_park_no = :carParkName")
+    CarParkStaticInfo getCarParkByID(String carParkName);
 }

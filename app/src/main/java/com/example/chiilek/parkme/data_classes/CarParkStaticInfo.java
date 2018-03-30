@@ -48,6 +48,10 @@ public class CarParkStaticInfo {
         return CPNumber;
     }
 
+    public void setCPNumber(@NonNull String CPNumber) {
+        this.CPNumber = CPNumber;
+    }
+
     public String getAddress() {
         return address;
     }
