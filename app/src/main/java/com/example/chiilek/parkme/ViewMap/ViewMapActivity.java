@@ -1,4 +1,4 @@
-package com.example.chiilek.parkme;
+package com.example.chiilek.parkme.ViewMap;
 
 import android.content.pm.ActivityInfo;
 import android.support.annotation.Nullable;
@@ -9,6 +9,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.arch.lifecycle.Observer;
 
 
+import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.apirepository.APIController;
 import com.example.chiilek.parkme.data_classes.CarParkDatum;
 import com.google.android.gms.maps.CameraUpdateFactory;
