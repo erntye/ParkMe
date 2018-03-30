@@ -38,7 +38,7 @@ public class ViewMapActivity extends AppCompatActivity {
                     public void onChanged(String newDestination) {
                         textInput.setText(newDestination);
                     }};
-        model.getDestination().observe(this, destinationObserver);
+        //model.getDestination().observe(this, destinationObserver);
 
     }
 
