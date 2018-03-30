@@ -10,38 +10,46 @@ import android.widget.EditText;
 
 import com.example.chiilek.parkme.R;
 
+import java.util.List;
+
 
 public class TestActivity extends AppCompatActivity {
 
     private static Button button;
+    private static Button initbutton;
     private static EditText textInput;
-    private static testViewModel model;
+    private static TestViewModel model;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.testlayout);
         textInput = findViewById(R.id.location);
         button = findViewById(R.id.button2);
+        initbutton = findViewById(R.id.button3);
 
         button.setOnClickListener(
-                new View.OnClickListener(){
-                    public void onClick(View v){
-                        model.setData(textInput.getText().toString());
+                new View.OnClickListener() {
+                    public void onClick(View v) {
+                        //model.setData(Integer.getInteger(textInput.getText().toString()));
                         button.setText(textInput.getText());
                     }
                 });
         //Create a view model and allow re-created activities to get the same view model instance
-        model = ViewModelProviders.of(this).get(testViewModel.class);
-        final Observer<String> destinationObserver =
-                new Observer<String>() {
-                    @Override
-                    public void onChanged(String newDestination) {
-                        textInput.setText(newDestination);
-                    }};
-        model.getDestination().observe(this, destinationObserver);
+        model = ViewModelProviders.of(this).get(TestViewModel.class);
+
+        initbutton.setOnClickListener(
+                new View.OnClickListener() {
+                    public void onClick(View v) {
+                        model.initialize();
+                        initbutton.setText("Done!");
+                    }
+                });
+        model.getList().observe(this, new Observer<List<TestEntity>>() {
+            @Override
+            public void onChanged(List<TestEntity> newTerm) {
+                textInput.setText(newTerm.get(1).name);
+            }
+        });
 
     }
-
-
-
 }

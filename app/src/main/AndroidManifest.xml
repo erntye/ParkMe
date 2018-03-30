@@ -30,18 +30,18 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_api_key" />
 
+
         <activity
             android:name=".ViewMapActivity"
             android:label="@string/title_activity_view_map">
-            <intent-filter>
+<!--            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
         <activity
             android:name=".test.TestActivity">
-            <intent-filter>r
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
