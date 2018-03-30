@@ -13,15 +13,18 @@ import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 
 @Dao
 public interface CarParkStaticInfoDao {
-    double xCoordOffset = 500;
-    double yCoordOffset = 500;
+    double latitudeOffset = 0.005;
+    double longitudeOffset = 0.005;
 
 
     @Query("SELECT * FROM CarParkInfo")
     List<CarParkStaticInfo> getAll();
 
     @Query("SELECT * FROM CarParkInfo " +
-            "WHERE (CAST (x_coord AS REAL) BETWEEN (:xCoord-:xCoordOffset) AND (:xCoord+:xCoordOffest)) " +
-            "AND (CAST (y_coord AS REAL) BETWEEN (:yCoord-:yCoordOffset) AND (:yCoord+:yCoordOffset))")
-    List<CarParkStaticInfo> getNearestCarParks(double xCoord, double yCoord);
+            "WHERE (CAST (latitude AS REAL) BETWEEN (:latitude-:latitudeOffset) AND (:latitude+:latitudeOffset)) " +
+            "AND (CAST (longitude AS REAL) BETWEEN (:longitude-:longitudeOffset) AND (:longitude+:longitudeOffset))")
+    List<CarParkStaticInfo> getNearestCarParks(double latitude, double longitude);
+
+    @Query("SELECT * FROM CarParkInfo WHERE car_park_no = :carParkName")
+    CarParkStaticInfo getCarParkByID(String carParkName);
 }

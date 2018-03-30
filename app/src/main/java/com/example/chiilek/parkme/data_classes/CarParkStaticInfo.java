@@ -41,11 +41,19 @@ public class CarParkStaticInfo {
     @ColumnInfo(name="night_parking")
     private String nightParking;
 
+    private String latitude;
+
+    private String longitude;
+
 
     //Getters and Setters
     @NonNull
     public String getCPNumber() {
         return CPNumber;
+    }
+
+    public void setCPNumber(@NonNull String CPNumber) {
+        this.CPNumber = CPNumber;
     }
 
     public String getAddress() {
@@ -110,5 +118,21 @@ public class CarParkStaticInfo {
 
     public void setNightParking(String nightParking) {
         this.nightParking = nightParking;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 }
