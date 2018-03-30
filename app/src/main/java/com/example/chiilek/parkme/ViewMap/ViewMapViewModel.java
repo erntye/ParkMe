@@ -1,4 +1,4 @@
-package com.example.chiilek.parkme;
+package com.example.chiilek.parkme.ViewMap;
 
 
 import android.arch.lifecycle.MutableLiveData;
@@ -6,6 +6,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 
+import com.example.chiilek.parkme.Location;
 import com.example.chiilek.parkme.data_classes.CarParkDatum;
 import com.example.chiilek.parkme.repository.Repository;
 

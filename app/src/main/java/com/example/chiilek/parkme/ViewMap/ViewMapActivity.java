@@ -1,4 +1,4 @@
-package com.example.chiilek.parkme;
+package com.example.chiilek.parkme.ViewMap;
 
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -8,6 +8,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.arch.lifecycle.Observer;
 
 
+import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.apirepository.APIController;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
