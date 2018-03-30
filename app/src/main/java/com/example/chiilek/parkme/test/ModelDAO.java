@@ -10,7 +10,7 @@ import java.util.List;
 import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 
 /**
- * Created by TKY on 28/3/2018.
+ * Created by Ernest on 28/3/2018.
  */
 @Dao
 public interface ModelDAO {

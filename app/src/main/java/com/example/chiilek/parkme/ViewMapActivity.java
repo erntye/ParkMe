@@ -1,5 +1,6 @@
 package com.example.chiilek.parkme;
 
+import android.content.pm.ActivityInfo;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -9,12 +10,15 @@ import android.arch.lifecycle.Observer;
 
 
 import com.example.chiilek.parkme.apirepository.APIController;
+import com.example.chiilek.parkme.data_classes.CarParkDatum;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.List;
 
 public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -29,13 +33,16 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        //to lock screen to portrait
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //Create a view model and allow re-created activities to get the same view model instance
         ViewMapViewModel model = ViewModelProviders.of(this).get(ViewMapViewModel.class);
-        model.getSearchTerm().observe(this, new Observer() {
+        //TODO pass current location to Viewmodel
+        model.getCarParkList().observe(this, new Observer<List<CarParkDatum>>() {
             @Override
-            public void onChanged(@Nullable Object o) {
-
+            public void onChanged(@Nullable List<CarParkDatum> newCarParkList) {
+                //display the new carparklist in the UI
             }
         });
 

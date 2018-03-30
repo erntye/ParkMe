@@ -8,13 +8,13 @@ import android.content.Context;
 import com.example.chiilek.parkme.data_classes.source.AppDatabase;
 
 /**
- * Created by TKY on 28/3/2018.
+ * Created by Ernest on 28/3/2018.
  */
 
 @Database(entities = {TestEntity.class}, version = 1,exportSchema = false)
 public abstract class TestDatabase extends RoomDatabase {
 
-    public abstract ModelDAO userDAO();
+    public abstract ModelDAO getModelDAO();
     private static TestDatabase INSTANCE;
 
     public static TestDatabase getDatabase(Context context) {

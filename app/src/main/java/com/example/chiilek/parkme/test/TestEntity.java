@@ -7,7 +7,7 @@ import android.arch.persistence.room.PrimaryKey;
 import java.util.List;
 
 /**
- * Created by TKY on 28/3/2018.
+ * Created by Ernest on 28/3/2018.
  */
 
 @Entity(tableName = "TestEntity")

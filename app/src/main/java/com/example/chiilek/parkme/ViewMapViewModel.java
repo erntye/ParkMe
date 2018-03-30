@@ -1,6 +1,8 @@
 package com.example.chiilek.parkme;
 
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
@@ -11,29 +13,37 @@ import com.example.chiilek.parkme.repository.Repository;
 
 import java.util.List;
 
-public class ViewMapViewModel extends ViewModel{
+public class ViewMapViewModel extends AndroidViewModel{
     private MutableLiveData<Location> msearchTerm;
     //list of nearest carparks to search term
-    private LiveData<List< CarParkDatum>> mcarParkList;
-    private Repository mRepository;
+    private LiveData<List<CarParkDatum>> mcarParkList;
+    private Location currentLocation;
+    private Repository repository;
 
-    public ViewMapViewModel(){
+    public ViewMapViewModel(Application application){
+        super(application);
+        this.repository = Repository.getInstance(this.getApplication());
         msearchTerm = new MutableLiveData<>();
-        //searches nearby everytime msearchterm changes, when called by VMMP.searchNearby()
+        mcarParkList = repository.searchNearby(currentLocation);
+
+        //searches nearby everytime msearchterm changes, when called by VMMP.setSearchTerm()
         mcarParkList = Transformations.switchMap(msearchTerm, (Location newDestination)->
-                mRepository.searchNearby(newDestination));
+                repository.searchNearby(newDestination));
     }
     //called by button in ViewMapActivity and triggers transformation
-    public void searchNearby(Location searchTerm){
+    public void setSearchTerm(Location searchTerm){
         msearchTerm.setValue(searchTerm);
     }
 
+    public void setCurrentLocation(Location currentLocation) {
+        this.currentLocation = currentLocation;
+    }
     /*
         // put this in the ViewMapActivity GMAP fragment with the search button to update searchTerm
 
         model = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
-        itemSelector.setOnClickListener(item -> {
-        model.searchNearby(item);
+        searchButton.setOnClickListener(item -> {
+        model.setSearchTerm(item);
         //create new SelectRouteActivity
         }
      */
@@ -57,6 +67,7 @@ public class ViewMapViewModel extends ViewModel{
     public LiveData<List<CarParkDatum>> getCarParkList() {
         return mcarParkList;
     }
+
 
 }
 
