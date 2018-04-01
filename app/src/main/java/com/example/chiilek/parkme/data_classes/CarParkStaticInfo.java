@@ -64,19 +64,19 @@ public class CarParkStaticInfo {
         this.address = address;
     }
 
-    public String getxCoord() {
+    public String getXCoord() {
         return xCoord;
     }
 
-    public void setxCoord(String xCoord) {
+    public void setXCoord(String xCoord) {
         this.xCoord = xCoord;
     }
 
-    public String getyCoord() {
+    public String getYCoord() {
         return yCoord;
     }
 
-    public void setyCoord(String yCoord) {
+    public void setYCoord(String yCoord) {
         this.yCoord = yCoord;
     }
 

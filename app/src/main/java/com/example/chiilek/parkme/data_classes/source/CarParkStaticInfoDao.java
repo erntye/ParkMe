@@ -21,8 +21,8 @@ public interface CarParkStaticInfoDao {
     List<CarParkStaticInfo> getAll();
 
     @Query("SELECT * FROM CarParkInfo " +
-            "WHERE (CAST (latitude AS REAL) BETWEEN (:latitude-:latitudeOffset) AND (:latitude+:latitudeOffset)) " +
-            "AND (CAST (longitude AS REAL) BETWEEN (:longitude-:longitudeOffset) AND (:longitude+:longitudeOffset))")
+            "WHERE (CAST (latitude AS REAL) BETWEEN (:latitude-0.005) AND (:latitude+0.005)) " +
+            "AND (CAST (longitude AS REAL) BETWEEN (:longitude-0.005) AND (:longitude+0.005))")
     List<CarParkStaticInfo> getNearestCarParks(double latitude, double longitude);
 
     @Query("SELECT * FROM CarParkInfo WHERE car_park_no = :carParkName")
