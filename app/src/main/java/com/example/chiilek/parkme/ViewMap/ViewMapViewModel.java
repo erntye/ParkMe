@@ -6,7 +6,6 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
-import android.arch.lifecycle.ViewModel;
 
 import com.example.chiilek.parkme.Location;
 import com.example.chiilek.parkme.data_classes.CarParkDatum;
@@ -19,17 +18,17 @@ public class ViewMapViewModel extends AndroidViewModel{
     //list of nearest carparks to search term
     private LiveData<List<CarParkDatum>> mcarParkList;
     private Location currentLocation;
-    private Repository repository;
+    private Repository mRepository;
 
     public ViewMapViewModel(Application application){
         super(application);
-        this.repository = Repository.getInstance(this.getApplication());
+        this.mRepository = Repository.getInstance(this.getApplication());
         msearchTerm = new MutableLiveData<>();
-        mcarParkList = repository.searchNearby(currentLocation);
+        mcarParkList = mRepository.searchNearby(currentLocation);
 
         //searches nearby everytime msearchterm changes, when called by VMMP.setSearchTerm()
         mcarParkList = Transformations.switchMap(msearchTerm, (Location newDestination)->
-                repository.searchNearby(newDestination));
+                mRepository.searchNearby(newDestination));
     }
     //called by button in ViewMapActivity and triggers transformation
     public void setSearchTerm(Location searchTerm){
