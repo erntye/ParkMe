@@ -2,7 +2,9 @@ package com.example.chiilek.parkme.apirepository;
 
 
 import com.example.chiilek.parkme.data_classes.CarParkDatum;
+import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,9 +33,35 @@ public class APIRepository {
         controller.makeCall();
     }
 
-    public static List<CarParkDatum> getTopFiveRepository (List carParkList) {
-        Collections.sort(carParkList, new CarParkComparator());
-        return carParkList.subList(0, 4);
+    /**
+     * Takes in a List<CarParkStaticInfo> of size
+     * @param staticInfos
+     * @return List<CarParkDatum>
+     */
+    public static List<CarParkDatum> getTopFiveRepository (List<CarParkStaticInfo> staticInfos) {
+
+        List<CarParkDatum> top5Avail = new ArrayList<CarParkDatum>();
+
+        for (CarParkStaticInfo si : staticInfos) {
+            for(int i = 0; i < CarParkList.size(); i++){
+                // Checks for similar carpark number.
+                if (si.getCPNumber() == CarParkList.get(i).getCarParkNumber()){
+                    top5Avail.add(CarParkList.get(i));
+                    break;
+                }
+            }
+        }
+
+        // Sorting implemented at CarParkComparator class.
+        // Compares and sorts based on absolute value of availability.
+        Collections.sort(top5Avail, new CarParkComparator());
+
+        // Checks that there are at least 5 carparks in the list.
+        if(top5Avail.size() >= 5){
+            return top5Avail.subList(0, 4);
+        } else {
+            return null;
+        }
     }
 
 }
