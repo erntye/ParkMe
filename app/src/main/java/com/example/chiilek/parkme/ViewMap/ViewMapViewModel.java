@@ -16,7 +16,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.List;
 
 public class ViewMapViewModel extends AndroidViewModel{
-    private MutableLiveData<Location> msearchTerm;
+    private MutableLiveData<LatLng> msearchTerm;
     //list of nearest carparks to search term
     private LiveData<List<CarParkStaticInfo>> mcarParkList;
     private LatLng currentLocation;
@@ -29,11 +29,11 @@ public class ViewMapViewModel extends AndroidViewModel{
         mcarParkList = mRepository.searchNearby(currentLocation);
 
         //searches nearby everytime msearchterm changes, when called by VMMP.setSearchTerm()
-        mcarParkList = Transformations.switchMap(msearchTerm, (Location newDestination)->
+        mcarParkList = Transformations.switchMap(msearchTerm, (LatLng newDestination)->
                 mRepository.searchNearby(newDestination));
     }
     //called by button in ViewMapActivity and triggers transformation
-    public void setSearchTerm(Location searchTerm){
+    public void setSearchTerm(LatLng searchTerm){
         msearchTerm.setValue(searchTerm);
     }
 
@@ -62,7 +62,7 @@ public class ViewMapViewModel extends AndroidViewModel{
         return null;
     }
 
-    public LiveData<Location> getSearchTerm() {
+    public LiveData<LatLng> getSearchTerm() {
         return msearchTerm;
     }
 
