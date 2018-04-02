@@ -7,17 +7,18 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 
-import com.example.chiilek.parkme.Location;
 import com.example.chiilek.parkme.data_classes.CarParkDatum;
+import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.repository.Repository;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
 public class ViewMapViewModel extends AndroidViewModel{
-    private MutableLiveData<Location> msearchTerm;
+    private MutableLiveData<LatLng> msearchTerm;
     //list of nearest carparks to search term
-    private LiveData<List<CarParkDatum>> mcarParkList;
-    private Location currentLocation;
+    private LiveData<List<CarParkStaticInfo>> mcarParkList;
+    private LatLng currentLocation;
     private Repository mRepository;
 
     public ViewMapViewModel(Application application){
@@ -27,15 +28,15 @@ public class ViewMapViewModel extends AndroidViewModel{
         mcarParkList = mRepository.searchNearby(currentLocation);
 
         //searches nearby everytime msearchterm changes, when called by VMMP.setSearchTerm()
-        mcarParkList = Transformations.switchMap(msearchTerm, (Location newDestination)->
+        mcarParkList = Transformations.switchMap(msearchTerm, (LatLng newDestination)->
                 mRepository.searchNearby(newDestination));
     }
     //called by button in ViewMapActivity and triggers transformation
-    public void setSearchTerm(Location searchTerm){
+    public void setSearchTerm(LatLng searchTerm){
         msearchTerm.setValue(searchTerm);
     }
 
-    public void setCurrentLocation(Location currentLocation) {
+    public void setCurrentLocation(LatLng currentLocation) {
         this.currentLocation = currentLocation;
     }
     /*
@@ -51,20 +52,20 @@ public class ViewMapViewModel extends AndroidViewModel{
     //displays popup carpark info
     //TODO find out what google maps returns when you press on a pin
     public CarParkDatum getCarParkInfo(String toFind){
-        if (mcarParkList != null){
-            for ( CarParkDatum carpark: mcarParkList.getValue()){
+        /*if (mcarParkList != null){
+            for ( CarParkStaticInfo carpark: mcarParkList.getValue()){
                 if (carpark.getCarParkNumber().equals(toFind))
                     return carpark;
             }
-        }
+        }*/
         return null;
     }
 
-    public LiveData<Location> getSearchTerm() {
+    public LiveData<LatLng> getSearchTerm() {
         return msearchTerm;
     }
 
-    public LiveData<List<CarParkDatum>> getCarParkList() {
+    public LiveData<List<CarParkStaticInfo>> getCarParkList() {
         return mcarParkList;
     }
 
