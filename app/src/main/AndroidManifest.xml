@@ -30,23 +30,28 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_api_key" />
 
+
         <activity
-            android:name=".ViewMapActivity"
+            android:name=".ViewMap.ViewMapActivity"
             android:label="@string/title_activity_view_map">
+<!--            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
+        </activity>
+        <activity
+            android:name=".test.TestActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name="com.example.chiilek.parkme.repository.LocationRepository"/>
+        <service android:name="com.example.chiilek.parkme.test.TestLocationManager"/>
         <activity
-            android:name=".TestActivity">
-            <intent-filter>r
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:name=".Navigation.NavigationActivity"
+            android:label="@string/title_activity_navigation"></activity>
     </application>
 
 </manifest>

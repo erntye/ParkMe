@@ -16,10 +16,10 @@ public class Location {
      * Lat/Long coordinates used by google maps (lon-lat):
      *      EPSG:4326 (WGS 84)
      * Coordinates should be converted before constructing Location objects
-     * @param longitude Longitude Coordinate
      * @param latitude Latitude Coordinate
+     * @param longitude Longitude Coordinate
      */
-    public Location(double longitude, double latitude){
+    public Location(double latitude, double longitude){
             this.longitude = longitude;
             this.latitude = latitude;
     }
