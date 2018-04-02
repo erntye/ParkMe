@@ -99,6 +99,27 @@ public class TestActivity extends AppCompatActivity {
                         }
                     }
                 });
+
+        //DIRECTIONS API TEST START
+//        Thread thread = new Thread(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                try  {
+//                    LatLng origin = new LatLng(1.3010632720868323, 103.85411269138322);
+//                    LatLng destination = new LatLng(1.3210042901028483, 103.88504719970231);
+//
+//                    System.out.println("test begins");
+//                    AvailabilityAPIController controller = new AvailabilityAPIController();
+//                    controller.callDirectionsAPI(origin, destination);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//
+//        thread.start();
+        //DIRECTIONS API TEST END
     }
     private ServiceConnection serviceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -144,27 +165,6 @@ public class TestActivity extends AppCompatActivity {
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-
-        Thread thread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try  {
-                    LatLng origin = new LatLng(1.3010632720868323, 103.85411269138322);
-                    LatLng destination = new LatLng(1.3210042901028483, 103.88504719970231);
-
-                    System.out.println("test begins");
-                    AvailabilityAPIController controller = new AvailabilityAPIController();
-                    controller.callDirectionsAPI(origin, destination);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        thread.start();
-
 
     }
 }

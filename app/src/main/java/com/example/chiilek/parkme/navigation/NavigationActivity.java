@@ -1,4 +1,4 @@
-package com.example.chiilek.parkme.Navigation;
+package com.example.chiilek.parkme.navigation;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.v4.app.FragmentActivity;

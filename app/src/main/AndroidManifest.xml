@@ -50,7 +50,7 @@
         <service android:name="com.example.chiilek.parkme.repository.LocationRepository"/>
         <service android:name="com.example.chiilek.parkme.test.TestLocationManager"/>
         <activity
-            android:name=".Navigation.NavigationActivity"
+            android:name=".navigation.NavigationActivity"
             android:label="@string/title_activity_navigation"></activity>
     </application>
 
