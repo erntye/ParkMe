@@ -2,6 +2,7 @@ package com.example.chiilek.parkme.repository;
 
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.util.Log;
 
@@ -36,12 +37,14 @@ public class Repository {
         return null;
     }
 
-    public LiveData<List<CarParkDatum>> searchNearby(Location destination){
+    public LiveData<List<CarParkStaticInfo>> searchNearby(Location destination){
         Log.d("Repo", "Called setSearchTerm(" + destination + ")");
         //call database getClosest10()
-        //call GMAPS API to plot on Map
         List<CarParkStaticInfo> closest10CarParks = appDatabase.CPInfoDao()
                 .getNearestCarParks(destination.getLatitude(),destination.getLongitude());
-        return null;
+
+        MutableLiveData<List<CarParkStaticInfo>> liveData = null;
+        liveData.setValue(closest10CarParks);
+        return liveData;
     }
 }
