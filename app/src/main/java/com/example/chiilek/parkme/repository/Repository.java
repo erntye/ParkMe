@@ -6,7 +6,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.chiilek.parkme.Location;
 import com.example.chiilek.parkme.data_classes.CarParkDatum;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.source.AppDatabase;
@@ -31,7 +30,7 @@ public class Repository {
     }
 
     //this function is called by the SelectRouteViewModel to return the top 5 car parks
-    public LiveData<List<CarParkDatum>> searchTop5(Location startpoint, Location destination){
+    public LiveData<List<CarParkDatum>> searchTop5(LatLng startpoint, LatLng destination){
         Log.d("Repo", "Called searchTop5(" + startpoint + "," + destination + ")");
         //call database getClosest10()
         //call API getTop5CarParks()
@@ -42,7 +41,7 @@ public class Repository {
      * Searches for the car parks near a selected location.
      * One usage is for plotting the car parks near a searched location.
      * @param destination
-     * @return
+     * @return LiveData List of CarParkStaticInfo
      */
     public LiveData<List<CarParkStaticInfo>> searchNearby(LatLng destination){
         Log.d("Repo", "Called setSearchTerm(" + destination + ")");

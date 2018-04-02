@@ -6,6 +6,9 @@ package com.example.chiilek.parkme;
  */
 
 
+/**
+ * Class is deprecated and will be removed in version 3.8.2
+ */
 public class Location {
     private double longitude;
     private double latitude;
