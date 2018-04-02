@@ -147,7 +147,7 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
         mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
-        mMap.getMyLocation().getLatitude();
+        //mMap.getMyLocation().getLatitude();
     }
 
     //establish service connection needed to bind to service

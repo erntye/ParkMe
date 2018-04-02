@@ -31,7 +31,7 @@ public class Repository {
     }
 
     //this function is called by the SelectRouteViewModel to return the top 5 car parks
-    public LiveData<List<CarParkDatum>> searchTop5(Location startpoint, Location destination){
+    public LiveData<List<CarParkDatum>> searchTop5(LatLng startpoint, LatLng destination){
         Log.d("Repo", "Called searchTop5(" + startpoint + "," + destination + ")");
         //call database getClosest10()
         //call API getTop5CarParks()
