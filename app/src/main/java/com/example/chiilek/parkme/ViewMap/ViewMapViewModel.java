@@ -7,7 +7,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 
-import com.example.chiilek.parkme.Location;
 import com.example.chiilek.parkme.data_classes.CarParkDatum;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.repository.Repository;
