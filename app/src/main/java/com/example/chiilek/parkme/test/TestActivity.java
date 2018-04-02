@@ -22,11 +22,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.chiilek.parkme.R;
-import com.example.chiilek.parkme.apirepository.APIController;
+import com.example.chiilek.parkme.apirepository.AvailabilityAPIController;
 import com.google.android.gms.maps.model.LatLng;
 import com.example.chiilek.parkme.repository.LocationRepository;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 
 import java.util.List;
 
@@ -157,7 +155,7 @@ public class TestActivity extends AppCompatActivity {
                     LatLng destination = new LatLng(1.3210042901028483, 103.88504719970231);
 
                     System.out.println("test begins");
-                    APIController controller = new APIController();
+                    AvailabilityAPIController controller = new AvailabilityAPIController();
                     controller.callDirectionsAPI(origin, destination);
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -29,7 +29,7 @@ public class APIRepository {
     }
 
     public static void refreshCarParks () {
-        APIController controller = new APIController();
+        AvailabilityAPIController controller = new AvailabilityAPIController();
         controller.makeCall();
     }
 
