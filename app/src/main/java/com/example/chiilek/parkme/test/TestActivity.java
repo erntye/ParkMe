@@ -165,9 +165,6 @@ public class TestActivity extends AppCompatActivity {
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-    }
-}
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
@@ -180,7 +177,7 @@ public class TestActivity extends AppCompatActivity {
                                 //Prompt the user once explanation has been shown
                                 ActivityCompat.requestPermissions(TestActivity.this,
                                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION );
+                                        MY_PERMISSIONS_REQUEST_LOCATION);
                             }
                         })
                         .create()
@@ -191,7 +188,7 @@ public class TestActivity extends AppCompatActivity {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION );
+                        MY_PERMISSIONS_REQUEST_LOCATION);
             }
         }
     }
@@ -218,41 +215,6 @@ public class TestActivity extends AppCompatActivity {
         }
 
     }
-
-/*    @Override
-    protected void onStart() {
-        super.onStart();
-        //testing to get location service
-        Intent intent = new Intent(this,LocationRepository.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        Log.d("Activity", "Call bindService()");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unbindService(mConnection);
-        mBound = false;
-        Log.d("Activity", "Call unbindService()");
-    }
-
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            LocationRepository.LocalBinder binder = (LocationRepository.LocalBinder) service;
-            mService = binder.getService();
-            mBound = true;
-            Log.d("Activity", "Bound to Service");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            mBound = false;
-            Log.d("Activity", "Disconnected from Service");
-        }
-    };*/
 }
 
 
