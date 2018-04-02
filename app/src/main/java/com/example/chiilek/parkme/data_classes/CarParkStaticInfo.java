@@ -3,6 +3,7 @@ package com.example.chiilek.parkme.data_classes;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 /**
  * Created by QuekYufei on 27/3/18.
@@ -13,6 +14,7 @@ public class CarParkStaticInfo {
 
     //declaring variables (columns in table)
     @PrimaryKey
+    @NonNull
     @ColumnInfo(name="car_park_no")
     private String CPNumber;
 
@@ -39,15 +41,18 @@ public class CarParkStaticInfo {
     @ColumnInfo(name="night_parking")
     private String nightParking;
 
+    private String latitude;
 
+    private String longitude;
 
 
     //Getters and Setters
+    @NonNull
     public String getCPNumber() {
         return CPNumber;
     }
 
-    public void setCPNumber(String CPNumber) {
+    public void setCPNumber(@NonNull String CPNumber) {
         this.CPNumber = CPNumber;
     }
 
@@ -59,19 +64,19 @@ public class CarParkStaticInfo {
         this.address = address;
     }
 
-    public String getxCoord() {
+    public String getXCoord() {
         return xCoord;
     }
 
-    public void setxCoord(String xCoord) {
+    public void setXCoord(String xCoord) {
         this.xCoord = xCoord;
     }
 
-    public String getyCoord() {
+    public String getYCoord() {
         return yCoord;
     }
 
-    public void setyCoord(String yCoord) {
+    public void setYCoord(String yCoord) {
         this.yCoord = yCoord;
     }
 
@@ -113,5 +118,21 @@ public class CarParkStaticInfo {
 
     public void setNightParking(String nightParking) {
         this.nightParking = nightParking;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 }
