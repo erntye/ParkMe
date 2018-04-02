@@ -41,16 +41,16 @@ public class Repository {
     /**
      * Searches for the car parks near a selected location.
      * One usage is for plotting the car parks near a searched location.
-     * @param destination
+     * @param searchTerm
      * @return
      */
-    public LiveData<List<CarParkStaticInfo>> searchNearby(LatLng destination){
-        Log.d("Repo", "Called setSearchTerm(" + destination + ")");
+    public LiveData<List<CarParkStaticInfo>> searchNearby(LatLng searchTerm){
+        Log.d("Repo", "Called setSearchTerm(" + searchTerm + ")");
         //call database getClosest10()
         List<CarParkStaticInfo> closest10CarParks = appDatabase.CPInfoDao()
-                .getNearestCarParks(destination.latitude,destination.longitude);
+                .getNearestCarParks(searchTerm.latitude, searchTerm.longitude);
 
-        MutableLiveData<List<CarParkStaticInfo>> liveData = null;
+        MutableLiveData<List<CarParkStaticInfo>> liveData = new MutableLiveData<>();
         liveData.setValue(closest10CarParks);
         return liveData;
     }
