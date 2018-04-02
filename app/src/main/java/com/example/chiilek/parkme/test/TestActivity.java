@@ -22,9 +22,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.chiilek.parkme.R;
+import com.example.chiilek.parkme.apirepository.AvailabilityAPIController;
+import com.google.android.gms.maps.model.LatLng;
 import com.example.chiilek.parkme.repository.LocationRepository;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 
 import java.util.List;
 
@@ -99,6 +99,27 @@ public class TestActivity extends AppCompatActivity {
                         }
                     }
                 });
+
+        //DIRECTIONS API TEST START
+//        Thread thread = new Thread(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                try  {
+//                    LatLng origin = new LatLng(1.3010632720868323, 103.85411269138322);
+//                    LatLng destination = new LatLng(1.3210042901028483, 103.88504719970231);
+//
+//                    System.out.println("test begins");
+//                    AvailabilityAPIController controller = new AvailabilityAPIController();
+//                    controller.callDirectionsAPI(origin, destination);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//
+//        thread.start();
+        //DIRECTIONS API TEST END
     }
     private ServiceConnection serviceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -145,6 +166,8 @@ public class TestActivity extends AppCompatActivity {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
 
+    }
+}
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.

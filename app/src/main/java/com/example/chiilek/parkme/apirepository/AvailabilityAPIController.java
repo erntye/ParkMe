@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.chiilek.parkme.data_classes.Envelope;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -23,7 +24,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * The only class that needs to be instantiated is makeCall().
  *
  *  Example:
- *      APIController controller = new APIController();
+ *      AvailabilityAPIController controller = new AvailabilityAPIController();
  *      controller.makeCall();
  *
  *      controller.onResponse(Call<Envelope> call, Response<Envelope> response){
@@ -38,7 +39,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  *
  */
 
-public class APIController implements Callback<Envelope> {
+public class AvailabilityAPIController implements Callback<Envelope> {
 
     static final private String BASE_URL = "https://api.data.gov.sg/v1/transport/";
 
@@ -89,9 +90,10 @@ public class APIController implements Callback<Envelope> {
         Envelope envelope = response.body();
 
         if (envelope != null){
-
             Log.d("SUCCESS", "*****************************************************");
+
             if (envelope.getItem() != null){
+                APIRepository.setCarParkList(envelope.getItem().getCarParkData());
                 Log.d("Repo_UpdateDateTime", envelope.getItem().getTimestamp());
                 Log.d("Repo_CarParkNumber", envelope.getItem().getCarParkData().get(0).getUpdateDatetime());
                 Log.d("Repo_Avail", Integer.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getLotsAvailable()));

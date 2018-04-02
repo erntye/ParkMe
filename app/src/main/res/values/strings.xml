@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">ParkMe</string>
     <string name="title_activity_view_map">Map</string>
+    <string name="title_activity_navigation">Navigation</string>
+
+
+    <string name="test_layout_button2">Button</string>
 </resources>

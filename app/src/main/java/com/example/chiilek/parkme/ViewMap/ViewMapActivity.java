@@ -22,14 +22,9 @@ import android.widget.Toast;
 
 
 import com.example.chiilek.parkme.R;
-import com.example.chiilek.parkme.apirepository.APIController;
+import com.example.chiilek.parkme.apirepository.AvailabilityAPIController;
 import com.example.chiilek.parkme.data_classes.CarParkDatum;
 import com.example.chiilek.parkme.repository.LocationService;
-import com.example.chiilek.parkme.test.TestActivity;
-import com.example.chiilek.parkme.test.TestLocationManager;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -72,7 +67,7 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
         });
 
         //api controller shouldn't be here?  - ernest
-        APIController controller = new APIController();
+        AvailabilityAPIController controller = new AvailabilityAPIController();
         controller.makeCall();
 
     }

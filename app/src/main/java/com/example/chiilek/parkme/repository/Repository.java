@@ -41,7 +41,7 @@ public class Repository {
         //call database getClosest10()
         //call GMAPS API to plot on Map
         List<CarParkStaticInfo> closest10CarParks = appDatabase.CPInfoDao()
-                .getNearestCarParks(1.0,2.0);
+                .getNearestCarParks(destination.getLatitude(),destination.getLongitude());
         return null;
     }
 }
