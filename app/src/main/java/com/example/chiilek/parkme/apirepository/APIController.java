@@ -105,9 +105,10 @@ public class APIController implements Callback<Envelope> {
         Envelope envelope = response.body();
 
         if (envelope != null){
-
             Log.d("SUCCESS", "*****************************************************");
+
             if (envelope.getItem() != null){
+                APIRepository.setCarParkList(envelope.getItem().getCarParkData());
                 Log.d("Repo_UpdateDateTime", envelope.getItem().getTimestamp());
                 Log.d("Repo_CarParkNumber", envelope.getItem().getCarParkData().get(0).getUpdateDatetime());
                 Log.d("Repo_Avail", Integer.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getLotsAvailable()));
