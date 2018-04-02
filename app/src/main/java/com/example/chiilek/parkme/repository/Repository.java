@@ -36,7 +36,7 @@ public class Repository {
         return null;
     }
 
-    public LiveData<List<CarParkDatum>> searchNearby(Location destination){
+    public LiveData<List<CarParkStaticInfo>> searchNearby(Location destination){
         Log.d("Repo", "Called setSearchTerm(" + destination + ")");
         //call database getClosest10()
         //call GMAPS API to plot on Map
