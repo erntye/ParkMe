@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.example.chiilek.parkme.data_classes.Envelope;
 import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDirections;
+import com.example.chiilek.parkme.data_classes.directions_classes.Step;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -145,18 +147,23 @@ public class APIController implements Callback<Envelope> {
 
         Call<GoogleMapsDirections> call = directionsAPI.getDirections(params);
         System.out.println("before enqueue");
+
+        GoogleMapsDirections returnMapsDirections;
         call.enqueue(new Callback<GoogleMapsDirections>(){
             @Override
             public void onResponse(Call<GoogleMapsDirections> call, Response<GoogleMapsDirections> response){
                 Log.d("API Controller  (G Maps)","in response");
                 GoogleMapsDirections gMapsDirections = response.body();
-                String overviewPolyline = gMapsDirections.getRoutes().get(0).getOverviewPolyline().getPoints();
+//              String overviewPolyline = gMapsDirections.getRoutes().get(0).getOverviewPolyline().getPoints();
+                List<Step> steps = gMapsDirections.getRoutes().get(0).getLegs().get(0).getSteps();
+                returnMapsDirections = gMapsDirections;
                 //TODO: get library to decode string polyline into latlng (?) or use latlng to plot
             }
 
             @Override
             public void onFailure(Call<GoogleMapsDirections> call, Throwable t){
-                t.printStackTrace(); };
+                t.printStackTrace();
+            }
         });
 
         //for testing the api call
