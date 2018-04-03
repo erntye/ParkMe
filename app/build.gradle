@@ -49,6 +49,6 @@ dependencies {
     annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
 
     // for google places
-    compile 'com.google.android.gms:play-services-places:11.8.0'
+    implementation 'com.google.android.gms:play-services-places:11.8.0'
 
 }
