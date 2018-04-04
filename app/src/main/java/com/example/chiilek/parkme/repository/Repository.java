@@ -8,7 +8,6 @@ import android.util.Log;
 
 import com.example.chiilek.parkme.apirepository.DirectionsAPIController;
 import com.example.chiilek.parkme.apirepository.DirectionsCallback;
-import com.example.chiilek.parkme.data_classes.CarParkDatum;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDirections;
@@ -93,9 +92,6 @@ public class Repository {
                             DirectionsAndCPInfo element = new DirectionsAndCPInfo(carPark, googleMapsDirections);
                             directionsAndCPList.add(element);
                             int i = counter.decrementAndGet();
-                            if(i==0){ //indicating that all callbacks are done
-
-                            }
                         }
                         public void onFailure(){
                             Log.e("Repository","Directions Callback onFailure.");
