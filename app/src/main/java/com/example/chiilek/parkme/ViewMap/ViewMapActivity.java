@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.apirepository.AvailabilityAPIController;
 import com.example.chiilek.parkme.data_classes.CarParkDatum;
+import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.repository.LocationService;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
@@ -67,9 +68,9 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
         //Create a view model and allow re-created activities to get the same view model instance
         ViewMapViewModel model = ViewModelProviders.of(this).get(ViewMapViewModel.class);
         //TODO pass current location to Viewmodel
-        model.getCarParkList().observe(this, new Observer<List<CarParkDatum>>() {
+        model.getCarParkList().observe(this, new Observer<List<CarParkStaticInfo>>() {
             @Override
-            public void onChanged(@Nullable List<CarParkDatum> newCarParkList) {
+            public void onChanged(@Nullable List<CarParkStaticInfo> newCarParkList) {
                 //display the new carparklist in the UI
             }
         });
