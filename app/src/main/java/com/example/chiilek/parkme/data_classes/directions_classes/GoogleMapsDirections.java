@@ -2,6 +2,9 @@
 package com.example.chiilek.parkme.data_classes.directions_classes;
 
 import java.util.List;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -39,6 +42,15 @@ public class GoogleMapsDirections {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public PolylineOptions getPolylineOptions(){
+        PolylineOptions polylineOptions = new PolylineOptions().clickable(true);
+        List<Step> steps = routes.get(0).getLegs().get(0).getSteps();
+        for(Step step : steps){
+            polylineOptions.add(new LatLng(step.getStartLocation().getLat(), step.getStartLocation().getLng()));
+        }
+        return polylineOptions;
     }
 
 }

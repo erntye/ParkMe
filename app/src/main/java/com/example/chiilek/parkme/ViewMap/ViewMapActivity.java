@@ -36,6 +36,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -45,6 +46,8 @@ import java.util.List;
 public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener  {
 
     private GoogleMap mMap;
+
+    ViewMapViewModel model;
     //needed to bind to service to get location updates
     private LocationService mLocationService;
     private final int REQUEST_PERMISSION_LOCATION = 1;
@@ -66,20 +69,12 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //Create a view model and allow re-created activities to get the same view model instance
-        ViewMapViewModel model = ViewModelProviders.of(this).get(ViewMapViewModel.class);
-
+        model = ViewModelProviders.of(this).get(ViewMapViewModel.class);
+        //TODO pass current location to Viewmodel
         model.getCarParkList().observe(this, new Observer<List<CarParkStaticInfo>>() {
             @Override
             public void onChanged(@Nullable List<CarParkStaticInfo> newCarParkList) {
                 //display the new carparklist in the UI
-            }
-        });
-
-        model.getCurrentLocation().observe(this, new Observer<LatLng>() {
-            @Override
-            public void onChanged(@Nullable LatLng newLocation) {
-                //TODO shift the marker of current location
-                Log.d("Activity", "onChanged: " + newLocation.toString());
             }
         });
 
@@ -96,7 +91,8 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
             @Override
             public void onPlaceSelected(Place place) {
                 Log.d("Maps", "Place selected: " + place.getName());
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(mLocationService.getLastLocation().getLatitude(), mLocationService.getLastLocation().getLongitude())));
+                CameraPosition cp = new CameraPosition.Builder().target(place.getLatLng()).zoom(14).build();
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
             }
 
             @Override
@@ -118,7 +114,9 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
     protected void onPause() {
         super.onPause();
         //unbind to service whenever activity is closed
-        unbindService(mConnection);
+//        mLocationService.stopLocationUpdates();
+//        unbindService(mConnection);
+
     }
 
     /**
@@ -133,11 +131,12 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        //mMap.moveCamera();
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+//        // Add a marker in Sydney and move the camera
+//        LatLng sydney = new LatLng(-34, 151);
+//        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSION_LOCATION);
@@ -162,7 +161,7 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
         public void onServiceConnected(ComponentName className, IBinder service) {
             String name = className.getClassName();
             Log.d("Activity", "In Service Connection");
-            if (name.endsWith("TestLocationManager")) {
+            if (name.endsWith("LocationService")) {
                 mLocationService = ((LocationService.LocationBinder) service).getService();
                 mLocationService.startLocationUpdate();
                 Log.d("Activity", "Location Update started");
@@ -170,9 +169,8 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
         }
 
         public void onServiceDisconnected(ComponentName className) {
-            if (className.getClassName().equals("TestLocationManager")) {
+            if (className.getClassName().equals("LocationService")) {
                 Log.d("Activity", "Service disconnected");
-                mLocationService.stopLocationUpdates();
                 mLocationService = null;
             }
         }

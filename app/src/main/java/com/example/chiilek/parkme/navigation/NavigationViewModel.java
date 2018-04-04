@@ -1,4 +1,4 @@
-package com.example.chiilek.parkme.navigation;
+package com.example.chiilek.parkme.Navigation;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;

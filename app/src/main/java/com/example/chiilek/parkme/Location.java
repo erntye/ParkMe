@@ -16,7 +16,7 @@ public class Location {
     /**
      * Coordinates given in data.gov api is in the format (XY):
      *      EPSG:3414 (SVY21 / Singapore TM)
-     * Lat/Long coordinates used by google maps (lon-lat):
+     * Lat/Long coordinates used by google maps (lat-lon):
      *      EPSG:4326 (WGS 84)
      * Coordinates should be converted before constructing Location objects
      * @param latitude Latitude Coordinate
