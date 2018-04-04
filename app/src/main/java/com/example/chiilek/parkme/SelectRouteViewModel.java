@@ -6,19 +6,19 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
-import android.arch.lifecycle.ViewModel;
 
 import com.example.chiilek.parkme.data_classes.CarParkDatum;
 import com.example.chiilek.parkme.repository.Repository;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
 public class SelectRouteViewModel extends AndroidViewModel {
-    private MutableLiveData<Location> destination;
-    private MutableLiveData<Location> startPoint;
+    private MutableLiveData<LatLng> destination;
+    private MutableLiveData<LatLng> startPoint;
     private MutableLiveData<CarParkDatum> chosenCarPark;
     private LiveData<List<CarParkDatum>> carParkList;
-    private LiveData<List<Location>> routeToPlot;
+    private LiveData<List<LatLng>> routeToPlot;
     private Repository mRepository;
 
     //to be set up by SelectRouteActivity
@@ -27,10 +27,10 @@ public class SelectRouteViewModel extends AndroidViewModel {
         this.mRepository = Repository.getInstance(this.getApplication());
         destination = new MutableLiveData<>();
         //calls repository to search again whenever destination is changed by SelectRouteVM.search()
-        carParkList = Transformations.switchMap(destination, (Location newDestination)->
+        carParkList = Transformations.switchMap(destination, (LatLng newDestination)->
                 mRepository.searchTop5(startPoint.getValue(), newDestination));
         //calls repository to search again whenever start point is changed
-        carParkList = Transformations.switchMap(startPoint, (Location newStartPoint)->
+        carParkList = Transformations.switchMap(startPoint, (LatLng newStartPoint)->
                 mRepository.searchTop5(newStartPoint, destination.getValue()));
 /*        routeToPlot = Transformations.switchMap(chosenCarPark, (CarParkDatum carpark)->
                 mRepository.getRoutePolyline(carpark));*/
@@ -38,12 +38,12 @@ public class SelectRouteViewModel extends AndroidViewModel {
     }
 
     //called by SelectRouteActivity whenever user inputs a new search term destination
-    public void setDestination(LiveData<Location> searchTerm){
+    public void setDestination(LiveData<LatLng> searchTerm){
         if (searchTerm!= null)
             destination.setValue(searchTerm.getValue());
     }
     //called by SelectRouteActivity whenever user inputs a new search term start point
-    public void setStartPoint(LiveData<Location> searchTerm){
+    public void setStartPoint(LiveData<LatLng> searchTerm){
         if (searchTerm!= null)
             startPoint.setValue(searchTerm.getValue());
     }
@@ -60,7 +60,7 @@ public class SelectRouteViewModel extends AndroidViewModel {
         return carParkList;
     }
     //expose for observation to viewmodel
-    public LiveData<List<Location>> getRouteToPlot() {
+    public LiveData<List<LatLng>> getRouteToPlot() {
         return routeToPlot;
     }
 }

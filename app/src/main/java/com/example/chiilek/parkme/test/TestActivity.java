@@ -22,11 +22,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.chiilek.parkme.R;
-import com.example.chiilek.parkme.apirepository.APIController;
+import com.example.chiilek.parkme.apirepository.AvailabilityAPIController;
 import com.google.android.gms.maps.model.LatLng;
 import com.example.chiilek.parkme.repository.LocationRepository;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 
 import java.util.List;
 
@@ -101,6 +99,27 @@ public class TestActivity extends AppCompatActivity {
                         }
                     }
                 });
+
+        //DIRECTIONS API TEST START
+//        Thread thread = new Thread(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                try  {
+//                    LatLng origin = new LatLng(1.3010632720868323, 103.85411269138322);
+//                    LatLng destination = new LatLng(1.3210042901028483, 103.88504719970231);
+//
+//                    System.out.println("test begins");
+//                    AvailabilityAPIController controller = new AvailabilityAPIController();
+//                    controller.callDirectionsAPI(origin, destination);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//
+//        thread.start();
+        //DIRECTIONS API TEST END
     }
     private ServiceConnection serviceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -146,30 +165,6 @@ public class TestActivity extends AppCompatActivity {
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-
-        Thread thread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try  {
-                    LatLng origin = new LatLng(1.3010632720868323, 103.85411269138322);
-                    LatLng destination = new LatLng(1.3210042901028483, 103.88504719970231);
-
-                    System.out.println("test begins");
-                    APIController controller = new APIController();
-                    controller.callDirectionsAPI(origin, destination);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        thread.start();
-
-
-    }
-}
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
@@ -182,7 +177,7 @@ public class TestActivity extends AppCompatActivity {
                                 //Prompt the user once explanation has been shown
                                 ActivityCompat.requestPermissions(TestActivity.this,
                                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION );
+                                        MY_PERMISSIONS_REQUEST_LOCATION);
                             }
                         })
                         .create()
@@ -193,7 +188,7 @@ public class TestActivity extends AppCompatActivity {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION );
+                        MY_PERMISSIONS_REQUEST_LOCATION);
             }
         }
     }
@@ -220,41 +215,6 @@ public class TestActivity extends AppCompatActivity {
         }
 
     }
-
-/*    @Override
-    protected void onStart() {
-        super.onStart();
-        //testing to get location service
-        Intent intent = new Intent(this,LocationRepository.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        Log.d("Activity", "Call bindService()");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unbindService(mConnection);
-        mBound = false;
-        Log.d("Activity", "Call unbindService()");
-    }
-
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-            LocationRepository.LocalBinder binder = (LocationRepository.LocalBinder) service;
-            mService = binder.getService();
-            mBound = true;
-            Log.d("Activity", "Bound to Service");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            mBound = false;
-            Log.d("Activity", "Disconnected from Service");
-        }
-    };*/
 }
 
 

@@ -4,7 +4,6 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
-import com.example.chiilek.parkme.Location;
 import com.example.chiilek.parkme.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,8 +36,8 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         NavigationViewModel model = ViewModelProviders.of(this).get(NavigationViewModel.class);
 
         Bundle extras = getIntent().getExtras();
-        Location startPoint = new Location(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
-        Location endPoint = new Location(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
+        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
+        LatLng endPoint = new LatLng(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
 
 
 
