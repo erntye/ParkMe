@@ -32,8 +32,8 @@
 
 
         <activity
-            android:name=".ViewMap.ViewMapActivity"
-            android:label="@string/title_activity_view_map">
+            android:name=".SuggestionsActivity"
+            android:label="TESTING">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
