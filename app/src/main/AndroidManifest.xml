@@ -39,6 +39,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".SuggestionsActivity"
+            android:label="@string/title_activity_suggestions">
+        </activity>
+
         <activity
             android:name=".test.TestActivity">
 <!--            <intent-filter>

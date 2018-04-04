@@ -12,7 +12,10 @@
         android:orientation="vertical">
 
         <fragment
+            android:name="com.example.chiilek.parkme.from_to_boxes"
+            android:id="@+id/multi_search_fragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></fragment>
+            android:layout_height="150dp">
+        </fragment>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
