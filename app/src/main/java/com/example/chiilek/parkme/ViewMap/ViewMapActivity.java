@@ -88,7 +88,7 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
             @Override
             public void onPlaceSelected(Place place) {
                 Log.d("Maps", "Place selected: " + place.getName());
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(mLocationService.getLastLocation().getLatitude(), mLocationService.getLastLocation().getLongitude())));
+                //mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(mLocationService.getLastLocation().getLatitude(), mLocationService.getLastLocation().getLongitude())));
             }
 
             @Override
@@ -110,8 +110,8 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
     protected void onPause() {
         super.onPause();
         //unbind to service whenever activity is closed
-        unbindService(mConnection);
-        mLocationService.stopLocationUpdates();
+  //      unbindService(mConnection);
+//        mLocationService.stopLocationUpdates();
     }
 
     /**
