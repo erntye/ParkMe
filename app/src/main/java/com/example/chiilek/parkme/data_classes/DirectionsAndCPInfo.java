@@ -39,7 +39,7 @@ public class DirectionsAndCPInfo {
         return deg * (Math.PI/180);
     }
 
-    public double getScore(){
+    public double getOverallScore(){
         return distanceScoreWeigtage*distanceScore + (1-distanceScoreWeigtage)*durationScore;
     }
 
