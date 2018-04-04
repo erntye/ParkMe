@@ -88,7 +88,7 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
             @Override
             public void onPlaceSelected(Place place) {
                 Log.d("Maps", "Place selected: " + place.getName());
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(mLocationService.getLastLocation().getLatitude(), mLocationService.getLastLocation().getLongitude())));
+//                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(mLocationService.getLastLocation().getLatitude(), mLocationService.getLastLocation().getLongitude())));
             }
 
             @Override
@@ -110,8 +110,9 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
     protected void onPause() {
         super.onPause();
         //unbind to service whenever activity is closed
-        unbindService(mConnection);
-        mLocationService.stopLocationUpdates();
+//        mLocationService.stopLocationUpdates();
+//        unbindService(mConnection);
+
     }
 
     /**
@@ -155,7 +156,7 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
         public void onServiceConnected(ComponentName className, IBinder service) {
             String name = className.getClassName();
             Log.d("Activity", "In Service Connection");
-            if (name.endsWith("TestLocationManager")) {
+            if (name.endsWith("LocationService")) {
                 mLocationService = ((LocationService.LocationBinder) service).getService();
                 mLocationService.startLocationUpdate();
                 Log.d("Activity", "Location Update started");
@@ -163,7 +164,7 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
         }
 
         public void onServiceDisconnected(ComponentName className) {
-            if (className.getClassName().equals("TestLocationManager")) {
+            if (className.getClassName().equals("LocationService")) {
                 Log.d("Activity", "Service disconnected");
                 mLocationService = null;
             }
