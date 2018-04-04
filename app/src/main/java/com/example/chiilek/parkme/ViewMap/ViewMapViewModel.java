@@ -9,6 +9,7 @@ import android.arch.lifecycle.Transformations;
 
 import com.example.chiilek.parkme.data_classes.CarParkDatum;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
+import com.example.chiilek.parkme.repository.LocationRepository;
 import com.example.chiilek.parkme.repository.Repository;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -18,29 +19,32 @@ public class ViewMapViewModel extends AndroidViewModel{
     private MutableLiveData<LatLng> msearchTerm;
     //list of nearest carparks to search term
     private LiveData<List<CarParkStaticInfo>> mcarParkList;
-    private LatLng currentLocation;
+    private LiveData<LatLng> currentLocation;
     private Repository mRepository;
+    private LocationRepository mLocationRepo;
 
     public ViewMapViewModel(Application application){
         super(application);
         this.mRepository = Repository.getInstance(this.getApplication());
+        mLocationRepo = LocationRepository.getLocationRepository(this.getApplication());
         msearchTerm = new MutableLiveData<>();
         //TODO get current location from repository?
-        currentLocation = new LatLng(1.0,1.0);
-        mcarParkList = mRepository.searchNearby(currentLocation);
+        currentLocation = mLocationRepo.getLocation();
+        mcarParkList = mRepository.searchNearby(currentLocation.getValue());
 
         //searches nearby everytime msearchterm changes, when called by VMMP.setSearchTerm()
         mcarParkList = Transformations.switchMap(msearchTerm, (LatLng newDestination)->
                 mRepository.searchNearby(newDestination));
+        //update currentLocation
+        currentLocation = Transformations.map(mLocationRepo.getLocation(),newLocation->{
+            return newLocation;
+        });
     }
     //called by button in ViewMapActivity and triggers transformation
     public void setSearchTerm(LatLng searchTerm){
         msearchTerm.setValue(searchTerm);
     }
 
-    public void setCurrentLocation(LatLng currentLocation) {
-        this.currentLocation = currentLocation;
-    }
     /*
         // put this in the ViewMapActivity GMAP fragment with the search button to update searchTerm
 
@@ -70,6 +74,8 @@ public class ViewMapViewModel extends AndroidViewModel{
     public LiveData<List<CarParkStaticInfo>> getCarParkList() {
         return mcarParkList;
     }
+
+    public LiveData<LatLng> getCurrentLocation(){return currentLocation;}
 
 
 }

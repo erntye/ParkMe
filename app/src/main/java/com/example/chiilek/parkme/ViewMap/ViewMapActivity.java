@@ -67,11 +67,19 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
 
         //Create a view model and allow re-created activities to get the same view model instance
         ViewMapViewModel model = ViewModelProviders.of(this).get(ViewMapViewModel.class);
-        //TODO pass current location to Viewmodel
+
         model.getCarParkList().observe(this, new Observer<List<CarParkStaticInfo>>() {
             @Override
             public void onChanged(@Nullable List<CarParkStaticInfo> newCarParkList) {
                 //display the new carparklist in the UI
+            }
+        });
+
+        model.getCurrentLocation().observe(this, new Observer<LatLng>() {
+            @Override
+            public void onChanged(@Nullable LatLng newLocation) {
+                //TODO shift the marker of current location
+                Log.d("Activity", "onChanged: " + newLocation.toString());
             }
         });
 
@@ -111,7 +119,6 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
         super.onPause();
         //unbind to service whenever activity is closed
         unbindService(mConnection);
-        mLocationService.stopLocationUpdates();
     }
 
     /**
@@ -165,6 +172,7 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
         public void onServiceDisconnected(ComponentName className) {
             if (className.getClassName().equals("TestLocationManager")) {
                 Log.d("Activity", "Service disconnected");
+                mLocationService.stopLocationUpdates();
                 mLocationService = null;
             }
         }
