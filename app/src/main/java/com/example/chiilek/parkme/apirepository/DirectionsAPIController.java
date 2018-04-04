@@ -2,6 +2,7 @@ package com.example.chiilek.parkme.apirepository;
 
 import android.util.Log;
 
+import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDirections;
 import com.example.chiilek.parkme.data_classes.directions_classes.Step;
 import com.google.android.gms.maps.model.LatLng;
@@ -21,7 +22,16 @@ public class DirectionsAPIController {
     static final private String GMAPS_DIRECTION_API_BASE_URL = "https://maps.googleapis.com/maps/api/directions/";
     static final private String GMAPS_API_KEY = "AIzaSyANCZRTm7L_jIqUArTsq8jcjNO7MatIqt4";
 
-    public void callDirectionsAPI(LatLng origin, LatLng destination){
+    private static DirectionsAPIController INSTANCE;
+
+    public static DirectionsAPIController getInstance(){
+        if (INSTANCE == null)
+            INSTANCE = new DirectionsAPIController();
+        return INSTANCE;
+    }
+
+
+    public void callDirectionsAPI(LatLng origin, LatLng destination, DirectionsCallback repoCallback){
         Map<String, String> params = new HashMap<String,String>();
         params.put("origin", "75 9th Ave New York, NY");
         params.put("destination", "MetLife Stadium 1 MetLife Stadium Dr East Rutherford, NJ 07073");
@@ -43,13 +53,12 @@ public class DirectionsAPIController {
             public void onResponse(Call<GoogleMapsDirections> call, Response<GoogleMapsDirections> response){
                 Log.d("API Controller  (G Maps)","in response");
                 GoogleMapsDirections gMapsDirections = response.body();
-//              String overviewPolyline = gMapsDirections.getRoutes().get(0).getOverviewPolyline().getPoints();
-                List<Step> steps = gMapsDirections.getRoutes().get(0).getLegs().get(0).getSteps();
-                //TODO: get library to decode string polyline into latlng (?) or use latlng to plot
+                repoCallback.onSuccess(gMapsDirections);
             }
 
             @Override
             public void onFailure(Call<GoogleMapsDirections> call, Throwable t){
+                repoCallback.onFailure();
                 t.printStackTrace();
             }
         });

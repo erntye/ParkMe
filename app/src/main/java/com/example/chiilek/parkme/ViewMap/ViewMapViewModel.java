@@ -25,11 +25,13 @@ public class ViewMapViewModel extends AndroidViewModel{
         super(application);
         this.mRepository = Repository.getInstance(this.getApplication());
         msearchTerm = new MutableLiveData<>();
-        mcarParkList = mRepository.searchNearby(currentLocation);
+        //TODO get current location from repository?
+        currentLocation = new LatLng(1.0,1.0);
+        mcarParkList = mRepository.searchNearbyCarParks(currentLocation);
 
         //searches nearby everytime msearchterm changes, when called by VMMP.setSearchTerm()
         mcarParkList = Transformations.switchMap(msearchTerm, (LatLng newDestination)->
-                mRepository.searchNearby(newDestination));
+                mRepository.searchNearbyCarParks(newDestination));
     }
     //called by button in ViewMapActivity and triggers transformation
     public void setSearchTerm(LatLng searchTerm){
