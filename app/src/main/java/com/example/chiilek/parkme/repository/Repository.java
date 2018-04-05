@@ -32,6 +32,7 @@ public class Repository {
     public static Repository getInstance(Context context){
         if (INSTANCE == null)
             INSTANCE = new Repository(context);
+        Log.d("Repo", "got Repo singleton");
         return INSTANCE;
     }
 

@@ -1,0 +1,26 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorMain"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context="com.example.chiilek.parkme.from_to_boxes">
+
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <fragment
+        android:id="@+id/place_autocomplete_fragment2"
+        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+        android:layout_width="300dp"
+        android:layout_height="50dp" />
+
+    <fragment
+        android:id="@+id/place_autocomplete_fragment3"
+        android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+        android:layout_marginTop="10dp"
+        android:layout_width="300dp"
+        android:layout_height="50dp" />
+
+</LinearLayout>

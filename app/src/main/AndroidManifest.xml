@@ -34,25 +34,32 @@
         <activity
             android:name=".ViewMap.ViewMapActivity"
             android:label="@string/title_activity_view_map">
-            <!--<intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".SuggestionsActivity"
+            android:label="@string/title_activity_suggestions">
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            </intent-filter>
         </activity>
 
         <activity
             android:name=".test.TestActivity">
-            <intent-filter>
+<!--            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>-->
         </activity>
-        <service android:name="com.example.chiilek.parkme.repository.LocationRepository"/>
-        <service android:name="com.example.chiilek.parkme.test.TestLocationManager"/>
+<!--        <service android:name="com.example.chiilek.parkme.repository.LocationRepository"/>
+        <service android:name="com.example.chiilek.parkme.test.TestLocationManager"/>-->
         <activity
             android:name=".navigation.NavigationActivity"
-            android:label="@string/title_activity_navigation"></activity>
+            android:label="@string/title_activity_navigation">
+        </activity>
     </application>
 
 </manifest>
