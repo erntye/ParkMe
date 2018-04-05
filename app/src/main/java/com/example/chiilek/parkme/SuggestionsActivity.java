@@ -1,19 +1,17 @@
 package com.example.chiilek.parkme;
 
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
+
 
 public class SuggestionsActivity extends AppCompatActivity{
 
@@ -44,11 +42,12 @@ public class SuggestionsActivity extends AppCompatActivity{
         //get animations
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        // specify an adapter (see also next example)
-        mAdapter = new CarparkAdapter(test);
+        //divide with a line between each suggestion
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
+        // specify an adapter
+        mAdapter = new SuggestionAdapter(test, this);
         mRecyclerView.setAdapter(mAdapter);
-
-
 
     }
 
