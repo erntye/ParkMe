@@ -43,6 +43,7 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
         return new MyViewHolder(itemView);
     }
 
+    //binds each seperate carpark to it view
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         CarParkStaticInfo CP = carparkList.get(position);
@@ -57,10 +58,10 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
         } catch (Exception e){
             Log.e("ERROR", "Failed to get drawable id", e);
         }
+        //----------------------------------------------------------------
 
         holder.buttonImage.setImageResource(drawableID);
         holder.CPNumber.setText(CP.getCPNumber());
-        holder.address.setText(CP.getAddress());
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -79,8 +80,10 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
         return carparkList.size();
     }
 
+
+    //This class holds all the Views inside one view in the recycler view
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        private TextView CPNumber,address;
+        private TextView CPNumber;
         private ImageView buttonImage;
         private RelativeLayout parentLayout;
 
@@ -89,7 +92,6 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
             super(view);
             parentLayout = view.findViewById(R.id.parent_layout);
             CPNumber = view.findViewById(R.id.CPNumber);
-            address = view.findViewById(R.id.address);
             buttonImage = view.findViewById(R.id.parking_suggestion_box_png);
 
         }

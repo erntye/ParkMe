@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/CPNumber"
+    android:background="@color/colorMain"
     android:orientation="vertical"
     android:gravity="center"
     tools:context="com.example.chiilek.parkme.from_to_boxes">
