@@ -61,10 +61,11 @@ public class TestActivity extends AppCompatActivity {
         button.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View v) {
-                        Log.d("Activity","Pressed Set Button");
-                        model.setData(Integer.parseInt(textInput.getText().toString()));
-                        Log.d("Activity","Data set to " + Integer.parseInt(textInput.getText().toString()));
-                        button.setText(textInput.getText());
+//                        Log.d("Activity","Pressed Set Button");
+//                        model.setData(Integer.parseInt(textInput.getText().toString()));
+//                        Log.d("Activity","Data set to " + Integer.parseInt(textInput.getText().toString()));
+//                        button.setText(textInput.getText());
+                        startActivity(new Intent(TestActivity.this, CarParkPopUp.class));
                     }
                 });
 
@@ -145,16 +146,16 @@ public class TestActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Intent intent = new Intent(this,TestLocationManager.class);
-        //startService(intent);
-        bindService(intent, serviceConnection,Context.BIND_AUTO_CREATE);
+//        Intent intent = new Intent(this,TestLocationManager.class);
+//        //startService(intent);
+//        bindService(intent, serviceConnection,Context.BIND_AUTO_CREATE);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        unbindService(serviceConnection);
-        testLocationManager.stopLocationUpdates();
+//        unbindService(serviceConnection);
+//        testLocationManager.stopLocationUpdates();
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
