@@ -7,10 +7,10 @@
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="27dp"
         android:text="parkName"
         android:textSize="60dp" />
 
@@ -18,20 +18,18 @@
         android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/textView3"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="153dp"
         android:text="LOTS REMAINING:"
-        android:textSize="25dp"/>
+        android:textSize="25dp" />
 
     <TextView
         android:id="@+id/textView9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/textView8"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="224dp"
         android:text="3"
-        android:textSize="90dp"/>
+        android:textSize="90dp" />
 
 </RelativeLayout>
