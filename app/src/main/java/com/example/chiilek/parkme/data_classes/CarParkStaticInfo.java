@@ -12,8 +12,7 @@ import android.support.annotation.NonNull;
 @Entity(tableName = "CarParkInfo")
 public class CarParkStaticInfo {
 
-    public CarParkStaticInfo(String address, String CPNumber){
-        this.address = address;
+    public CarParkStaticInfo(String CPNumber){
         this.CPNumber = CPNumber;
     }
     //declaring variables (columns in table)

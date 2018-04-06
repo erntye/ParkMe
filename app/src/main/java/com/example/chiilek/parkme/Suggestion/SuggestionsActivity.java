@@ -1,4 +1,4 @@
-package com.example.chiilek.parkme;
+package com.example.chiilek.parkme.Suggestion;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 
 import java.util.ArrayList;
@@ -22,11 +23,14 @@ public class SuggestionsActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //creating dummy data
+
+        //TODO LOAD REAL DATA BELOW HERE
+        //--------------
         for (int i = 0; i<10;i++){
-            CarParkStaticInfo CP = new CarParkStaticInfo("abow"+i,"wohoo"+i+4);
+            CarParkStaticInfo CP = new CarParkStaticInfo("CarPark Number"+i*4);
             test.add(CP);
         }
+        //---------------
         setContentView(R.layout.activity_suggestions);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);

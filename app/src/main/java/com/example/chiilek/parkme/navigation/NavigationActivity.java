@@ -1,4 +1,4 @@
-package com.example.chiilek.parkme.navigation;
+package com.example.chiilek.parkme.Navigation;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.v4.app.FragmentActivity;
@@ -38,7 +38,6 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         Bundle extras = getIntent().getExtras();
         LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
         LatLng endPoint = new LatLng(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
-
 
 
     }

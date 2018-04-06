@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -21,9 +20,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.chiilek.parkme.CarParkPopUp.CarParkPopUpActivity;
 import com.example.chiilek.parkme.R;
-import com.example.chiilek.parkme.apirepository.AvailabilityAPIController;
-import com.google.android.gms.maps.model.LatLng;
 import com.example.chiilek.parkme.repository.LocationRepository;
 
 import java.util.List;
@@ -54,7 +52,6 @@ public class TestActivity extends AppCompatActivity {
 
 
 
-
         //Create a view model and allow re-created activities to get the same view model instance
         model = ViewModelProviders.of(this).get(TestViewModel.class);
 
@@ -65,7 +62,7 @@ public class TestActivity extends AppCompatActivity {
 //                        model.setData(Integer.parseInt(textInput.getText().toString()));
 //                        Log.d("Activity","Data set to " + Integer.parseInt(textInput.getText().toString()));
 //                        button.setText(textInput.getText());
-                        startActivity(new Intent(TestActivity.this, CarParkPopUp.class));
+                        startActivity(new Intent(TestActivity.this, CarParkPopUpActivity.class));
                     }
                 });
 

@@ -1,7 +1,7 @@
-package com.example.chiilek.parkme;
+package com.example.chiilek.parkme.Suggestion;
 
 import android.content.Context;
-import android.nfc.Tag;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,9 +17,9 @@ import android.widget.Toast;
  */
 
 
-
-
+import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
+import com.example.chiilek.parkme.CarParkPopUp.CarParkPopUpActivity;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -60,13 +60,20 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
         }
         //----------------------------------------------------------------
 
+        String distanceString = Integer.toString(position);
+
         holder.buttonImage.setImageResource(drawableID);
         holder.CPNumber.setText(CP.getCPNumber());
+        holder.distance.setText(distanceString);
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
                 Log.d("test", "onClick: clicked on: " + CP.getCPNumber());
                 Toast.makeText(mContext, CP.getCPNumber(), Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(mContext, CarParkPopUpActivity.class);
+                intent.putExtra("cp_pop_up", carparkList.get(position).getCPNumber());
+                mContext.startActivity(intent);
             }
         });
 
@@ -81,15 +88,17 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
     }
 
 
-    //This class holds all the Views inside one view in the recycler view
+    //This class holds all the Views inside one rectangle in the recycler view
     public class MyViewHolder extends RecyclerView.ViewHolder{
         private TextView CPNumber;
+        private TextView distance;
         private ImageView buttonImage;
         private RelativeLayout parentLayout;
 
 
         public MyViewHolder(View view) {
             super(view);
+            distance = view.findViewById(R.id.distance);
             parentLayout = view.findViewById(R.id.parent_layout);
             CPNumber = view.findViewById(R.id.CPNumber);
             buttonImage = view.findViewById(R.id.parking_suggestion_box_png);
