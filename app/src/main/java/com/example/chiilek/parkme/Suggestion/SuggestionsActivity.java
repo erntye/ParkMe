@@ -23,11 +23,11 @@ public class SuggestionsActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        getSupportActionBar().hide();
         //TODO LOAD REAL DATA BELOW HERE
         //--------------
-        for (int i = 0; i<6;i++){
-            CarParkStaticInfo CP = new CarParkStaticInfo("CarPark Number"+i*4);
+        for (int i = 1; i<6;i++){
+            CarParkStaticInfo CP = new CarParkStaticInfo("CarPark Number"+i);
             test.add(CP);
         }
         //---------------

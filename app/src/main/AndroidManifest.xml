@@ -39,7 +39,7 @@
 
         <activity
             android:name=".Suggestion.SuggestionsActivity"
-            android:label="TESTING">
+            android:label="CarParkSuggestions">
         </activity>
 
         <activity
@@ -57,8 +57,11 @@
             android:label="@string/title_activity_navigation">
         </activity>
         <activity
-            android:name=".CarParkPopUp.CarParkPopUpActivity">
+            android:name=".CarParkPopUp.CarParkPopUpActivity"
             android:label="CarParkPopUp"
+            android:theme="@style/AppTheme.PopUpTheme"
+            >
+
         </activity>
 
     </application>
