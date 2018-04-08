@@ -70,10 +70,10 @@
         android:layout_height="45dp"
         android:layout_alignStart="@+id/textView6"
         android:layout_below="@+id/textView18"
-        android:text="Night Parking:"
-        android:textSize="16sp"
         android:fontFamily="arial"
-        android:textColor="@color/colorMain"/>
+        android:text="Night Parking:"
+        android:textColor="@color/colorMain"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/textView18"
@@ -127,8 +127,8 @@
         android:layout_alignStart="@+id/textView6"
         android:layout_below="@+id/textView13"
         android:text="Car Park Type:"
-        amily="arial"     "@color/colorMain"
-        android:textColor='andr />
+        android:fontFamily="arial"
+        android:textColor="@color/colorMain" />
 
     <TextView
         android:id="@+id/textView12"
@@ -165,7 +165,6 @@
         android:textColor="@color/colorMain"
         android:textSize="14sp"
         android:fontFamily="arial"
-        android:textColor="@color/colorMain"
         android:textStyle="italic" />
 
     <TextView
@@ -263,7 +262,9 @@
         android:id="@+id/selectButton"
         android:layout_width="110dp"
         android:layout_height="36dp"
-        android:layout_alignEnd="@+id/textView21"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/row_padding_vertical"
+        android:layout_alignEnd="@+id/textView23"
         android:layout_below="@+id/textView19"
         app:srcCompat="@drawable/select_button" />
 
