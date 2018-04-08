@@ -32,26 +32,35 @@
 
 
         <activity
+            android:name=".ViewMap.ViewMapActivity"
+            android:label="@string/title_activity_view_map">
+        </activity>
+
+        <activity
             android:name=".Suggestion.SuggestionsActivity"
             android:label="TESTING">
 
             <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity
             android:name=".test.TestActivity">
-        </activity>
-        <activity
-            android:name=".Navigation.NavigationActivity"
-            android:label="@string/title_activity_navigation">
 
+        </activity>
+<!--        <service android:name="com.example.chiilek.parkme.repository.LocationRepository"/>
+        <service android:name="com.example.chiilek.parkme.test.TestLocationManager"/>-->
+
+        <activity
+            android:name=".navigation.NavigationActivity"
+            android:label="@string/title_activity_navigation">
         </activity>
         <activity
             android:name=".CarParkPopUp.CarParkPopUpActivity"
             android:theme="@style/PopUpWindow">
+            android:theme="@style/AppTheme.CustomTheme">
         </activity>
     </application>
 

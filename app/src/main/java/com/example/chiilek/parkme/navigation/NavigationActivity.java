@@ -1,4 +1,4 @@
-package com.example.chiilek.parkme.Navigation;
+package com.example.chiilek.parkme.navigation;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.v4.app.FragmentActivity;
@@ -33,11 +33,11 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         mapFragment.getMapAsync(this);
 
         //Create a view model and allow re-created activities to get the same view model instance
-        com.example.chiilek.parkme.Navigation.NavigationViewModel model = ViewModelProviders.of(this).get(com.example.chiilek.parkme.Navigation.NavigationViewModel.class);
+        com.example.chiilek.parkme.navigation.NavigationViewModel model = ViewModelProviders.of(this).get(com.example.chiilek.parkme.navigation.NavigationViewModel.class);
 
-        Bundle extras = getIntent().getExtras();
-        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
-        LatLng endPoint = new LatLng(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
+//        Bundle extras = getIntent().getExtras();
+//        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
+//        LatLng endPoint = new LatLng(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
 
 
     }
