@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.example.chiilek.parkme.R;
+import com.example.chiilek.parkme.navigation.NavigationActivity;
 import com.example.chiilek.parkme.navigation.RouteOverviewActivity;
 
 /**
@@ -28,7 +29,7 @@ public class ReroutePopUpActivity extends AppCompatActivity {
         rb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ReroutePopUpActivity.this, RouteOverviewActivity.class));
+                startActivity(new Intent(ReroutePopUpActivity.this, NavigationActivity.class));
             }
         });
         cancel.setOnClickListener(new View.OnClickListener(){

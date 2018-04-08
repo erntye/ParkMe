@@ -3,6 +3,9 @@ package com.example.chiilek.parkme.navigation;
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+import android.content.Intent;
 
 import com.example.chiilek.parkme.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -38,7 +41,13 @@ public class RouteOverviewActivity extends FragmentActivity implements OnMapRead
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
 //        LatLng endPoint = new LatLng(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
-
+        ImageView b = findViewById(R.id.startButton);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(RouteOverviewActivity.this, NavigationActivity.class));
+            }
+        });
 
     }
 

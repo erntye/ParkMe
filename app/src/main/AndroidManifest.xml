@@ -54,7 +54,7 @@
 
         <activity
             android:name=".navigation.RouteOverviewActivity"
-            android:label="@string/title_activity_navigation">
+            android:label="@string/title_activity_route_overview">
         </activity>
         <activity
             android:name=".CarParkPopUp.CarParkPopUpActivity"
@@ -68,7 +68,12 @@
             android:theme="@style/AppTheme.PopUpTheme">
 
         </activity>
+        <activity
+            android:name=".navigation.NavigationActivity"
+            android:label="@string/title_activity_navigation"
+            >
 
+        </activity>
     </application>
 
 </manifest>
