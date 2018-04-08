@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.example.chiilek.parkme.Navigation.NavigationActivity;
+import com.example.chiilek.parkme.navigation.NavigationActivity;
 import com.example.chiilek.parkme.R;
 
 /**

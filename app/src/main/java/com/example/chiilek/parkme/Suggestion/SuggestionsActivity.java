@@ -26,7 +26,7 @@ public class SuggestionsActivity extends AppCompatActivity{
 
         //TODO LOAD REAL DATA BELOW HERE
         //--------------
-        for (int i = 0; i<10;i++){
+        for (int i = 0; i<6;i++){
             CarParkStaticInfo CP = new CarParkStaticInfo("CarPark Number"+i*4);
             test.add(CP);
         }
