@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.chiilek.parkme.CarParkPopUp.CarParkPopUpActivity;
+import com.example.chiilek.parkme.ReroutePopUp.ReroutePopUpActivity ;
 import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.repository.LocationRepository;
 
@@ -71,6 +72,7 @@ public class TestActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         model.initialize();
                         initbutton.setText("Done!");
+                        startActivity(new Intent(TestActivity.this, ReroutePopUpActivity.class));
                         Log.d("Activity","Pressed Init Button");
                     }
                 });

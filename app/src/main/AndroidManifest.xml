@@ -53,7 +53,7 @@
         <service android:name="com.example.chiilek.parkme.test.TestLocationManager"/>-->
 
         <activity
-            android:name=".navigation.NavigationActivity"
+            android:name=".navigation.RouteOverviewActivity"
             android:label="@string/title_activity_navigation">
         </activity>
         <activity
@@ -61,6 +61,11 @@
             android:label="CarParkPopUp"
             android:theme="@style/AppTheme.PopUpTheme"
             >
+        </activity>
+        <activity
+            android:name=".ReroutePopUp.ReroutePopUpActivity"
+            android:label="ReroutePopUp"
+            android:theme="@style/AppTheme.PopUpTheme">
 
         </activity>
 
