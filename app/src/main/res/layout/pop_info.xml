@@ -262,10 +262,9 @@
         android:id="@+id/selectButton"
         android:layout_width="110dp"
         android:layout_height="36dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/row_padding_vertical"
-        android:layout_alignEnd="@+id/textView23"
         android:layout_below="@+id/textView19"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
         app:srcCompat="@drawable/select_button" />
 
 </RelativeLayout>
