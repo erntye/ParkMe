@@ -6,7 +6,7 @@
     android:background="@color/colorMain"
     android:orientation="vertical"
     android:gravity="center"
-    tools:context="com.example.chiilek.parkme.from_to_boxes">
+    tools:context="com.example.chiilek.parkme.MultiSearchFragment">
 
 
     <!-- TODO: Update blank fragment layout -->

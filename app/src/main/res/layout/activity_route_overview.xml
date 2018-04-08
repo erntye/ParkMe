@@ -18,7 +18,7 @@
     <fragment
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:name="com.example.chiilek.parkme.from_to_boxes"
+        android:name="com.example.chiilek.parkme.MultiSearchFragment"
         android:id="@+id/from_to_fragment">
 
     </fragment>
