@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="parkName"
+        android:textColor="@color/colorMain"
+        android:textSize="60dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView3"
+        android:layout_centerHorizontal="true"
+        android:text="LOTS REMAINING:"
+        android:textColor="@color/color2"
+        android:textSize="25dp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView8"
+        android:layout_centerHorizontal="true"
+        android:text="3"
+        android:textColor="@color/color2"
+        android:textSize="120sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/rerouteButton"
+        android:layout_width="210dp"
+        android:layout_height="75dp"
+        android:layout_below="@+id/textView9"
+        android:layout_centerHorizontal="true"
+        app:srcCompat="@drawable/reroute_button" />
+
+    <ImageView
+        android:id="@+id/cancelButton"
+        android:layout_width="160dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/rerouteButton"
+        android:layout_centerHorizontal="true"
+        app:srcCompat="@drawable/cancel_button" />
+
+</RelativeLayout>

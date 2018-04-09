@@ -2,7 +2,32 @@
     <string name="app_name">ParkMe</string>
     <string name="title_activity_view_map">Map</string>
     <string name="title_activity_navigation">Navigation</string>
+    <string name="title_activity_suggestions">Suggestions</string>
+    <string name="title_activity_route_overview">RouteOverview</string>
 
 
     <string name="test_layout_button2">Button</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="textView21">TextView</string>
+    <string name="textView20">TextView</string>
+    <string name="textView7">Motor Cycle:</string>
+    <string name="textView6">Motor Car:</string>
+    <string name="textView5">Available Lots</string>
+    <string name="textView4">parkAdress</string>
+    <string name="textView3">parkName</string>
+    <string name="textView12">Heavy Vehicle:</string>
+    <string name="textView16">Parking System:</string>
+    <string name="textView14">Car Park Type:</string>
+    <string name="textView15">Free Parking:</string>
+    <string name="textView17">Miscellaneous</string>
+    <string name="textView18">Short-Term Parking:</string>
+    <string name="textView19">Night Parking:</string>
+    <string name="textView22">TextView</string>
+    <string name="textView23">TextView</string>
+    <string name="textView24">TextView</string>
+    <string name="textView25">TextView</string>
+    <string name="textView26">TextView</string>
+    <string name="textView27">TextView</string>
 </resources>
