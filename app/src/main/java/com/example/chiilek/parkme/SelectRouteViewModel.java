@@ -12,6 +12,7 @@ import android.util.Log;
 import com.example.chiilek.parkme.data_classes.availability_classes.CarParkDatum;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.repository.GetRoutesCallback;
+import com.example.chiilek.parkme.repository.LocationRepository;
 import com.example.chiilek.parkme.repository.Repository;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -25,12 +26,15 @@ public class SelectRouteViewModel extends AndroidViewModel {
     private MediatorLiveData mediatorDirAndCPList = new MediatorLiveData<>();
     private LiveData<List<LatLng>> routeToPlot;
     private Repository mRepository;
+    private LocationRepository mLocationRepo;
 
     //to be set up by SelectRouteActivity
     public SelectRouteViewModel(Application application){
         super(application);
         this.mRepository = Repository.getInstance(this.getApplication());
         destination = new MutableLiveData<>();
+        mLocationRepo = LocationRepository.getLocationRepository(this.getApplication());
+        startPoint.setValue(mLocationRepo.getLocation().getValue());
 
         mediatorDirAndCPList.addSource(destination,  newDestination -> mRepository.getDirectionsAndCPs(startPoint.getValue(), (LatLng)newDestination,
                 new GetRoutesCallback() {
