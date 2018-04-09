@@ -1,4 +1,4 @@
-package com.example.chiilek.parkme.data_classes;
+package com.example.chiilek.parkme.data_classes.availability_classes;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -31,6 +31,10 @@ public class Item {
     public List<CarParkDatum> getCarParkData() {
 
         return carParkData;
+    }
+
+    public CarParkDatum getCarParkDatum(String cpNumber){
+        return carParkData.stream().filter(o -> o.getCarParkNumber().equals(cpNumber)).findFirst().get();
     }
 
 }

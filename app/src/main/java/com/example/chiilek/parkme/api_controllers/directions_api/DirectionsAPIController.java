@@ -1,14 +1,11 @@
-package com.example.chiilek.parkme.apirepository;
+package com.example.chiilek.parkme.api_controllers.directions_api;
 
 import android.util.Log;
 
-import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDirections;
-import com.example.chiilek.parkme.data_classes.directions_classes.Step;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -20,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class DirectionsAPIController {
 
     static final private String GMAPS_DIRECTION_API_BASE_URL = "https://maps.googleapis.com/maps/api/directions/";
-    static final private String GMAPS_API_KEY = "AIzaSyANCZRTm7L_jIqUArTsq8jcjNO7MatIqt4";
+    static final private String GMAPS_API_KEY = "AIzaSyCMcA56knRPYgayHU95ceIL2nNyLkpIeUo";
 
     private static DirectionsAPIController INSTANCE;
 
@@ -33,8 +30,8 @@ public class DirectionsAPIController {
 
     public void callDirectionsAPI(LatLng origin, LatLng destination, DirectionsCallback repoCallback){
         Map<String, String> params = new HashMap<String,String>();
-        params.put("origin", "75 9th Ave New York, NY");
-        params.put("destination", "MetLife Stadium 1 MetLife Stadium Dr East Rutherford, NJ 07073");
+        params.put("origin", Double.toString(origin.latitude) + "," + Double.toString(origin.longitude));
+        params.put("destination", Double.toString(destination.latitude) + "," + Double.toString(destination.longitude));
         params.put("mode", "driving");
         params.put("key", GMAPS_API_KEY);
 
@@ -46,22 +43,26 @@ public class DirectionsAPIController {
         GMapsDirectionsAPI directionsAPI = retrofit.create(GMapsDirectionsAPI.class);
 
         Call<GoogleMapsDirections> call = directionsAPI.getDirections(params);
-        System.out.println("before enqueue");
+
+        System.out.println("before enqueue, calling for: " + destination.toString());
 
         call.enqueue(new Callback<GoogleMapsDirections>(){
             @Override
             public void onResponse(Call<GoogleMapsDirections> call, Response<GoogleMapsDirections> response){
-                Log.d("API Controller  (G Maps)","in response");
+                Log.d("DirectionsAPIController","in response");
                 GoogleMapsDirections gMapsDirections = response.body();
                 repoCallback.onSuccess(gMapsDirections);
             }
 
             @Override
             public void onFailure(Call<GoogleMapsDirections> call, Throwable t){
+                Log.d("DirectionsAPIController", "in failure");
                 repoCallback.onFailure();
                 t.printStackTrace();
             }
         });
+        Log.d("DirectionsAPIController", "enqueued");
+
 
         //for testing the api call
 //        try {
