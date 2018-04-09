@@ -200,6 +200,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/pop_up_car_park_type_text"
             android:layout_marginStart="240dp"
+
             android:fontFamily="arial"
             android:text="TextView"
             android:textColor="@color/colorMain" />
@@ -277,24 +278,24 @@
             android:textSize="18sp" />
 
         <TextView
-        android:id="@+id/pop_up_short-term_parking_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/pop_up_short-term_parking_text"
-        android:layout_marginLeft="240dp"
-        android:fontFamily="arial"
-        android:text="TextView"
-        android:textColor="@color/colorMain" />
+            android:id="@+id/pop_up_short-term_parking_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/pop_up_short-term_parking_text"
+            android:layout_marginLeft="240dp"
+            android:fontFamily="arial"
+            android:text="TextView"
+            android:textColor="@color/colorMain" />
 
         <TextView
-        android:id="@+id/pop_up_night_parking_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/pop_up_night_parking_text"
-        android:layout_alignStart="@+id/pop_up_short-term_parking_value"
-        android:fontFamily="arial"
-        android:text="TextView"
-        android:textColor="@color/colorMain" />
+            android:id="@+id/pop_up_night_parking_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/pop_up_night_parking_text"
+            android:layout_alignStart="@+id/pop_up_short-term_parking_value"
+            android:fontFamily="arial"
+            android:text="TextView"
+            android:textColor="@color/colorMain" />
 
     </RelativeLayout>
 
