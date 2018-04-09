@@ -220,8 +220,8 @@
         android:id="@+id/selectButton"
         android:layout_width="110dp"
         android:layout_height="36dp"
-        android:layout_alignEnd="@+id/textView21"
-        android:layout_below="@+id/textView19"
+        android:layout_below="@+id/textView21"
+        android:layout_toEndOf="@+id/textView15"
         app:srcCompat="@drawable/select_button" />
 
 </RelativeLayout>
