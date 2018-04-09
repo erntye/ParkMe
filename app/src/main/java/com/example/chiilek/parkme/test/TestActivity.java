@@ -2,11 +2,9 @@ package com.example.chiilek.parkme.test;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -22,10 +20,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.chiilek.parkme.CarParkPopUp.CarParkPopUpActivity;
+import com.example.chiilek.parkme.ReroutePopUp.ReroutePopUpActivity ;
 import com.example.chiilek.parkme.R;
-import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
-import com.example.chiilek.parkme.repository.Repository;
-import com.google.android.gms.maps.model.LatLng;
 import com.example.chiilek.parkme.repository.LocationRepository;
 
 import java.util.List;
@@ -56,17 +53,17 @@ public class TestActivity extends AppCompatActivity {
 
 
 
-
         //Create a view model and allow re-created activities to get the same view model instance
         model = ViewModelProviders.of(this).get(TestViewModel.class);
 
         button.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View v) {
-                        Log.d("Activity","Pressed Set Button");
-                        model.setData(Integer.parseInt(textInput.getText().toString()));
-                        Log.d("Activity","Data set to " + Integer.parseInt(textInput.getText().toString()));
-                        button.setText(textInput.getText());
+//                        Log.d("Activity","Pressed Set Button");
+//                        model.setData(Integer.parseInt(textInput.getText().toString()));
+//                        Log.d("Activity","Data set to " + Integer.parseInt(textInput.getText().toString()));
+//                        button.setText(textInput.getText());
+                        startActivity(new Intent(TestActivity.this, CarParkPopUpActivity.class));
                     }
                 });
 
@@ -75,9 +72,11 @@ public class TestActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         model.initialize();
                         initbutton.setText("Done!");
+                        startActivity(new Intent(TestActivity.this, ReroutePopUpActivity.class));
                         Log.d("Activity","Pressed Init Button");
                     }
                 });
+
         model.getList().observe(this, new Observer<List<TestEntity>>() {
             @Override
             public void onChanged(List<TestEntity> newTerm) {
@@ -89,6 +88,7 @@ public class TestActivity extends AppCompatActivity {
                     textInput.setText(newTerm.get(0).name);
             }
         });
+
         locationbutton.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View v) {
@@ -102,20 +102,6 @@ public class TestActivity extends AppCompatActivity {
                     }
                 });
 
-//        LatLng origin = new LatLng(1.3010632720868323, 103.85411269138322);
-//        LatLng destination = new LatLng(1.3210042901028483, 103.88504719970231);
-//
-//        System.out.println("test begins");
-//        Repository repo = Repository.getInstance(TestActivity.this);
-//
-//        LiveData<List<DirectionsAndCPInfo>> liveData = repo.getDirectionsAndCPs(origin, destination);
-//        List<DirectionsAndCPInfo> nonLiveData = liveData.getValue();
-//
-//        for(DirectionsAndCPInfo item : nonLiveData){
-//            Log.d("shit", item.getCarParkStaticInfo().getCPNumber() + " score: " + Double.toString(item.getOverallScore()));
-//        }
-
-
         //DIRECTIONS API TEST START
 //        Thread thread = new Thread(new Runnable() {
 //
@@ -126,15 +112,8 @@ public class TestActivity extends AppCompatActivity {
 //                    LatLng destination = new LatLng(1.3210042901028483, 103.88504719970231);
 //
 //                    System.out.println("test begins");
-//                    Repository repo = Repository.getInstance(TestActivity.this);
-//
-//                    LiveData<List<DirectionsAndCPInfo>> liveData = repo.getDirectionsAndCPs(origin, destination);
-//                    List<DirectionsAndCPInfo> nonLiveData = liveData.getValue();
-//
-//                    for(DirectionsAndCPInfo item : nonLiveData){
-//                        Log.d("shit", item.getCarParkStaticInfo().getCPNumber() + " score: " + Double.toString(item.getOverallScore()));
-//                    }
-//
+//                    AvailabilityAPIController controller = new AvailabilityAPIController();
+//                    controller.callDirectionsAPI(origin, destination);
 //                } catch (Exception e) {
 //                    e.printStackTrace();
 //                }
@@ -168,16 +147,16 @@ public class TestActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Intent intent = new Intent(this,TestLocationManager.class);
-        //startService(intent);
-        bindService(intent, serviceConnection,Context.BIND_AUTO_CREATE);
+//        Intent intent = new Intent(this,TestLocationManager.class);
+//        //startService(intent);
+//        bindService(intent, serviceConnection,Context.BIND_AUTO_CREATE);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        unbindService(serviceConnection);
-        testLocationManager.stopLocationUpdates();
+//        unbindService(serviceConnection);
+//        testLocationManager.stopLocationUpdates();
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;

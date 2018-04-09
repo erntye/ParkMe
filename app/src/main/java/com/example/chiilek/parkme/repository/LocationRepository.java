@@ -1,7 +1,10 @@
 package com.example.chiilek.parkme.repository;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Service;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,194 +15,114 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-public class LocationRepository extends Service implements LocationListener {
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
-    //Binder given to clients
-    private final IBinder mBinder = new LocalBinder();
+public class LocationRepository  {
 
-    public class LocalBinder extends Binder {
-        public LocationRepository getService(){
-            Log.d("Service","getService");
-            return LocationRepository.this;
+    private FusedLocationProviderClient mFusedClient;
+    private LocationRequest mLocationRequest;
+    private LocationCallback mLocationCallback;
+    private MutableLiveData<LatLng> currentLocation;
+    private static LocationRepository INSTANCE;
+    private Context mContext;
+
+    private LocationRepository(Context context){
+        mContext = context;
+        mFusedClient = LocationServices.getFusedLocationProviderClient(mContext);
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setInterval(3000);
+        mLocationRequest.setFastestInterval(1000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {return;}
+                Location location = locationResult.getLastLocation();
+                currentLocation.setValue(new LatLng(location.getLatitude(), location.getLongitude()));
+                Log.d("Location Repo","Location Update is" + location.getLatitude() + " "
+                        + location.getLongitude());
+            }
+        };
+        startLocationUpdate();
+        currentLocation = new MutableLiveData<>();
+        currentLocation.setValue(new LatLng(37.4219983,-122.084));
+        Log.d("Location Repo", "created");
+    }
+
+    public static LocationRepository getLocationRepository(Context context){
+        if (INSTANCE == null)
+            INSTANCE = new LocationRepository(context.getApplicationContext());
+        Log.d("Location Repo", "called get singleton");
+        return INSTANCE;
+    }
+
+    private void startLocationUpdate(){
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(mLocationRequest);
+        LocationSettingsRequest locationSettingsRequest = builder.build();
+        SettingsClient client = LocationServices.getSettingsClient(mContext);
+        client.checkLocationSettings(locationSettingsRequest);
+
+        //check for permission before you can request updates
+        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            //Location Permission already granted
+            mFusedClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+            Log.d("Location Repo","requested updates");
+        } else {
+            //do not need because we are requesting for permission in UI
+            Log.d("Location Repo","update permission not granted");
         }
     }
-
-    @Override
-    public IBinder onBind(Intent arg0) {
-        Log.d("Service","OnBind");
-        return mBinder;
-
+    public LiveData<LatLng> getLocation(){
+        Log.d("Location Repo", "return current location" + currentLocation.getValue().toString());
+        return this.currentLocation;
     }
 
-    // flag for GPS status
-    boolean isGPSEnabled = false;
-
-    // flag for network status
-    boolean isNetworkEnabled = false;
-
-    // flag for GPS status
-    boolean canGetLocation = false;
-
-    Location location; // location
-    double latitude; // latitude
-    double longitude; // longitude
-
-    // The minimum distance to change Updates in meters
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
-
-    // The minimum time between updates in milliseconds
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 5; // 5 second
-
-    // Declaring a Location Manager
-    protected LocationManager locationManager;
-
-/*    public LocationRepository() {
-        Log.d("Service","constructor");
-        getLocation();
-    }*/
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Log.d("Service", "onCreate");
-        getLocation();
-    }
-
-    public Location getLocation() {
-        Log.d("Service","context is "+getBaseContext());
-        Log.d("Service","this is "+ this);
-/*        if ( ContextCompat.checkSelfPermission( LocationRepository.this, android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission( LocationRepository.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-        }*/
-        try {
-            Log.d("Service","in try loop");
-            locationManager = (LocationManager) this
-                    .getSystemService(LOCATION_SERVICE);
-            Log.d("Service","Location Manager is  "+ locationManager);
-            // getting GPS status
-            isGPSEnabled = locationManager
-                    .isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-            // getting network status
-            isNetworkEnabled = locationManager
-                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-            Log.d("Service","network enabled:  "+ isNetworkEnabled);
-            Log.d("Service","GPS enabled:  "+ isGPSEnabled);
-            if (!isGPSEnabled && !isNetworkEnabled) {
-                // no network provider is enabled
-            } else {
-                this.canGetLocation = true;
-                // First get location from Network Provider
-                if (isNetworkEnabled) {
-                    locationManager.requestLocationUpdates(
-                            LocationManager.NETWORK_PROVIDER,
-                            MIN_TIME_BW_UPDATES,
-                            MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                    Log.d("Network", "Network");
-                    if (locationManager != null) {
-                        location = locationManager
-                                .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                        if (location != null) {
-                            latitude = location.getLatitude();
-                            longitude = location.getLongitude();
-                        }
-                    }
-                }
-                // if GPS Enabled get lat/long using GPS Services
-                if (isGPSEnabled) {
-                    Log.d("Service", "in if isGPSEnabled statement");
-                    if (location == null) {
-                        Log.d("Service", "in location == null statement");
-                        locationManager.requestLocationUpdates(
-                                LocationManager.GPS_PROVIDER,
-                                MIN_TIME_BW_UPDATES,
-                                MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                        Log.d("GPS Enabled", "GPS Enabled");
-                        if (locationManager != null) {
-                            location = locationManager
-                                    .getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                            Log.d("Service", "last known location is " + location.toString());
-                            if (location != null) {
-                                latitude = location.getLatitude();
-                                longitude = location.getLongitude();
+    public MutableLiveData<LatLng> getLastLocation(){
+        Log.d("Location Repo", "Getting Last Location");
+        if (mFusedClient == null)
+            mFusedClient = LocationServices.getFusedLocationProviderClient(mContext);
+        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED){
+            mFusedClient.getLastLocation()
+                    .addOnSuccessListener(new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null){
+                                Log.d("Location Repo","getlastlocation is " + location.getLongitude() + location.getLatitude());
+                                currentLocation.setValue(new LatLng(location.getLatitude(),location.getLongitude()));
                             }
                         }
-                    }
-                }
-            }
-
-        } catch (SecurityException a){
-            a.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+                    })
+                    .addOnFailureListener(new OnFailureListener(){
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d("Location Repo","Failed to get last location");
+                            e.printStackTrace();
+                        }
+                    });
         }
-        Log.d("Service", "return location is " + location.getLatitude() + " " + location.getLatitude());
-        return location;
+        return this.currentLocation;
     }
 
-    /**
-     * Stop using GPS listener
-     * Calling this function will stop using GPS in your app
-     * */
-    public void stopUsingGPS(){
-        if(locationManager != null){
-            locationManager.removeUpdates(LocationRepository.this);
-        }
+    public void stopLocationUpdates(){
+        mFusedClient.removeLocationUpdates(mLocationCallback);
     }
-
-    /**
-     * Function to get latitude
-     * */
-    public double getLatitude(){
-        if(location != null){
-            latitude = location.getLatitude();
-        }
-
-        // return latitude
-        return latitude;
-    }
-
-    /**
-     * Function to get longitude
-     * */
-    public double getLongitude(){
-        if(location != null){
-            longitude = location.getLongitude();
-        }
-
-        // return longitude
-        return longitude;
-    }
-
-    /**
-     * Function to check GPS/wifi enabled
-     * @return boolean
-     * */
-    public boolean canGetLocation() {
-        return this.canGetLocation;
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-    }
-
-
 
 }

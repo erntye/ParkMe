@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/pop_up_title_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
+        android:fontFamily="arial"
+        android:gravity="center"
+        android:text="Ang Mo Kio Hub"
+        android:textColor="@color/colorMain"
+        android:textSize="40sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/pop_up_park_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@+id/pop_up_title_location"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="arial"
+        android:text="parkAddress"
+        android:textColor="@color/colorMain"
+        android:textSize="14sp"
+        android:textStyle="italic" />
+
+    <RelativeLayout
+        android:id="@+id/pop_up_available_lots_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pop_up_park_address">
+
+        <ImageView
+            android:id="@+id/pop_up_available_lots_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="19dp"
+            app:srcCompat="@drawable/ic_local_parking_black_24dp" />
+
+        <TextView
+            android:id="@+id/pop_up_available_lots_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/pop_up_available_lots_image"
+            android:fontFamily="arial"
+            android:text="Available Lots"
+            android:textColor="@color/colorMain"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/pop_up_motor_car_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="45dp"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/pop_up_available_lots_text"
+            android:fontFamily="arial"
+            android:text="Motor Car:"
+            android:textColor="@color/colorMain"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/pop_up_motor_cycle_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/pop_up_motor_car_text"
+            android:layout_below="@+id/pop_up_motor_car_text"
+            android:fontFamily="arial"
+            android:text="Motor Cycle:"
+            android:textColor="@color/colorMain"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/pop_up_heavy_vehicle_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/pop_up_motor_car_text"
+            android:layout_below="@+id/pop_up_motor_cycle_text"
+            android:fontFamily="arial"
+            android:text="Heavy Vehicle:"
+            android:textColor="@color/colorMain"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/pop_up_motor_car_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/pop_up_motor_car_text"
+            android:layout_marginLeft="240dp"
+            android:fontFamily="arial"
+            android:text="TextView"
+            android:textColor="@color/colorMain" />
+
+        <TextView
+            android:id="@+id/pop_up_motor_cycle_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/pop_up_motor_cycle_text"
+            android:layout_alignStart="@+id/pop_up_motor_car_value"
+            android:fontFamily="arial"
+            android:text="TextView"
+            android:textColor="@color/colorMain" />
+
+        <TextView
+            android:id="@+id/pop_up_heavy_vehicle_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/pop_up_motor_car_value"
+            android:layout_alignBaseline="@+id/pop_up_heavy_vehicle_text"
+            android:fontFamily="arial"
+            android:text="TextView"
+            android:textColor="@color/colorMain" />
+
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/pop_up_information_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/pop_up_available_lots_layout">
+
+        <ImageView
+            android:id="@+id/information_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="20dp"
+            app:srcCompat="@drawable/ic_info_black_24dp" />
+
+        <TextView
+            android:id="@+id/pop_up_information_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="2dp"
+            android:layout_toEndOf="@+id/information_image"
+            android:fontFamily="arial"
+            android:text="Information"
+            android:textColor="@color/colorMain"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/pop_up_car_park_type_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/pop_up_information_text"
+            android:layout_marginStart="45dp"
+            android:fontFamily="arial"
+            android:text="Car Park Type:"
+            android:textColor="@color/colorMain"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/pop_up_parking_system_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/pop_up_car_park_type_text"
+            android:layout_below="@+id/pop_up_car_park_type_text"
+            android:fontFamily="arial"
+            android:text="Parking System:"
+            android:textColor="@color/colorMain"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/pop_up_free_parking_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/pop_up_parking_system_text"
+            android:layout_below="@+id/pop_up_parking_system_text"
+            android:fontFamily="arial"
+            android:text="Free Parking:"
+            android:textColor="@color/colorMain"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/pop_up_car_park_type_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/pop_up_car_park_type_text"
+            android:layout_marginStart="240dp"
+            android:fontFamily="arial"
+            android:text="TextView"
+            android:textColor="@color/colorMain" />
+
+        <TextView
+            android:id="@+id/pop_up_parking_system_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/pop_up_parking_system_text"
+            android:layout_alignStart="@+id/pop_up_car_park_type_value"
+            android:fontFamily="arial"
+            android:text="TextView"
+            android:textColor="@color/colorMain" />
+
+        <TextView
+            android:id="@+id/pop_up_free_parking_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/pop_up_free_parking_text"
+            android:layout_alignStart="@+id/pop_up_car_park_type_value"
+            android:fontFamily="arial"
+            android:text="TextView"
+            android:textColor="@color/colorMain" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/pop_up_miscellaneous_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_below="@id/pop_up_information_layout">
+
+        <ImageView
+            android:id="@+id/pop_up_miscellaneous_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="20dp"
+            app:srcCompat="@drawable/ic_gesture_black_24dp" />
+
+        <TextView
+            android:id="@+id/pop_up_miscellaneous_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_toEndOf="@+id/pop_up_miscellaneous_image"
+            android:fontFamily="arial"
+            android:text="Miscellaneous"
+            android:textColor="@color/colorMain"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/pop_up_short-term_parking_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="45dp"
+            android:layout_below="@+id/pop_up_miscellaneous_text"
+            android:fontFamily="arial"
+            android:text="Short-Term Parking:"
+            android:textColor="@color/colorMain"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/pop_up_night_parking_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/pop_up_short-term_parking_text"
+            android:layout_alignStart="@+id/pop_up_short-term_parking_text"
+            android:fontFamily="arial"
+            android:text="Night Parking:"
+            android:textColor="@color/colorMain"
+            android:textSize="18sp" />
+
+        <TextView
+        android:id="@+id/pop_up_short-term_parking_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/pop_up_short-term_parking_text"
+        android:layout_marginLeft="240dp"
+        android:fontFamily="arial"
+        android:text="TextView"
+        android:textColor="@color/colorMain" />
+
+        <TextView
+        android:id="@+id/pop_up_night_parking_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/pop_up_night_parking_text"
+        android:layout_alignStart="@+id/pop_up_short-term_parking_value"
+        android:fontFamily="arial"
+        android:text="TextView"
+        android:textColor="@color/colorMain" />
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/pop_up_select_button"
+        android:layout_width="105dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/pop_up_miscellaneous_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="35dp"
+        app:srcCompat="@drawable/select_button" />
+
+</RelativeLayout>
