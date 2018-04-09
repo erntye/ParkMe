@@ -8,10 +8,18 @@
     tools:showIn="@layout/activity_suggestions"
     tools:context=".Suggestion.SuggestionsActivity">
 
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:name="com.example.chiilek.parkme.MultiSearchFragment"
+        android:id="@+id/from_to_fragment">
+
+    </fragment>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"
+        android:layout_below="@id/from_to_fragment"/>
 
 </RelativeLayout>

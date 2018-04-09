@@ -13,7 +13,9 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:text="parkName"
-        android:textSize="60dp" />
+        android:textColor="@color/colorMain"
+        android:textSize="60dp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textView8"
@@ -22,7 +24,9 @@
         android:layout_below="@+id/textView3"
         android:layout_centerHorizontal="true"
         android:text="LOTS REMAINING:"
-        android:textSize="25dp" />
+        android:textColor="@color/color2"
+        android:textSize="25dp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textView9"
@@ -31,10 +35,12 @@
         android:layout_below="@+id/textView8"
         android:layout_centerHorizontal="true"
         android:text="3"
-        android:textSize="90dp" />
+        android:textColor="@color/color2"
+        android:textSize="120sp"
+        android:textStyle="bold" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/rerouteButton"
         android:layout_width="210dp"
         android:layout_height="75dp"
         android:layout_below="@+id/textView9"
@@ -42,10 +48,10 @@
         app:srcCompat="@drawable/reroute_button" />
 
     <ImageView
-        android:id="@+id/imageView6"
+        android:id="@+id/cancelButton"
         android:layout_width="160dp"
         android:layout_height="50dp"
-        android:layout_below="@+id/imageView2"
+        android:layout_below="@+id/rerouteButton"
         android:layout_centerHorizontal="true"
         app:srcCompat="@drawable/cancel_button" />
 

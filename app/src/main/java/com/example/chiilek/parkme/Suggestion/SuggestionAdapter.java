@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
-import com.example.chiilek.parkme.CarParkPopUp.CarParkPopUpActivity;
+import com.example.chiilek.parkme.navigation.RouteOverviewActivity;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -71,7 +71,7 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
                 Log.d("test", "onClick: clicked on: " + CP.getCPNumber());
                 Toast.makeText(mContext, CP.getCPNumber(), Toast.LENGTH_SHORT).show();
 
-                Intent intent = new Intent(mContext, CarParkPopUpActivity.class);
+                Intent intent = new Intent(mContext, RouteOverviewActivity.class);
                 intent.putExtra("cp_pop_up", carparkList.get(position).getCPNumber());
                 mContext.startActivity(intent);
             }
