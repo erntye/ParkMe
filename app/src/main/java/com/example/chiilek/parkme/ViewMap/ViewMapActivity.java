@@ -24,8 +24,7 @@ import android.widget.Toast;
 
 
 import com.example.chiilek.parkme.R;
-import com.example.chiilek.parkme.apirepository.AvailabilityAPIController;
-import com.example.chiilek.parkme.data_classes.CarParkDatum;
+import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityAPIController;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.repository.LocationService;
 import com.google.android.gms.common.api.Status;
@@ -77,7 +76,7 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
 
         //api controller shouldn't be here?  - ernest
         AvailabilityAPIController controller = new AvailabilityAPIController();
-        controller.makeCall();
+        //controller.makeCall();
 
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);

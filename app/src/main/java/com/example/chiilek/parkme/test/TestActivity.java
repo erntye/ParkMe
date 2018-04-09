@@ -2,6 +2,7 @@ package com.example.chiilek.parkme.test;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.ComponentName;
@@ -22,7 +23,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.chiilek.parkme.R;
-import com.example.chiilek.parkme.apirepository.AvailabilityAPIController;
+import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
+import com.example.chiilek.parkme.repository.Repository;
 import com.google.android.gms.maps.model.LatLng;
 import com.example.chiilek.parkme.repository.LocationRepository;
 
@@ -100,6 +102,20 @@ public class TestActivity extends AppCompatActivity {
                     }
                 });
 
+//        LatLng origin = new LatLng(1.3010632720868323, 103.85411269138322);
+//        LatLng destination = new LatLng(1.3210042901028483, 103.88504719970231);
+//
+//        System.out.println("test begins");
+//        Repository repo = Repository.getInstance(TestActivity.this);
+//
+//        LiveData<List<DirectionsAndCPInfo>> liveData = repo.getDirectionsAndCPs(origin, destination);
+//        List<DirectionsAndCPInfo> nonLiveData = liveData.getValue();
+//
+//        for(DirectionsAndCPInfo item : nonLiveData){
+//            Log.d("shit", item.getCarParkStaticInfo().getCPNumber() + " score: " + Double.toString(item.getOverallScore()));
+//        }
+
+
         //DIRECTIONS API TEST START
 //        Thread thread = new Thread(new Runnable() {
 //
@@ -110,8 +126,15 @@ public class TestActivity extends AppCompatActivity {
 //                    LatLng destination = new LatLng(1.3210042901028483, 103.88504719970231);
 //
 //                    System.out.println("test begins");
-//                    AvailabilityAPIController controller = new AvailabilityAPIController();
-//                    controller.callDirectionsAPI(origin, destination);
+//                    Repository repo = Repository.getInstance(TestActivity.this);
+//
+//                    LiveData<List<DirectionsAndCPInfo>> liveData = repo.getDirectionsAndCPs(origin, destination);
+//                    List<DirectionsAndCPInfo> nonLiveData = liveData.getValue();
+//
+//                    for(DirectionsAndCPInfo item : nonLiveData){
+//                        Log.d("shit", item.getCarParkStaticInfo().getCPNumber() + " score: " + Double.toString(item.getOverallScore()));
+//                    }
+//
 //                } catch (Exception e) {
 //                    e.printStackTrace();
 //                }

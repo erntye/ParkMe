@@ -1,6 +1,6 @@
-package com.example.chiilek.parkme.apirepository;
+package com.example.chiilek.parkme.api_controllers.availability_api;
 
-import com.example.chiilek.parkme.data_classes.Envelope;
+import com.example.chiilek.parkme.data_classes.availability_classes.Envelope;
 
 
 import retrofit2.Call;
