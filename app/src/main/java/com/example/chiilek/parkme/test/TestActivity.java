@@ -76,6 +76,7 @@ public class TestActivity extends AppCompatActivity {
                         Log.d("Activity","Pressed Init Button");
                     }
                 });
+
         model.getList().observe(this, new Observer<List<TestEntity>>() {
             @Override
             public void onChanged(List<TestEntity> newTerm) {
@@ -87,6 +88,7 @@ public class TestActivity extends AppCompatActivity {
                     textInput.setText(newTerm.get(0).name);
             }
         });
+
         locationbutton.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View v) {
