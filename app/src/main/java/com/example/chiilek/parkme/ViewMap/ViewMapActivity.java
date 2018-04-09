@@ -28,12 +28,9 @@ import android.widget.Toast;
 
 import com.example.chiilek.parkme.CarParkPopUp.CarParkPopUpActivity;
 import com.example.chiilek.parkme.R;
-import com.example.chiilek.parkme.ReroutePopUp.ReroutePopUpActivity;
-import com.example.chiilek.parkme.apirepository.AvailabilityAPIController;
-import com.example.chiilek.parkme.data_classes.CarParkDatum;
+import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityAPIController;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.repository.LocationService;
-import com.example.chiilek.parkme.test.TestActivity;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -96,7 +93,7 @@ public class ViewMapActivity extends FragmentActivity
 
         //api controller shouldn't be here?  - ernest
         AvailabilityAPIController controller = new AvailabilityAPIController();
-        controller.makeCall();
+        //controller.makeCall();
 
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
