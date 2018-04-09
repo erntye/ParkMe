@@ -1,7 +1,9 @@
-package com.example.chiilek.parkme.apirepository;
+package com.example.chiilek.parkme.repository;
 
 
-import com.example.chiilek.parkme.data_classes.CarParkDatum;
+import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityAPIController;
+import com.example.chiilek.parkme.api_controllers.availability_api.CarParkComparator;
+import com.example.chiilek.parkme.data_classes.availability_classes.CarParkDatum;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 
 import java.util.ArrayList;
@@ -30,7 +32,6 @@ public class APIRepository {
 
     public static void refreshCarParks () {
         AvailabilityAPIController controller = new AvailabilityAPIController();
-        controller.makeCall();
     }
 
     /**

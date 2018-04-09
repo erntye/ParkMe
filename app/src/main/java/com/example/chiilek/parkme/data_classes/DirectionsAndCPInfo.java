@@ -1,19 +1,30 @@
 package com.example.chiilek.parkme.data_classes;
 
+import android.util.Log;
+
+import com.example.chiilek.parkme.data_classes.availability_classes.CarParkDatum;
 import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDirections;
 
 public class DirectionsAndCPInfo {
     private CarParkStaticInfo carParkStaticInfo;
     private GoogleMapsDirections googleMapsDirections;
+    private CarParkDatum carParkDatum;
     private double distance;
     private int duration;
+    private int availability = -1;
     private double distanceScore = 0;
     private double durationScore = 0;
-    private double distanceScoreWeigtage = 0.80;
+    private double availabilityScore = 0;
+    private double distanceScoreWeight = 0.50;
+    private double durationScoreWeight = 0.25;
+    private double availabilityScoreWeight = 0.25;
 
     public DirectionsAndCPInfo(CarParkStaticInfo cpInfo, GoogleMapsDirections gmapsDir){
         this.carParkStaticInfo = cpInfo;
         this.googleMapsDirections = gmapsDir;
+        Log.d("DirectionsAndCPInfo", "gmapsDir status "+ gmapsDir.getStatus());
+        Log.d("DirectionsAndCPInfo", "gmapsDir routes size " + gmapsDir.getRoutes().size());
+
         distance = getDistanceFromLatLngInKm(gmapsDir.getRoutes().get(0).getLegs().get(0).getStartLocation().getLat(),
                 gmapsDir.getRoutes().get(0).getLegs().get(0).getStartLocation().getLng(),
                 Double.parseDouble(cpInfo.getLatitude()),
@@ -40,18 +51,39 @@ public class DirectionsAndCPInfo {
     }
 
     public double getOverallScore(){
-        return distanceScoreWeigtage*distanceScore + (1-distanceScoreWeigtage)*durationScore;
+        return distanceScoreWeight * distanceScore +
+                durationScoreWeight * durationScore +
+                availabilityScoreWeight * availabilityScore;
+    }
+
+    public double getDestinationLatitude(){
+        return Double.parseDouble(carParkStaticInfo.getLatitude());
+    }
+
+    public double getDestinationLongitude(){
+        return Double.parseDouble(carParkStaticInfo.getLongitude());
+    }
+
+    public void setCarParkDatum(CarParkDatum carParkDatum) {
+        this.carParkDatum = carParkDatum;
+        this.availability = carParkDatum.getCarParkInfo().get(0).getLotsAvailable();
     }
 
     public CarParkStaticInfo getCarParkStaticInfo() { return carParkStaticInfo; }
 
     public GoogleMapsDirections getGoogleMapsDirections() { return googleMapsDirections; }
 
+    public CarParkDatum getCarParkDatum() { return carParkDatum; }
+
     public double getDistance(){ return distance; }
 
     public int getDuration(){ return duration; }
 
+    public int getAvailability() { return availability; }
+
     public void setDistanceScore(double distanceScore) { this.distanceScore = distanceScore; }
 
     public void setDurationScore(double durationScore) { this.durationScore = durationScore; }
+
+    public void setAvailabilityScore(double availabilityScore) { this.availabilityScore = availabilityScore; }
 }
