@@ -9,6 +9,9 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -23,12 +26,17 @@ import android.util.Log;
 import android.widget.Toast;
 
 
+import com.example.chiilek.parkme.CarParkPopUp.CarParkPopUpActivity;
 import com.example.chiilek.parkme.R;
+import com.example.chiilek.parkme.ReroutePopUp.ReroutePopUpActivity;
 import com.example.chiilek.parkme.apirepository.AvailabilityAPIController;
 import com.example.chiilek.parkme.data_classes.CarParkDatum;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.repository.LocationService;
+import com.example.chiilek.parkme.test.TestActivity;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
@@ -36,16 +44,24 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.List;
 
-public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener  {
+public class ViewMapActivity extends FragmentActivity
+        implements OnMapReadyCallback,
+        GoogleMap.OnMyLocationButtonClickListener,
+        GoogleMap.OnMyLocationClickListener,
+        GoogleMap.OnMarkerClickListener {
 
     private GoogleMap mMap;
+    private FusedLocationProviderClient mFusedLocationClient;
 
     ViewMapViewModel model;
     //needed to bind to service to get location updates
@@ -63,7 +79,7 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
 
         //for location services
         checkLocationPermission();
-
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         //to lock screen to portrait
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -131,7 +147,6 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        //mMap.moveCamera();
 
 //        // Add a marker in Sydney and move the camera
 //        LatLng sydney = new LatLng(-34, 151);
@@ -149,12 +164,34 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            CameraPosition cp = new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(14).build();
+                            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
+                        }
+                    }
+                });
+
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cap_park_marker);
+
+        Bitmap smallMarker = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
+
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(1.343168, 103.682737))
+                .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+
+        mMap.setOnMarkerClickListener(this);
 
         mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
         //mMap.getMyLocation().getLatitude();
     }
+
 
     //establish service connection needed to bind to service
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -246,6 +283,14 @@ public class ViewMapActivity extends FragmentActivity implements OnMapReadyCallb
     @Override
     public void onMyLocationClick(@NonNull Location location) {
         Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        startActivity(new Intent(ViewMapActivity.this,  CarParkPopUpActivity.class));
+        Log.d("Activity","Pressed Init Button");
+        //Toast.makeText(this, "Location:\n" + marker.getPosition(), Toast.LENGTH_LONG).show();
+        return false;
     }
 }
 
