@@ -1,7 +1,7 @@
-package com.example.chiilek.parkme.apirepository;
+package com.example.chiilek.parkme.api_controllers.availability_api;
 
 
-import com.example.chiilek.parkme.data_classes.CarParkDatum;
+import com.example.chiilek.parkme.data_classes.availability_classes.CarParkDatum;
 
 import java.util.Comparator;
 
