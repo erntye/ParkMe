@@ -23,7 +23,7 @@ public class CarParkPopUpActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         //TODO Pass the choice over to navigation
         //this makes the SELECT button go to navigation
-        ImageView b = findViewById(R.id.selectButton);
+        ImageView b = findViewById(R.id.pop_up_select_button);
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -1,9 +1,9 @@
-package com.example.chiilek.parkme.apirepository;
+package com.example.chiilek.parkme.api_controllers.availability_api;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.example.chiilek.parkme.data_classes.Envelope;
+import com.example.chiilek.parkme.data_classes.availability_classes.Envelope;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -42,10 +42,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class AvailabilityAPIController implements Callback<Envelope> {
 
     static final private String BASE_URL = "https://api.data.gov.sg/v1/transport/";
+    AvailabilityCallback mavailabilityCallback;
+    int mcallbackIndex;
 
 
-    public void makeCall(){
-
+    public void makeCall(int callbackIndex, AvailabilityCallback availCallback){
+        mavailabilityCallback = availCallback;
+        mcallbackIndex = callbackIndex;
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
@@ -93,21 +96,21 @@ public class AvailabilityAPIController implements Callback<Envelope> {
             Log.d("SUCCESS", "*****************************************************");
 
             if (envelope.getItem() != null){
-                APIRepository.setCarParkList(envelope.getItem().getCarParkData());
+                mavailabilityCallback.onSuccess(mcallbackIndex, envelope.getItem());
+                //APIRepository.setCarParkList(envelope.getItem().getCarParkData());
                 Log.d("Repo_UpdateDateTime", envelope.getItem().getTimestamp());
                 Log.d("Repo_CarParkNumber", envelope.getItem().getCarParkData().get(0).getUpdateDatetime());
                 Log.d("Repo_Avail", Integer.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getLotsAvailable()));
                 Log.d("Repo_Total", Integer.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getTotalLots()));
                 Log.d("Repo_Type", Character.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getLotType()));
-            } else {
-                Log.d("Repo_Update time is null", "No object pulled: " + response.body().toString());
-            }
-            if (envelope.getItem() != null){
                 Log.d("Repo_CarParkDate", envelope.getItem().toString());
+            } else {
+                Log.d("AvailabilityAPIController", "No object pulled: " + response.body().toString());
             }
         }
         else {
             Log.d("Repo_CarPark is Null", "No object pulled: " + response.toString());
+            mavailabilityCallback.onFailure();
         }
     }
 

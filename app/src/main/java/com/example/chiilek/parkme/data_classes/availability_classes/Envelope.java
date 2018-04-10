@@ -1,4 +1,4 @@
-package com.example.chiilek.parkme.data_classes;
+package com.example.chiilek.parkme.data_classes.availability_classes;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

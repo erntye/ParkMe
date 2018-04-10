@@ -1,4 +1,4 @@
-package com.example.chiilek.parkme.apirepository;
+package com.example.chiilek.parkme.api_controllers.directions_api;
 
 import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDirections;
 
