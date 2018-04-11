@@ -93,7 +93,7 @@ public class AvailabilityAPIController implements Callback<Envelope> {
         Envelope envelope = response.body();
 
         if (envelope != null){
-            Log.d("SUCCESS", "*****************************************************");
+            Log.d("APIController", "Successfully called not null");
 
             if (envelope.getItem() != null){
                 mavailabilityCallback.onSuccess(mcallbackIndex, envelope.getItem());
@@ -116,7 +116,7 @@ public class AvailabilityAPIController implements Callback<Envelope> {
 
     @Override
     public void onFailure(@NonNull Call<Envelope> call, @NonNull Throwable t) {
-        Log.d("Repo_YOU FAILEDDDDDDDDDDDD********@#$%^&*", t.getMessage());
+        Log.d("AvailabilityAPIController", t.getMessage());
         t.getStackTrace();
     }
 }

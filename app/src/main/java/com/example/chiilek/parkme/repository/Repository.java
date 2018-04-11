@@ -55,9 +55,13 @@ public class Repository {
         //gets list of all nearby car parks (within a certain range)
         List<CarParkStaticInfo> closestCarParks = appDatabase.CPInfoDao()
                 .getNearestCarParks(destination.latitude, destination.longitude);
-
+        //TODO handle function if size 0
+        if (closestCarParks == null)
+            Log.d("Repository", "closest carpark is null");
+        else
+            Log.d("Repository", "closest carparks size:" + closestCarParks.size()) ;
         //generates directions to each car park, stores in DirectionsAndCPInfo class
-        Log.d("Repository", "origin: " + startPoint.toString());
+        //Log.d("Repository", "origin: " + startPoint.toString());
         List<DirectionsAndCPInfo> directionsAndCPList = new ArrayList<DirectionsAndCPInfo>();
         AvailabilityAPIController availAPIControl = new AvailabilityAPIController();
         AtomicInteger counter = new AtomicInteger(closestCarParks.size());

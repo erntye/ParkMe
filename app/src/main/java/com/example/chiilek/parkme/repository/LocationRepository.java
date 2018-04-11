@@ -45,7 +45,7 @@ public class LocationRepository  {
         mContext = context;
         mFusedClient = LocationServices.getFusedLocationProviderClient(mContext);
         mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(3000);
+        mLocationRequest.setInterval(2000);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationCallback = new LocationCallback() {
@@ -54,13 +54,13 @@ public class LocationRepository  {
                 if (locationResult == null) {return;}
                 Location location = locationResult.getLastLocation();
                 currentLocation.setValue(new LatLng(location.getLatitude(), location.getLongitude()));
-                Log.d("Location Repo","Location Update is" + location.getLatitude() + " "
+                Log.d("Location Repo","Location Update is " + location.getLatitude() + " "
                         + location.getLongitude());
             }
         };
         startLocationUpdate();
         currentLocation = new MutableLiveData<>();
-        currentLocation.setValue(new LatLng(37.4219983,-122.084));
+        currentLocation.setValue(new LatLng(1.321,103.850));
         Log.d("Location Repo", "created");
     }
 
@@ -90,7 +90,7 @@ public class LocationRepository  {
         }
     }
     public LiveData<LatLng> getLocation(){
-        Log.d("Location Repo", "return current location" + currentLocation.getValue().toString());
+        Log.d("Location Repo", "return current location " + currentLocation.getValue().toString());
         return this.currentLocation;
     }
 

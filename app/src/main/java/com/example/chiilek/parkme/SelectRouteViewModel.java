@@ -41,8 +41,12 @@ public class SelectRouteViewModel extends AndroidViewModel {
         super(application);
         this.mRepository = Repository.getInstance(this.getApplication());
         destination = new MutableLiveData<>();
+        //TODO actually put in a proper destination
+        destination.setValue(new LatLng(1.378455, 103.755149));
         mLocationRepo = LocationRepository.getLocationRepository(this.getApplication());
+        startPoint = new MutableLiveData<>();
         startPoint.setValue(mLocationRepo.getLocation().getValue());
+        currentLocation = new MutableLiveData<>();
         currentLocation.setValue(startPoint.getValue());
 
         mediatorDirAndCPList.addSource(destination,  newDestination -> mRepository.getDirectionsAndCPs(startPoint.getValue(), (LatLng)newDestination,
@@ -128,12 +132,16 @@ public class SelectRouteViewModel extends AndroidViewModel {
         chosenCarPark.setValue(choice);
     }
     //expose for observation to viewmodel
-    public LiveData<List<DirectionsAndCPInfo>> getDirectionsAndCarParks() {
+
+    public MutableLiveData<List<DirectionsAndCPInfo>> getDirectionsAndCarParks() {
         if (directionsAndCarParksList == null) {
             directionsAndCarParksList = new MutableLiveData<List<DirectionsAndCPInfo>>();
+            Log.d("SelectRouteVM","Start point is "+ startPoint.getValue().toString());
+            Log.d("SelectRouteVM","Destination is "+ destination.getValue().toString());
             mRepository.getDirectionsAndCPs(startPoint.getValue(),destination.getValue(), new GetRoutesCallback() {
                 @Override
                 public void onSuccess(List<DirectionsAndCPInfo> directionsAndCPInfoList) {
+                    Log.d("SelectRouteViewModel", "getdirectionsandcp successful");
                     directionsAndCarParksList.setValue(directionsAndCPInfoList);
                 }
                 @Override

@@ -45,10 +45,7 @@
 
         <activity
             android:name=".test.TestActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
 <!--        <service android:name="com.example.chiilek.parkme.repository.LocationRepository"/>
         <service android:name="com.example.chiilek.parkme.test.TestLocationManager"/>-->
@@ -62,7 +59,10 @@
             android:name=".CarParkPopUp.CarParkPopUpActivity"
             android:label="CarParkPopUp"
             android:theme="@style/AppTheme.PopUpTheme">
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".ReroutePopUp.ReroutePopUpActivity"
