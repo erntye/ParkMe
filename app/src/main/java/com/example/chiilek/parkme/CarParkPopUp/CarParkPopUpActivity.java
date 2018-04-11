@@ -39,10 +39,6 @@ public class CarParkPopUpActivity extends AppCompatActivity {
         int height = dm.heightPixels;
 
         getWindow().setLayout((int)(width*.9), (int)(height*.9));
-
-
-
-
     }
 
 }
