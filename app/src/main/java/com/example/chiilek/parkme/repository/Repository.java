@@ -10,6 +10,7 @@ import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityA
 import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityCallback;
 import com.example.chiilek.parkme.api_controllers.directions_api.DirectionsAPIController;
 import com.example.chiilek.parkme.api_controllers.directions_api.DirectionsCallback;
+import com.example.chiilek.parkme.api_controllers.directions_api.GMapsDirectionsAPI;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.data_classes.availability_classes.Item;
@@ -143,37 +144,37 @@ public class Repository {
     }
 
     //function to manage async calls to the Directions API for generation directions to each car park
-    private List<DirectionsAndCPInfo> callAPIForDirAndCP(List<CarParkStaticInfo> closestCarParks, LatLng startPoint){
-        List<DirectionsAndCPInfo> directionsAndCPList = new ArrayList<DirectionsAndCPInfo>();
-        AtomicInteger counter = new AtomicInteger(closestCarParks.size());
-        for(CarParkStaticInfo carPark : closestCarParks){
-            DirectionsAPIController.getInstance().callDirectionsAPI(startPoint,
-                    new LatLng(Double.parseDouble(carPark.getLatitude()),Double.parseDouble(carPark.getLongitude())),
-                    new DirectionsCallback(){
-                        public void onSuccess(GoogleMapsDirections googleMapsDirections){
-                            DirectionsAndCPInfo element = new DirectionsAndCPInfo(carPark, googleMapsDirections);
-                            directionsAndCPList.add(element);
-                            int i = counter.decrementAndGet();
-                            Log.d("Repository","counter is now " + Integer.toString(i));
-                        }
-                        public void onFailure(){
-                            Log.e("Repository","Directions Callback onFailure.");
-                            int i = counter.decrementAndGet();
-                        }
-
-                    });
-        }
-        while(counter.get() != 0){
-            Log.d("waiting",Integer.toString(counter.get()));
-//            try {
-//                wait(1000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-        }
-        Log.d("Repository", "done with calls, counter = 0");
-        return directionsAndCPList;
-    }
+//    private List<DirectionsAndCPInfo> callAPIForDirAndCP(List<CarParkStaticInfo> closestCarParks, LatLng startPoint){
+//        List<DirectionsAndCPInfo> directionsAndCPList = new ArrayList<DirectionsAndCPInfo>();
+//        AtomicInteger counter = new AtomicInteger(closestCarParks.size());
+//        for(CarParkStaticInfo carPark : closestCarParks){
+//            DirectionsAPIController.getInstance().callDirectionsAPI(startPoint,
+//                    new LatLng(Double.parseDouble(carPark.getLatitude()),Double.parseDouble(carPark.getLongitude())),
+//                    new DirectionsCallback(){
+//                        public void onSuccess(GoogleMapsDirections googleMapsDirections){
+//                            DirectionsAndCPInfo element = new DirectionsAndCPInfo(carPark, googleMapsDirections);
+//                            directionsAndCPList.add(element);
+//                            int i = counter.decrementAndGet();
+//                            Log.d("Repository","counter is now " + Integer.toString(i));
+//                        }
+//                        public void onFailure(){
+//                            Log.e("Repository","Directions Callback onFailure.");
+//                            int i = counter.decrementAndGet();
+//                        }
+//
+//                    });
+//        }
+//        while(counter.get() != 0){
+//            Log.d("waiting",Integer.toString(counter.get()));
+////            try {
+////                wait(1000);
+////            } catch (InterruptedException e) {
+////                e.printStackTrace();
+////            }
+//        }
+//        Log.d("Repository", "done with calls, counter = 0");
+//        return directionsAndCPList;
+//    }
 
     /**
      * Searches for the car parks near a selected location.
@@ -190,5 +191,21 @@ public class Repository {
         MutableLiveData<List<CarParkStaticInfo>> liveData = new MutableLiveData<>();
         liveData.setValue(closestCarParks);
         return liveData;
+    }
+
+    public void updateRoutes(LatLng startPoint, LatLng destination, DirectionsCallback directionCallback){
+        DirectionsAPIController.getInstance().callDirectionsAPI(startPoint, destination, new DirectionsCallback() {
+            @Override
+            public void onSuccess(GoogleMapsDirections gMapsDirections) {
+                Log.d("Repository", "update routes callback success");
+                directionCallback.onSuccess(gMapsDirections);
+            }
+
+            @Override
+            public void onFailure() {
+                Log.d("Repository", "update routes callback failure");
+            }
+        });
+
     }
 }

@@ -9,8 +9,10 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.util.Log;
 
+import com.example.chiilek.parkme.api_controllers.directions_api.DirectionsCallback;
 import com.example.chiilek.parkme.data_classes.availability_classes.CarParkDatum;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
+import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDirections;
 import com.example.chiilek.parkme.repository.GetRoutesCallback;
 import com.example.chiilek.parkme.repository.LocationRepository;
 import com.example.chiilek.parkme.repository.Repository;
@@ -27,6 +29,12 @@ public class SelectRouteViewModel extends AndroidViewModel {
     private LiveData<List<LatLng>> routeToPlot;
     private Repository mRepository;
     private LocationRepository mLocationRepo;
+    //used during navigation
+    private MediatorLiveData mediatorCurrentLoc = new MediatorLiveData<>();
+    private MutableLiveData<LatLng> currentLocation;
+    private DirectionsAndCPInfo chosenRoute;
+    private MutableLiveData<GoogleMapsDirections> updatingRouteDirections;
+    private boolean navigationStarted = false;
 
     //to be set up by SelectRouteActivity
     public SelectRouteViewModel(Application application){
@@ -35,6 +43,7 @@ public class SelectRouteViewModel extends AndroidViewModel {
         destination = new MutableLiveData<>();
         mLocationRepo = LocationRepository.getLocationRepository(this.getApplication());
         startPoint.setValue(mLocationRepo.getLocation().getValue());
+        currentLocation.setValue(startPoint.getValue());
 
         mediatorDirAndCPList.addSource(destination,  newDestination -> mRepository.getDirectionsAndCPs(startPoint.getValue(), (LatLng)newDestination,
                 new GetRoutesCallback() {
@@ -47,16 +56,39 @@ public class SelectRouteViewModel extends AndroidViewModel {
                         Log.d("SelectRouteViewModel", "onFailure add source destination get routes callback");
                     }}));
 
-        mediatorDirAndCPList.addSource(startPoint,newStartPoint -> mRepository.getDirectionsAndCPs((LatLng)newStartPoint, destination.getValue(),
-                new GetRoutesCallback() {
-                    @Override
-                    public void onSuccess(List<DirectionsAndCPInfo> directionsAndCPInfoList) {
-                        directionsAndCarParksList.setValue(directionsAndCPInfoList);
-                    }
-                    @Override
-                    public void onFailure() {
-                        Log.d("SelectRouteViewModel", "onFailure add source destination get routes callback");
-                    }}));
+        mediatorDirAndCPList.addSource(startPoint,newStartPoint ->
+                mRepository.getDirectionsAndCPs((LatLng) newStartPoint, destination.getValue(),
+                        new GetRoutesCallback() {
+                            @Override
+                            public void onSuccess(List<DirectionsAndCPInfo> directionsAndCPInfoList) {
+                                directionsAndCarParksList.setValue(directionsAndCPInfoList);
+                            }
+
+                            @Override
+                            public void onFailure() {
+                                Log.d("SelectRouteViewModel", "onFailure add source destination get routes callback");
+                            }
+                        }));
+
+        mediatorCurrentLoc.addSource(currentLocation, newCurrentLocation -> {
+            if(navigationStarted){
+                mRepository.updateRoutes((LatLng) newCurrentLocation, chosenRoute.getDestinationLatLng(),
+                        new DirectionsCallback() {
+                            @Override
+                            public void onSuccess(GoogleMapsDirections gMapsDirections) {
+                                updatingRouteDirections.setValue(gMapsDirections);
+                                Log.d("SelectRouteViewModel", "navigation: updated route directions with new current loc.");
+                            }
+
+                            @Override
+                            public void onFailure() {
+                                Log.d("SelectRouteViewModel", "navigation: update route failed");
+                            }
+                        });
+            }
+        });
+        /*TODO: set navigationStarted when changing to navi activity, onExit set it back to false.
+        * Perhaps make a function which resets all nav information upon exit.*/
 
 //        //calls repository to search again wTransformations.switchMap(destination, (LatLng newDestination)->
 //                        mRepository.getDirectionsAndCPs(startPoint.getValue(), newDestination,
