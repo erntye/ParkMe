@@ -15,7 +15,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 /**
@@ -40,7 +39,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         mapFragment.getMapAsync(this);
 
         //Create a view model and allow re-created activities to get the same view model instance
-        com.example.chiilek.parkme.navigation.NavigationViewModel model = ViewModelProviders.of(this).get(com.example.chiilek.parkme.navigation.NavigationViewModel.class);
+        NavigationViewModel model = ViewModelProviders.of(this).get(NavigationViewModel.class);
 
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));

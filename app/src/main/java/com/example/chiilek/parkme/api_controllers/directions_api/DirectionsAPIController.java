@@ -44,7 +44,7 @@ public class DirectionsAPIController {
 
         Call<GoogleMapsDirections> call = directionsAPI.getDirections(params);
 
-        System.out.println("before enqueue, calling for: " + destination.toString());
+        Log.d("DirectionsAPIController","before enqueue, calling for: " + destination.toString());
 
         call.enqueue(new Callback<GoogleMapsDirections>(){
             @Override

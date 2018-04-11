@@ -24,8 +24,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.util.ArrayList;
-
 /**
  * Expects following data passed in as extras in Intent:
  *  double startPointLat
@@ -57,7 +55,7 @@ public class RouteOverviewActivity extends FragmentActivity implements OnMapRead
         mapFragment.getMapAsync(this);
 
         //Create a view model and allow re-created activities to get the same view model instance
-        com.example.chiilek.parkme.navigation.NavigationViewModel model = ViewModelProviders.of(this).get(com.example.chiilek.parkme.navigation.NavigationViewModel.class);
+        NavigationViewModel model = ViewModelProviders.of(this).get(NavigationViewModel.class);
 
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
