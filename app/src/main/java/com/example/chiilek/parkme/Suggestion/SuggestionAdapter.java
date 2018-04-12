@@ -65,7 +65,7 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
         //String distanceString = Integer.toString(position);
         holder.buttonImage.setImageResource(drawableID);
         holder.CPNumber.setText(CP.getCarParkStaticInfo().getCPNumber());
-        holder.distance.setText(Integer.toString((int)CP.getDistance()) + "m");
+        holder.distance.setText(Integer.toString((int)CP.getDistance()) + "m away");
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -86,6 +86,10 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
         notifyDataSetChanged();
     }
 
+    //function to get a certain DirectionsAndCPInfo
+    public DirectionsAndCPInfo getCarParkInfo(int position){
+        return carparkList.get(position);
+    }
     @Override
     public int getItemCount() {
         return carparkList.size();

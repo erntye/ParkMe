@@ -56,10 +56,13 @@ public class Repository {
         List<CarParkStaticInfo> closestCarParks = appDatabase.CPInfoDao()
                 .getNearestCarParks(destination.latitude, destination.longitude);
         //TODO handle function if size 0
-        if (closestCarParks == null)
+        if (closestCarParks == null) {
             Log.d("Repository", "closest carpark is null");
-        else
-            Log.d("Repository", "closest carparks size:" + closestCarParks.size()) ;
+            return;
+        } else if (closestCarParks.size() == 0) {
+            Log.d("Repository", "closest carparks size:" + closestCarParks.size());
+            return;
+        }
         //generates directions to each car park, stores in DirectionsAndCPInfo class
         //Log.d("Repository", "origin: " + startPoint.toString());
         List<DirectionsAndCPInfo> directionsAndCPList = new ArrayList<DirectionsAndCPInfo>();
@@ -70,37 +73,39 @@ public class Repository {
                     new LatLng(Double.parseDouble(carPark.getLatitude()), Double.parseDouble(carPark.getLongitude())),
                     new DirectionsCallback() {
                 public void onSuccess(GoogleMapsDirections googleMapsDirections) {
-                    Log.d("repository", "in success");
-                    DirectionsAndCPInfo element = new DirectionsAndCPInfo(carPark, googleMapsDirections);
-                    directionsAndCPList.add(element);
-                    int index = directionsAndCPList.indexOf(element);
+                    Log.d("repository", "in get directions and CP success");
+                    if (googleMapsDirections.getRoutes() == null){
+                        DirectionsAndCPInfo element = new DirectionsAndCPInfo(carPark, googleMapsDirections);
+                        directionsAndCPList.add(element);
+                        int index = directionsAndCPList.indexOf(element);
 
-                    //calling Availability API with callback function.
-                    availAPIControl.makeCall(index, new AvailabilityCallback() {
-                        @Override
-                        public void onSuccess(int index, Item cpAPIItem) {
-                            DirectionsAndCPInfo newElement = directionsAndCPList.get(index);
-                            //passes in the car park number of the destination car park.
-                            newElement.setCarParkDatum(cpAPIItem.getCarParkDatum(newElement.getCarParkStaticInfo().getCPNumber()));
-                            int i = counter.decrementAndGet();
-                            if (i == 0) {
-                                Log.d("repository", "in avail callback success: atomic counter is 0");
-                                Log.d("repository", "calling back to routes callback");
-                                routesCallback.onSuccess(scoreAndSort(directionsAndCPList));
+                        //calling Availability API with callback function.
+                        availAPIControl.makeCall(index, new AvailabilityCallback() {
+                            @Override
+                            public void onSuccess(int index, Item cpAPIItem) {
+                                DirectionsAndCPInfo newElement = directionsAndCPList.get(index);
+                                //passes in the car park number of the destination car park.
+                                newElement.setCarParkDatum(cpAPIItem.getCarParkDatum(newElement.getCarParkStaticInfo().getCPNumber()));
+                                int i = counter.decrementAndGet();
+                                if (i == 0) {
+                                    Log.d("repository", "in avail callback success: atomic counter is 0");
+                                    Log.d("repository", "calling back to routes callback");
+                                    routesCallback.onSuccess(scoreAndSort(directionsAndCPList));
+                                }
                             }
-                        }
 
-                        @Override
-                        public void onFailure() {
-                            Log.e("Repository", "Availability Callback onFailure");
-                            int i = counter.decrementAndGet();
-                            if (i == 0) {
-                                Log.d("repository", "in avail callback failure: atomic counter is 0");
-                                Log.d("repository", "calling back to routes callback");
-                                routesCallback.onSuccess(directionsAndCPList);
+                            @Override
+                            public void onFailure() {
+                                Log.e("Repository", "Availability Callback onFailure");
+                                int i = counter.decrementAndGet();
+                                if (i == 0) {
+                                    Log.d("repository", "in avail callback failure: atomic counter is 0");
+                                    Log.d("repository", "calling back to routes callback");
+                                    routesCallback.onSuccess(directionsAndCPList);
+                                }
                             }
-                        }
-                    });
+                        });
+                    }else return;
                 }
 
                 public void onFailure() {

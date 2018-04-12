@@ -34,7 +34,7 @@ public class CarParkPopUpActivity extends AppCompatActivity {
         //this makes the SELECT button go to navigation
         ImageView b = findViewById(R.id.pop_up_select_button);
 /*
-        //these values are we going to show?
+        //these values are we going to show? //yes, waiting for database to update to include it
         EditText motorCarValue = findViewById(R.id.pop_up_motor_car_value);
         EditText heavyVehicleValue = findViewById(R.id.pop_up_heavy_vehicle_value);
         EditText motorCycleValue = findViewById(R.id.pop_up_motor_cycle_value);

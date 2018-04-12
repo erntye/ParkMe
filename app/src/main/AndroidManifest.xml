@@ -40,7 +40,10 @@
         <activity
             android:name=".Suggestion.SuggestionsActivity"
             android:label="CarParkSuggestions">
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity
@@ -59,10 +62,7 @@
             android:name=".CarParkPopUp.CarParkPopUpActivity"
             android:label="CarParkPopUp"
             android:theme="@style/AppTheme.PopUpTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
         <activity
             android:name=".ReroutePopUp.ReroutePopUpActivity"

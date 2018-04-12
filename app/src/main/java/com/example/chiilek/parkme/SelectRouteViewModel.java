@@ -23,10 +23,8 @@ import java.util.List;
 public class SelectRouteViewModel extends AndroidViewModel {
     private MutableLiveData<LatLng> destination;
     private MutableLiveData<LatLng> startPoint;
-    private MutableLiveData<CarParkDatum> chosenCarPark;
     private MutableLiveData<List<DirectionsAndCPInfo>> directionsAndCarParksList;
     private MediatorLiveData mediatorDirAndCPList = new MediatorLiveData<>();
-    private LiveData<List<LatLng>> routeToPlot;
     private Repository mRepository;
     private LocationRepository mLocationRepo;
     //used during navigation
@@ -34,50 +32,56 @@ public class SelectRouteViewModel extends AndroidViewModel {
     private MutableLiveData<LatLng> currentLocation;
     private DirectionsAndCPInfo chosenRoute;
     private MutableLiveData<GoogleMapsDirections> updatingRouteDirections;
-    //TODO change back navigationstarted to false
-    private boolean navigationStarted = true;
+    private boolean navigationStarted = false;
 
     //to be set up by SelectRouteActivity
     public SelectRouteViewModel(Application application){
         super(application);
         this.mRepository = Repository.getInstance(this.getApplication());
         destination = new MutableLiveData<>();
-        //TODO actually put in a proper destination
+        //TODO get destination from user
         destination.setValue(new LatLng(1.378455, 103.755149));
         mLocationRepo = LocationRepository.getLocationRepository(this.getApplication());
         startPoint = new MutableLiveData<>();
         startPoint.setValue(mLocationRepo.getLocation().getValue());
         currentLocation = mLocationRepo.getLocation();
+        directionsAndCarParksList = new MutableLiveData<>();
+        //TODO get chosen route from user input
 
-        mediatorDirAndCPList.addSource(destination,  newDestination -> mRepository.getDirectionsAndCPs(startPoint.getValue(), (LatLng)newDestination,
-                new GetRoutesCallback() {
-                    @Override
-                    public void onSuccess(List<DirectionsAndCPInfo> directionsAndCPInfoList) {
-                        directionsAndCarParksList.postValue(directionsAndCPInfoList);
-                    }
-                    @Override
-                    public void onFailure() {
-                        Log.d("SelectRouteViewModel", "onFailure add source destination get routes callback");
-                    }}));
+        mediatorDirAndCPList.addSource(destination,  newDestination -> {
+            Log.d("SelectRouteViewModel","mediator activated on destination changed, get directions and CP called");
+            mRepository.getDirectionsAndCPs(startPoint.getValue(), (LatLng)newDestination,
+            new GetRoutesCallback() {
+                @Override
+                public void onSuccess(List<DirectionsAndCPInfo> directionsAndCPInfoList) {
+                    directionsAndCarParksList.postValue(directionsAndCPInfoList);
+                }
+                @Override
+                public void onFailure() {
+                    Log.d("SelectRouteViewModel", "onFailure add source destination get routes callback");
+                }
+            });
+        });
 
         mediatorDirAndCPList.addSource(startPoint,newStartPoint ->{
-            Log.d("SelectRouteViewModel", "mediatorDirAndCPList changed");
-                mRepository.getDirectionsAndCPs((LatLng) newStartPoint, destination.getValue(),
-                        new GetRoutesCallback() {
-                            @Override
-                            public void onSuccess(List<DirectionsAndCPInfo> directionsAndCPInfoList) {
-                                directionsAndCarParksList.postValue(directionsAndCPInfoList);
-                            }
+            Log.d("SelectRouteViewModel", "mediator activated on start point changed, get directions and CP called");
+            mRepository.getDirectionsAndCPs((LatLng) newStartPoint, destination.getValue(),
+                    new GetRoutesCallback() {
+                        @Override
+                        public void onSuccess(List<DirectionsAndCPInfo> directionsAndCPInfoList) {
+                            directionsAndCarParksList.postValue(directionsAndCPInfoList);
+                        }
+                        @Override
+                        public void onFailure() {
+                            Log.d("SelectRouteViewModel", "onFailure add source destination get routes callback");
+                        }
+                    });
+        });
 
-                            @Override
-                            public void onFailure() {
-                                Log.d("SelectRouteViewModel", "onFailure add source destination get routes callback");
-                            }
-                        }); });
-
-        mediatorCurrentLoc.addSource(mLocationRepo.getLocation(), newCurrentLocation -> {
+        mediatorCurrentLoc.addSource(currentLocation, newCurrentLocation -> {
             Log.d("SelectRouteViewModel", "mediatorCurrentLoc changed");
             if(navigationStarted){
+                Log.d("SelectRouteViewModel", "inside navigation started");
                 mRepository.updateRoutes((LatLng) newCurrentLocation, chosenRoute.getDestinationLatLng(),
                         new DirectionsCallback() {
                             @Override
@@ -130,12 +134,16 @@ public class SelectRouteViewModel extends AndroidViewModel {
             Log.d("SelectRouteViewModel", "setStartPoint: " + searchTerm.toString());
             startPoint.setValue(searchTerm);
     }
-    //called by SelectRouteActivity upon choosing a certain car park to trigger transformation
-    public void setChosenCarPark(CarParkDatum choice){
-        chosenCarPark.setValue(choice);
-    }
-    //expose for observation to viewmodel
 
+    //called by SelectRouteActivity when user presses his route
+    public void setChosenRoute(DirectionsAndCPInfo newRoute){
+        this.chosenRoute = newRoute;
+    }
+
+    //called by NavigationActivity when Navigation mode started
+    public void setNavigationStarted(){navigationStarted = true;}
+
+    //expose for observation to viewmodel
     public MutableLiveData<List<DirectionsAndCPInfo>> getDirectionsAndCarParks() {
         if (directionsAndCarParksList == null) {
             directionsAndCarParksList = new MutableLiveData<List<DirectionsAndCPInfo>>();
@@ -154,8 +162,15 @@ public class SelectRouteViewModel extends AndroidViewModel {
         }
         return directionsAndCarParksList;
     }
+
     //expose for observation to viewmodel
-    public LiveData<List<LatLng>> getRouteToPlot() {
-        return routeToPlot;
+    public MediatorLiveData getMediatorCurrentLoc() {
+        return mediatorCurrentLoc;
     }
+
+    //expose for observation to viewmodel
+    public MediatorLiveData getMediatorDirAndCPList() {
+        return mediatorDirAndCPList;
+    }
+
 }
