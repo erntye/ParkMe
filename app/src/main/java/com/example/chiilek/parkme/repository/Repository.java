@@ -14,6 +14,7 @@ import com.example.chiilek.parkme.api_controllers.directions_api.DirectionsCallb
 import com.example.chiilek.parkme.api_controllers.directions_api.GMapsDirectionsAPI;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
+import com.example.chiilek.parkme.data_classes.availability_classes.CarParkDatum;
 import com.example.chiilek.parkme.data_classes.availability_classes.Item;
 import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDirections;
 import com.example.chiilek.parkme.data_classes.source.AppDatabase;
@@ -57,8 +58,10 @@ public class Repository {
         List<CarParkStaticInfo> closestCarParks = appDatabase.CPInfoDao()
                 .getNearestCarParks(destination.latitude, destination.longitude);
         //TODO handle function if size 0
-        if (closestCarParks == null)
+        if (closestCarParks == null) {
             Log.d("Repository", "In getDirectionsAndCPs: closestCarParks is null");
+            routesCallback.onFailure();
+        }
         else
             Log.d("Repository", "In getDirectionsAndCPs: closestCarParks size: " + closestCarParks.size()) ;
         //generates directions to each car park, stores in DirectionsAndCPInfo class
@@ -81,19 +84,33 @@ public class Repository {
                         availAPIControl.makeCall(new AvailabilityCallback() {
                             @Override
                             public void onSuccess(Item cpAPIItem) {
-                                for(DirectionsAndCPInfo dirAndCP : directionsAndCPList){
-                                    //passes in the car park number of the destination car park.
-                                    dirAndCP.setCarParkDatum(cpAPIItem.getCarParkDatum(dirAndCP.getCarParkStaticInfo().getCPNumber()));
+                                if(cpAPIItem.getCarParkData().size() == 0){
+                                    Log.d("Repository", "In availability callback success: Size of cpData list in Item object is 0.");
+                                    for(DirectionsAndCPInfo dirAndCP : directionsAndCPList){
+                                        //stores CarParkDatum object into each DirectionsAndCP object
+                                        dirAndCP.setCarParkDatum(new CarParkDatum());
+                                    }
+                                    Log.d("Repository", "In availability callback success. Created default CarParkDatum objects and stored in D&CPInfo objects.");
+                                }else {
+                                    for (DirectionsAndCPInfo dirAndCP : directionsAndCPList) {
+                                        //stores CarParkDatum object into each DirectionsAndCP object
+                                        dirAndCP.setCarParkDatum(cpAPIItem.getCarParkDatum(dirAndCP.getCarParkStaticInfo().getCPNumber()));
+                                    }
+                                    Log.d("Repository", "In availability callback success: CarParkDatum has been saved for all car parks in list.");
+                                    Log.d("Repository", "Calling onSuccess from ViewModel's GetRoutesCallback");
+                                    routesCallback.onSuccess(scoreAndSort(directionsAndCPList));
                                 }
-                                Log.d("Repository", "In availability callback success: Availability calls have been made for all car parks in list.");
-                                Log.d("Repository", "Calling onSuccess from ViewModel's GetRoutesCallback");
-                                routesCallback.onSuccess(scoreAndSort(directionsAndCPList));
                             }
 
                             @Override
                             public void onFailure() {
                                 Log.e("Repository", "Availability Callback onFailure");
                                 Log.d("Repository", "Calling onSuccess from ViewModel's GetRoutesCallback");
+                                for(DirectionsAndCPInfo dirAndCP : directionsAndCPList){
+                                    //stores CarParkDatum object into each DirectionsAndCP object
+                                    dirAndCP.setCarParkDatum(new CarParkDatum());
+                                }
+                                Log.d("Repository", "In availability callback failure. Created default CarParkDatum objects and stored in D&CPInfo objects.");
                                 routesCallback.onSuccess(directionsAndCPList);
                             }
                         });
@@ -106,8 +123,13 @@ public class Repository {
                     int i = counter.decrementAndGet();
                     if (i == 0) {
                         Log.d("Repository", "In directions callback failure: atomic counter is 0");
-                        Log.d("Repository", "Calling onSuccess from ViewModel's GetRoutesCallback");
-                        routesCallback.onSuccess(directionsAndCPList);
+                        if(directionsAndCPList.size() == 0){
+                            Log.d("Repository", "In directions callback failure, could not find routes for any car park.");
+                            routesCallback.onFailure();
+                        }else {
+                            Log.d("Repository", "In directions callback failure, calling onSuccess from ViewModel's GetRoutesCallback");
+                            routesCallback.onSuccess(directionsAndCPList);
+                        }
                     }
                 }
             });

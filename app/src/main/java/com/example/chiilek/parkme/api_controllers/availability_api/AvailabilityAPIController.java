@@ -104,6 +104,7 @@ public class AvailabilityAPIController implements Callback<Envelope> {
                         "Lots Type:      " + Character.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getLotType()));
             } else {
                 Log.d("AvailabilityAPIController", "No Item in Envelope; No object pulled: " + response.body().toString());
+                mavailabilityCallback.onFailure();
             }
         }
         else {

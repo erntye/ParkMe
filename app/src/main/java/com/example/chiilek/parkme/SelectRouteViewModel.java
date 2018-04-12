@@ -71,7 +71,7 @@ public class SelectRouteViewModel extends AndroidViewModel {
 
                             @Override
                             public void onFailure() {
-                                Log.d("SelectRouteViewModel", "onFailure add source destination get routes callback");
+                                Log.d("SelectRouteViewModel", "onFailure add source start point get routes callback");
                             }
                         }); });
 

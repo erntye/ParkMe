@@ -19,6 +19,13 @@ import com.google.gson.annotations.SerializedName;
 
 public class CarParkInfo {
 
+    //for generating default objects
+    public CarParkInfo(){
+        totalLots = -1;
+        lotType = 'U';
+        lotsAvailable = -1;
+    }
+
     @SerializedName("total_lots")
     @Expose
     private int totalLots;
