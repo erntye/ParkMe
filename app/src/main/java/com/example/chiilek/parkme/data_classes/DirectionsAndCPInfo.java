@@ -23,8 +23,7 @@ public class DirectionsAndCPInfo {
     public DirectionsAndCPInfo(CarParkStaticInfo cpInfo, GoogleMapsDirections gmapsDir){
         this.carParkStaticInfo = cpInfo;
         this.googleMapsDirections = gmapsDir;
-        Log.d("DirectionsAndCPInfo", "gmapsDir status "+ gmapsDir.getStatus());
-        Log.d("DirectionsAndCPInfo", "gmapsDir routes size " + gmapsDir.getRoutes().size());
+        Log.d("DirectionsAndCPInfo", "gmapsDir status "+ gmapsDir.getStatus() + ", gmapsDir routes size " + gmapsDir.getRoutes().size());
 
         distance = getDistanceFromLatLngInKm(gmapsDir.getRoutes().get(0).getLegs().get(0).getStartLocation().getLat(),
                 gmapsDir.getRoutes().get(0).getLegs().get(0).getStartLocation().getLng(),

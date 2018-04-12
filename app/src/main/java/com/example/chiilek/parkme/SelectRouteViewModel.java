@@ -139,8 +139,8 @@ public class SelectRouteViewModel extends AndroidViewModel {
     public MutableLiveData<List<DirectionsAndCPInfo>> getDirectionsAndCarParks() {
         if (directionsAndCarParksList == null) {
             directionsAndCarParksList = new MutableLiveData<List<DirectionsAndCPInfo>>();
-            Log.d("SelectRouteVM","Start point is "+ startPoint.getValue().toString());
-            Log.d("SelectRouteVM","Destination is "+ destination.getValue().toString());
+            Log.d("SelectRouteViewModel","Start point is "+ startPoint.getValue().toString());
+            Log.d("SelectRouteViewModel","Destination is "+ destination.getValue().toString());
             mRepository.getDirectionsAndCPs(startPoint.getValue(),destination.getValue(), new GetRoutesCallback() {
                 @Override
                 public void onSuccess(List<DirectionsAndCPInfo> directionsAndCPInfoList) {

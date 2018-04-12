@@ -185,17 +185,17 @@ public class ViewMapActivity extends FragmentActivity
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             String name = className.getClassName();
-            Log.d("Activity", "In Service Connection");
+            Log.d("ViewMapActivity", "In Service Connection");
             if (name.endsWith("LocationService")) {
                 mLocationService = ((LocationService.LocationBinder) service).getService();
                 mLocationService.startLocationUpdate();
-                Log.d("Activity", "Location Update started");
+                Log.d("ViewMapActivity", "Location Update started");
             }
         }
 
         public void onServiceDisconnected(ComponentName className) {
             if (className.getClassName().equals("LocationService")) {
-                Log.d("Activity", "Service disconnected");
+                Log.d("ViewMapActivity", "Service disconnected");
                 mLocationService = null;
             }
         }
@@ -276,7 +276,7 @@ public class ViewMapActivity extends FragmentActivity
     @Override
     public boolean onMarkerClick(Marker marker) {
         startActivity(new Intent(ViewMapActivity.this,  CarParkPopUpActivity.class));
-        Log.d("Activity","Pressed Init Button");
+        Log.d("ViewMapActivity","Pressed Init Button");
         //Toast.makeText(this, "Location:\n" + marker.getPosition(), Toast.LENGTH_LONG).show();
         return false;
     }

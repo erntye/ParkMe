@@ -4,6 +4,7 @@ package com.example.chiilek.parkme.repository;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
+import android.text.Layout;
 import android.util.Log;
 
 import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityAPIController;
@@ -36,7 +37,7 @@ public class Repository {
     public static Repository getInstance(Context context){
         if (INSTANCE == null)
             INSTANCE = new Repository(context);
-        Log.d("Repo", "got Repo singleton");
+        Log.d("Repository", "In Singleton Pattern getInstance");
         return INSTANCE;
     }
 
@@ -50,16 +51,16 @@ public class Repository {
      *          all nearby car parks, sorted by weighted score
      */
     public void getDirectionsAndCPs(LatLng startPoint, LatLng destination, GetRoutesCallback routesCallback) {
-        Log.d("Repository", "Called getDirectionsAndCPs(" + startPoint.toString() + "," + destination.toString() + ")");
+        Log.d("Repository", "Called getDirectionsAndCPs(startPoint: " + startPoint.toString() + ", destination: " + destination.toString() + ")");
 
         //gets list of all nearby car parks (within a certain range)
         List<CarParkStaticInfo> closestCarParks = appDatabase.CPInfoDao()
                 .getNearestCarParks(destination.latitude, destination.longitude);
         //TODO handle function if size 0
         if (closestCarParks == null)
-            Log.d("Repository", "closest carpark is null");
+            Log.d("Repository", "In getDirectionsAndCPs: closestCarParks is null");
         else
-            Log.d("Repository", "closest carparks size:" + closestCarParks.size()) ;
+            Log.d("Repository", "In getDirectionsAndCPs: closestCarParks size: " + closestCarParks.size()) ;
         //generates directions to each car park, stores in DirectionsAndCPInfo class
         //Log.d("Repository", "origin: " + startPoint.toString());
         List<DirectionsAndCPInfo> directionsAndCPList = new ArrayList<DirectionsAndCPInfo>();
@@ -70,45 +71,42 @@ public class Repository {
                     new LatLng(Double.parseDouble(carPark.getLatitude()), Double.parseDouble(carPark.getLongitude())),
                     new DirectionsCallback() {
                 public void onSuccess(GoogleMapsDirections googleMapsDirections) {
-                    Log.d("repository", "in success");
+                    Log.d("Repository", "onSuccess in DirectionsCallback from CP in closestCarParks");
                     DirectionsAndCPInfo element = new DirectionsAndCPInfo(carPark, googleMapsDirections);
                     directionsAndCPList.add(element);
-                    int index = directionsAndCPList.indexOf(element);
-
-                    //calling Availability API with callback function.
-                    availAPIControl.makeCall(index, new AvailabilityCallback() {
-                        @Override
-                        public void onSuccess(int index, Item cpAPIItem) {
-                            DirectionsAndCPInfo newElement = directionsAndCPList.get(index);
-                            //passes in the car park number of the destination car park.
-                            newElement.setCarParkDatum(cpAPIItem.getCarParkDatum(newElement.getCarParkStaticInfo().getCPNumber()));
-                            int i = counter.decrementAndGet();
-                            if (i == 0) {
-                                Log.d("repository", "in avail callback success: atomic counter is 0");
-                                Log.d("repository", "calling back to routes callback");
+                    int i = counter.decrementAndGet();
+                    if(i==0){
+                        Log.d("Repository", "In getDirectionsAndCPs: atomic counter is 0; GMaps API calls are done");
+                        //calling Availability API with callback function.
+                        availAPIControl.makeCall(new AvailabilityCallback() {
+                            @Override
+                            public void onSuccess(Item cpAPIItem) {
+                                for(DirectionsAndCPInfo dirAndCP : directionsAndCPList){
+                                    //passes in the car park number of the destination car park.
+                                    dirAndCP.setCarParkDatum(cpAPIItem.getCarParkDatum(dirAndCP.getCarParkStaticInfo().getCPNumber()));
+                                }
+                                Log.d("Repository", "In availability callback success: Availability calls have been made for all car parks in list.");
+                                Log.d("Repository", "Calling onSuccess from ViewModel's GetRoutesCallback");
                                 routesCallback.onSuccess(scoreAndSort(directionsAndCPList));
                             }
-                        }
 
-                        @Override
-                        public void onFailure() {
-                            Log.e("Repository", "Availability Callback onFailure");
-                            int i = counter.decrementAndGet();
-                            if (i == 0) {
-                                Log.d("repository", "in avail callback failure: atomic counter is 0");
-                                Log.d("repository", "calling back to routes callback");
+                            @Override
+                            public void onFailure() {
+                                Log.e("Repository", "Availability Callback onFailure");
+                                Log.d("Repository", "Calling onSuccess from ViewModel's GetRoutesCallback");
                                 routesCallback.onSuccess(directionsAndCPList);
                             }
-                        }
-                    });
+                        });
+                    }
+
                 }
 
                 public void onFailure() {
                     Log.e("Repository", "Directions Callback onFailure.");
                     int i = counter.decrementAndGet();
                     if (i == 0) {
-                        Log.d("repository", "directions callback failure: atomic counter is 0");
-                        Log.d("repository", "calling back to routes callback");
+                        Log.d("Repository", "In directions callback failure: atomic counter is 0");
+                        Log.d("Repository", "Calling onSuccess from ViewModel's GetRoutesCallback");
                         routesCallback.onSuccess(directionsAndCPList);
                     }
                 }
@@ -134,6 +132,7 @@ public class Repository {
             score--;
         }
 
+        //sorts and scores by availability
         directionsAndCPList.sort(Comparator.comparingDouble(DirectionsAndCPInfo::getAvailability));
         score = size;
         for(DirectionsAndCPInfo element : directionsAndCPList){
@@ -187,7 +186,7 @@ public class Repository {
      * @return
      */
     public LiveData<List<CarParkStaticInfo>> searchNearbyCarParks(LatLng searchTerm){
-        Log.d("Repo", "Called setSearchTerm(" + searchTerm + ")");
+        Log.d("Repository", "Called setSearchTerm(" + searchTerm + ")");
         //call database getClosest10()
         List<CarParkStaticInfo> closestCarParks = appDatabase.CPInfoDao()
                 .getNearestCarParks(searchTerm.latitude, searchTerm.longitude);
@@ -201,13 +200,13 @@ public class Repository {
         DirectionsAPIController.getInstance().callDirectionsAPI(startPoint, destination, new DirectionsCallback() {
             @Override
             public void onSuccess(GoogleMapsDirections gMapsDirections) {
-                Log.d("Repository", "update routes callback success");
+                Log.d("Repository", "updateRoutes callback success");
                 directionCallback.onSuccess(gMapsDirections);
             }
 
             @Override
             public void onFailure() {
-                Log.d("Repository", "update routes callback failure");
+                Log.d("Repository", "updateRoutes callback failure");
             }
         });
 

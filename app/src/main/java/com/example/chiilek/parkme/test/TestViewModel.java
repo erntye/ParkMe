@@ -27,7 +27,7 @@ public class TestViewModel extends AndroidViewModel{
     //need to use androidviewmodel class so that can get Context, which needs to be passed to Database for Room
     public TestViewModel(Application application) {
         super(application);
-        Log.d("ViewModel","viewmodel created");
+        Log.d("TestViewModel","viewmodel created");
         this.testRepo = TestRepo.getInstance(this.getApplication());
         //initialize database if empty
         if (testRepo.getAllEntity() == null)
@@ -45,6 +45,15 @@ public class TestViewModel extends AndroidViewModel{
         //calls repository to search again whenever newDestination is changed by SelectRouteVM.search()
         testList = Transformations.switchMap(searchTerm, (Integer id) ->
                 testRepo.getEntityById(id));
+
+        LiveData<LatLng> thingy;
+        LiveData<String> live = Transformations.map(mLocationRepo.getLocation(), newLocation ->
+        {
+            Log.d("TestViewModel","switch map");
+            return newLocation.toString();
+        }
+        );
+
     }
 
     public LiveData<Integer> getSearchTerm(){
