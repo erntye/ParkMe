@@ -15,6 +15,7 @@ import com.example.chiilek.parkme.SelectRouteViewModel;
 import com.example.chiilek.parkme.ViewMap.ViewMapViewModel;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,33 +25,24 @@ import java.util.concurrent.TimeUnit;
 public class SuggestionsActivity extends AppCompatActivity{
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private List<DirectionsAndCPInfo> test = new ArrayList<DirectionsAndCPInfo>();
+    private SuggestionAdapter mAdapter;
+    private List<DirectionsAndCPInfo> mCarparkList = new ArrayList<DirectionsAndCPInfo>();
     private SelectRouteViewModel model;
-    private List<DirectionsAndCPInfo> mCarparkList;
-
+    //TODO refer to the multisearch fragment to get the startpoint and destination search terms
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
 
         model = ViewModelProviders.of(this).get(SelectRouteViewModel.class);
-
-        if (mCarparkList != null)
-            Log.d("SuggestionsActivity","not null");
-        else
-            Log.d("SuggestionsActivity","null");
         model.getDirectionsAndCarParks().observe(this, newDirections ->
             {
-                mCarparkList = model.getDirectionsAndCarParks().getValue();
-                for (int i = 0; i < mCarparkList.size();i++){
-                    Log.d("SuggestionsActivity","i is " + i);
-                    test.add(mCarparkList.get(i));
-                    mAdapter.notifyDataSetChanged();
+                Log.d("SuggestionsActivity", "observer activated directionsandcarparklist changed");
+                mAdapter.addItems(newDirections);
+                model.setStartPoint(new LatLng(1.3209983,104.888));
                 }
-            });
-        if (mCarparkList != null)
-            Log.d("SelectRouteVM","Start point is "+ mCarparkList.size());
+            );
+
         //TODO LOAD REAL DATA BELOW HERE
         //--------------
 
@@ -74,7 +66,7 @@ public class SuggestionsActivity extends AppCompatActivity{
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
         // specify an adapter
-        mAdapter = new SuggestionAdapter(test, this);
+        mAdapter = new SuggestionAdapter(mCarparkList, this);
         mRecyclerView.setAdapter(mAdapter);
 
     }

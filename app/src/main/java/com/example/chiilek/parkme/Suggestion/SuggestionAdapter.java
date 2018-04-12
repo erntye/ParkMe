@@ -2,6 +2,7 @@ package com.example.chiilek.parkme.Suggestion;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Path;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -79,8 +80,11 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
 
     }
 
-
-
+    //function to allow activity to add entire list at one time
+    public void addItems(List<DirectionsAndCPInfo> carparkList){
+        this.carparkList = carparkList;
+        notifyDataSetChanged();
+    }
 
     @Override
     public int getItemCount() {

@@ -34,7 +34,8 @@ public class SelectRouteViewModel extends AndroidViewModel {
     private MutableLiveData<LatLng> currentLocation;
     private DirectionsAndCPInfo chosenRoute;
     private MutableLiveData<GoogleMapsDirections> updatingRouteDirections;
-    private boolean navigationStarted = false;
+    //TODO change back navigationstarted to false
+    private boolean navigationStarted = true;
 
     //to be set up by SelectRouteActivity
     public SelectRouteViewModel(Application application){
@@ -46,41 +47,42 @@ public class SelectRouteViewModel extends AndroidViewModel {
         mLocationRepo = LocationRepository.getLocationRepository(this.getApplication());
         startPoint = new MutableLiveData<>();
         startPoint.setValue(mLocationRepo.getLocation().getValue());
-        currentLocation = new MutableLiveData<>();
-        currentLocation.setValue(startPoint.getValue());
+        currentLocation = mLocationRepo.getLocation();
 
         mediatorDirAndCPList.addSource(destination,  newDestination -> mRepository.getDirectionsAndCPs(startPoint.getValue(), (LatLng)newDestination,
                 new GetRoutesCallback() {
                     @Override
                     public void onSuccess(List<DirectionsAndCPInfo> directionsAndCPInfoList) {
-                        directionsAndCarParksList.setValue(directionsAndCPInfoList);
+                        directionsAndCarParksList.postValue(directionsAndCPInfoList);
                     }
                     @Override
                     public void onFailure() {
                         Log.d("SelectRouteViewModel", "onFailure add source destination get routes callback");
                     }}));
 
-        mediatorDirAndCPList.addSource(startPoint,newStartPoint ->
+        mediatorDirAndCPList.addSource(startPoint,newStartPoint ->{
+            Log.d("SelectRouteViewModel", "mediatorDirAndCPList changed");
                 mRepository.getDirectionsAndCPs((LatLng) newStartPoint, destination.getValue(),
                         new GetRoutesCallback() {
                             @Override
                             public void onSuccess(List<DirectionsAndCPInfo> directionsAndCPInfoList) {
-                                directionsAndCarParksList.setValue(directionsAndCPInfoList);
+                                directionsAndCarParksList.postValue(directionsAndCPInfoList);
                             }
 
                             @Override
                             public void onFailure() {
                                 Log.d("SelectRouteViewModel", "onFailure add source destination get routes callback");
                             }
-                        }));
+                        }); });
 
-        mediatorCurrentLoc.addSource(currentLocation, newCurrentLocation -> {
+        mediatorCurrentLoc.addSource(mLocationRepo.getLocation(), newCurrentLocation -> {
+            Log.d("SelectRouteViewModel", "mediatorCurrentLoc changed");
             if(navigationStarted){
                 mRepository.updateRoutes((LatLng) newCurrentLocation, chosenRoute.getDestinationLatLng(),
                         new DirectionsCallback() {
                             @Override
                             public void onSuccess(GoogleMapsDirections gMapsDirections) {
-                                updatingRouteDirections.setValue(gMapsDirections);
+                                updatingRouteDirections.postValue(gMapsDirections);
                                 Log.d("SelectRouteViewModel", "navigation: updated route directions with new current loc.");
                             }
 
@@ -118,14 +120,15 @@ public class SelectRouteViewModel extends AndroidViewModel {
     }
 
     //called by SelectRouteActivity whenever user inputs a new search term destination
-    public void setDestination(LiveData<LatLng> searchTerm){
+    public void setDestination(LatLng searchTerm){
         if (searchTerm!= null)
-            destination.setValue(searchTerm.getValue());
+            destination.setValue(searchTerm);
     }
     //called by SelectRouteActivity whenever user inputs a new search term start point
-    public void setStartPoint(LiveData<LatLng> searchTerm){
+    public void setStartPoint(LatLng searchTerm){
         if (searchTerm!= null)
-            startPoint.setValue(searchTerm.getValue());
+            Log.d("SelectRouteViewModel", "setStartPoint: " + searchTerm.toString());
+            startPoint.setValue(searchTerm);
     }
     //called by SelectRouteActivity upon choosing a certain car park to trigger transformation
     public void setChosenCarPark(CarParkDatum choice){

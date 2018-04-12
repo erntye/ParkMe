@@ -89,7 +89,7 @@ public class LocationRepository  {
             Log.d("Location Repo","update permission not granted");
         }
     }
-    public LiveData<LatLng> getLocation(){
+    public MutableLiveData<LatLng> getLocation(){
         Log.d("Location Repo", "return current location " + currentLocation.getValue().toString());
         return this.currentLocation;
     }
