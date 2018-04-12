@@ -40,12 +40,11 @@ public class CarParkPopUpActivity extends AppCompatActivity {
         EditText motorCycleValue = findViewById(R.id.pop_up_motor_cycle_value);
 
         */
-        EditText carParkTypeValue = findViewById(R.id.pop_up_car_park_type_value);
-        EditText parkingSystemValue = findViewById(R.id.pop_up_parking_system_value);
-        EditText freeParkingValue = findViewById(R.id.pop_up_free_parking_value);
-        EditText shortTermParkingValue = findViewById(R.id.pop_up_short_term_parking_value);
-        EditText nightParkingValue = findViewById(R.id.pop_up_night_parking_value);
-
+        TextView carParkTypeValue = findViewById(R.id.pop_up_car_park_type_value);
+        TextView parkingSystemValue = findViewById(R.id.pop_up_parking_system_value);
+        TextView freeParkingValue = findViewById(R.id.pop_up_free_parking_value);
+        TextView shortTermParkingValue = findViewById(R.id.pop_up_short_term_parking_value);
+        TextView nightParkingValue = findViewById(R.id.pop_up_night_parking_value);
 /*
         //waiting for carparkstaticinfo to be assigned
         freeParkingValue.setText(chosenCarPark.getFreeParking());
