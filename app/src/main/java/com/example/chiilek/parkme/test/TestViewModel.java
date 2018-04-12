@@ -4,17 +4,25 @@ package com.example.chiilek.parkme.test;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Transformations;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
+
+import com.example.chiilek.parkme.repository.LocationRepository;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
 public class TestViewModel extends AndroidViewModel{
     private MutableLiveData<Integer> searchTerm;
     private LiveData<List<TestEntity>> testList;
+    private MutableLiveData<LatLng> currentLocation;
+    private MediatorLiveData mediatorData = new MediatorLiveData<>();
     private TestRepo testRepo;
+    private LocationRepository mLocationRepo;
+
 
     //need to use androidviewmodel class so that can get Context, which needs to be passed to Database for Room
     public TestViewModel(Application application) {
@@ -27,7 +35,13 @@ public class TestViewModel extends AndroidViewModel{
         //initialize variables
         searchTerm = new MutableLiveData<>();
         testList = testRepo.getAllEntity();
-
+        mLocationRepo = LocationRepository.getLocationRepository(application.getApplicationContext());
+        currentLocation = mLocationRepo.getLocation();
+        mediatorData.addSource(currentLocation, newLocation ->{
+                Log.d("TestViewModel","inside mediator live data ");
+                testRepo.testMediatorFunc();
+                }
+        );
         //calls repository to search again whenever newDestination is changed by SelectRouteVM.search()
         testList = Transformations.switchMap(searchTerm, (Integer id) ->
                 testRepo.getEntityById(id));

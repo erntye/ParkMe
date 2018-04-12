@@ -40,6 +40,10 @@ public class TestRepo {
         Log.d("Repo","Called getEntityById(" + id+ ")");
         return testDatabase.getModelDAO().getModelById(id);
     }
+    public void deleteEntityById(int id){
+        Log.d("Repo","Called getEntityById(" + id+ ")");
+        testDatabase.getModelDAO().delete(id);
+    }
 
     public void initialize(){
         Log.d("repo","Initialize Entered");
@@ -56,7 +60,18 @@ public class TestRepo {
                 return null;
             }
         }.execute();
+    }
 
-
+    public void testMediatorFunc(){
+        Log.d("repo","Testing Mediator function");
+        new AsyncTask<Void, Void, Void>(){
+            @Override
+            protected Void doInBackground(Void... voids) {
+                TestEntity entity4 = new TestEntity(4,"testing4");
+                testDatabase.getModelDAO().save(entity4);
+                Log.d("repo","Initialize Saved");
+                return null;
+            }
+        }.execute();
     }
 }

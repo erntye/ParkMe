@@ -28,7 +28,6 @@ public class ViewMapViewModel extends AndroidViewModel{
         this.mRepository = Repository.getInstance(this.getApplication());
         mLocationRepo = LocationRepository.getLocationRepository(this.getApplication());
         msearchTerm = new MutableLiveData<>();
-        //TODO get current location from repository?
         currentLocation = mLocationRepo.getLocation();
         mcarParkList = mRepository.searchNearbyCarParks(currentLocation.getValue());
 

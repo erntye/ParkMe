@@ -196,7 +196,7 @@
             android:textColor="@color/colorMain"
             android:textSize="18sp" />
 
-        <TextView
+        <EditText
             android:id="@+id/pop_up_car_park_type_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -206,7 +206,7 @@
             android:text="TextView"
             android:textColor="@color/colorMain" />
 
-        <TextView
+        <EditText
             android:id="@+id/pop_up_parking_system_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -217,7 +217,7 @@
             android:text="TextView"
             android:textColor="@color/colorMain" />
 
-        <TextView
+        <EditText
             android:id="@+id/pop_up_free_parking_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -281,7 +281,7 @@
             android:textColor="@color/colorMain"
             android:textSize="18sp" />
 
-        <TextView
+        <EditText
             android:id="@+id/pop_up_short-term_parking_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -293,7 +293,7 @@
             android:text="TextView"
             android:textColor="@color/colorMain" />
 
-        <TextView
+        <EditText
             android:id="@+id/pop_up_night_parking_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
