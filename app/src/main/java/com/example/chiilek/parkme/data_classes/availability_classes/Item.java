@@ -36,8 +36,8 @@ public class Item {
     }
 
     public CarParkDatum getCarParkDatum(String cpNumber){
-        Log.d("item", "cp number is " + cpNumber);
-        Log.d("item", "carpark data size " + carParkData.size());
+        Log.d("Item", "Size of response from availability API: " + carParkData.size());
+        Log.d("Item", "Searching availability API response for this car park: " + cpNumber);
         return carParkData.stream().filter(o -> o.getCarParkNumber().equals(cpNumber)).findFirst().get();
     }
 

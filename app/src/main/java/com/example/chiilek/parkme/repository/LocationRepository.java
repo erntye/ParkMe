@@ -61,7 +61,7 @@ public class LocationRepository  {
         startLocationUpdate();
         currentLocation = new MutableLiveData<>();
         currentLocation.setValue(new LatLng(1.321,103.850));
-        Log.d("Location Repo", "created");
+        Log.d("Location Repo", "LocationRepository constructed");
     }
 
     public static LocationRepository getLocationRepository(Context context){
@@ -90,7 +90,7 @@ public class LocationRepository  {
         }
     }
     public MutableLiveData<LatLng> getLocation(){
-        Log.d("Location Repo", "return current location " + currentLocation.getValue().toString());
+        Log.d("Location Repo", "getLocation called, returning current location " + currentLocation.getValue().toString());
         return this.currentLocation;
     }
 
@@ -105,7 +105,7 @@ public class LocationRepository  {
                         @Override
                         public void onSuccess(Location location) {
                             if (location != null){
-                                Log.d("Location Repo","getlastlocation is " + location.getLongitude() + location.getLatitude());
+                                Log.d("Location Repo","getLastLocation is " + location.getLongitude() + location.getLatitude());
                                 currentLocation.setValue(new LatLng(location.getLatitude(),location.getLongitude()));
                             }
                         }

@@ -28,7 +28,6 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
-
 public class TestActivity extends AppCompatActivity {
 
     private static Button button;
@@ -51,8 +50,6 @@ public class TestActivity extends AppCompatActivity {
         initbutton = findViewById(R.id.button3);
         locationbutton = findViewById(R.id.button4);
         checkLocationPermission();
-
-
 
         //Create a view model and allow re-created activities to get the same view model instance
         model = ViewModelProviders.of(this).get(TestViewModel.class);
