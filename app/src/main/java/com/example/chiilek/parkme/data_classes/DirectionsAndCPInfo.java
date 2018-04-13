@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.chiilek.parkme.data_classes.availability_classes.CarParkDatum;
 import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDirections;
+import com.google.android.gms.maps.model.LatLng;
 
 public class DirectionsAndCPInfo {
     private CarParkStaticInfo carParkStaticInfo;
@@ -22,8 +23,7 @@ public class DirectionsAndCPInfo {
     public DirectionsAndCPInfo(CarParkStaticInfo cpInfo, GoogleMapsDirections gmapsDir){
         this.carParkStaticInfo = cpInfo;
         this.googleMapsDirections = gmapsDir;
-        Log.d("DirectionsAndCPInfo", "gmapsDir status "+ gmapsDir.getStatus());
-        Log.d("DirectionsAndCPInfo", "gmapsDir routes size " + gmapsDir.getRoutes().size());
+        Log.d("DirectionsAndCPInfo", "gmapsDir status "+ gmapsDir.getStatus() + ", gmapsDir routes size " + gmapsDir.getRoutes().size());
 
         distance = getDistanceFromLatLngInKm(gmapsDir.getRoutes().get(0).getLegs().get(0).getStartLocation().getLat(),
                 gmapsDir.getRoutes().get(0).getLegs().get(0).getStartLocation().getLng(),
@@ -56,6 +56,11 @@ public class DirectionsAndCPInfo {
                 availabilityScoreWeight * availabilityScore;
     }
 
+    public LatLng getDestinationLatLng(){
+        return new LatLng(getDestinationLatitude(),getDestinationLongitude());
+    }
+
+    //deprecated, to replace getLat and getLong with getDestinationLatLng
     public double getDestinationLatitude(){
         return Double.parseDouble(carParkStaticInfo.getLatitude());
     }

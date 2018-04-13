@@ -47,7 +47,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.List;
@@ -60,6 +59,8 @@ public class ViewMapActivity extends FragmentActivity
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
+    Bitmap bitmap;
+    Bitmap smallMarker;
 
     ViewMapViewModel model;
     //needed to bind to service to get location updates
@@ -70,43 +71,51 @@ public class ViewMapActivity extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_map);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        //for location services
         checkLocationPermission();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        //to lock screen to portrait
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        //Create a view model and allow re-created activities to get the same view model instance
         model = ViewModelProviders.of(this).get(ViewMapViewModel.class);
         //TODO pass current location to Viewmodel
         model.getCarParkList().observe(this, new Observer<List<CarParkStaticInfo>>() {
             @Override
             public void onChanged(@Nullable List<CarParkStaticInfo> newCarParkList) {
-                //display the new carparklist in the UI
             }
         });
 
-        //api controller shouldn't be here?  - ernest
         AvailabilityAPIController controller = new AvailabilityAPIController();
-        //controller.makeCall();
 
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
         autocompleteFragment.setBoundsBias(new LatLngBounds(new LatLng(1.227925, 103.604971), new LatLng(1.456672, 104.003780)));
 
+        Repository repository = Repository.getInstance(this); // TODO remove this shit bruh
+
+        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cap_park_marker);
+        smallMarker = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
                 Log.d("Maps", "Place selected: " + place.getName());
                 CameraPosition cp = new CameraPosition.Builder().target(place.getLatLng()).zoom(14).build();
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
+                List<CarParkStaticInfo> list = repository.searchNearbyCarParks(place.getLatLng()).getValue();
+
+                Log.d("Marker", Integer.toString(list.size()));
+
+                for (CarParkStaticInfo cpsi : list){
+                    Log.d("Marker", cpsi.getAddress());
+                    mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
+                            .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)))
+                            .setTag(cpsi);
+                }
             }
 
             @Override
@@ -145,11 +154,13 @@ public class ViewMapActivity extends FragmentActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSION_LOCATION);
             return;
         }
-
+        Repository repository = Repository.getInstance(this); // TODO remove this shit bruh
         mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
@@ -158,19 +169,20 @@ public class ViewMapActivity extends FragmentActivity
                         if (location != null) {
                             CameraPosition cp = new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(14).build();
                             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
+                            List<CarParkStaticInfo> list = repository.searchNearbyCarParks(new LatLng(location.getLatitude(), location.getLongitude())).getValue();
+
+                            Log.d("Marker", Integer.toString(list.size()));
+
+                            for (CarParkStaticInfo cpsi : list){
+                                mMap.addMarker(new MarkerOptions()
+                                        .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
+                                        .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)))
+                                        .setTag(cpsi);
+                            }
+
                         }
                     }
                 });
-
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cap_park_marker);
-
-        Bitmap smallMarker = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
-
-
-
-        mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(1.343168, 103.682737))
-                .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
 
         mMap.setOnMarkerClickListener(this);
 
@@ -185,17 +197,17 @@ public class ViewMapActivity extends FragmentActivity
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             String name = className.getClassName();
-            Log.d("Activity", "In Service Connection");
+            Log.d("ViewMapActivity", "In Service Connection");
             if (name.endsWith("LocationService")) {
                 mLocationService = ((LocationService.LocationBinder) service).getService();
                 mLocationService.startLocationUpdate();
-                Log.d("Activity", "Location Update started");
+                Log.d("ViewMapActivity", "Location Update started");
             }
         }
 
         public void onServiceDisconnected(ComponentName className) {
             if (className.getClassName().equals("LocationService")) {
-                Log.d("Activity", "Service disconnected");
+                Log.d("ViewMapActivity", "Service disconnected");
                 mLocationService = null;
             }
         }
@@ -276,7 +288,21 @@ public class ViewMapActivity extends FragmentActivity
     @Override
     public boolean onMarkerClick(Marker marker) {
         startActivity(new Intent(ViewMapActivity.this,  CarParkPopUpActivity.class));
-        Log.d("Activity","Pressed Init Button");
+        Log.d("ViewMapActivity","Pressed Init Button");
+
+        CarParkStaticInfo cpsi = (CarParkStaticInfo) marker.getTag();
+
+        if (cpsi == null){
+            Log.d("Marker", "FUCKFUCKFUCK");
+        }
+
+        Intent intent = new Intent(ViewMapActivity.this,  CarParkPopUpActivity.class);
+
+
+
+        intent.putExtra("CarParkStaticInfo", (CarParkStaticInfo) marker.getTag());
+        startActivity(intent);
+        Log.d("ViewMapActivity","Pressed Init Button");
         //Toast.makeText(this, "Location:\n" + marker.getPosition(), Toast.LENGTH_LONG).show();
         return false;
     }

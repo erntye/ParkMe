@@ -2,6 +2,7 @@ package com.example.chiilek.parkme.Suggestion;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Path;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
+import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.navigation.RouteOverviewActivity;
 
 import java.lang.reflect.Field;
@@ -26,10 +28,10 @@ import java.util.List;
 
 public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.MyViewHolder> {
 
-    private List<CarParkStaticInfo> carparkList;
+    private List<DirectionsAndCPInfo> carparkList;
     private Context mContext;
 
-    public SuggestionAdapter(List<CarParkStaticInfo> carparkList, Context context) {
+    public SuggestionAdapter(List<DirectionsAndCPInfo> carparkList, Context context) {
         this.carparkList= carparkList;
         this.mContext = context;
 
@@ -46,7 +48,7 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
     //binds each seperate carpark to it view
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        CarParkStaticInfo CP = carparkList.get(position);
+        DirectionsAndCPInfo CP = carparkList.get(position);
 
         //needed to get the image ID
         Class res = R.drawable.class;
@@ -59,29 +61,35 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
             Log.e("ERROR", "Failed to get drawable id", e);
         }
         //----------------------------------------------------------------
-
-        String distanceString = Integer.toString(position);
-
+        //TODO add travel time and carpark availability
+        //String distanceString = Integer.toString(position);
         holder.buttonImage.setImageResource(drawableID);
-        holder.CPNumber.setText(CP.getCPNumber());
-        holder.distance.setText(distanceString);
+        holder.CPNumber.setText(CP.getCarParkStaticInfo().getCPNumber());
+        holder.distance.setText(Integer.toString((int)CP.getDistance()) + "m away");
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                Log.d("test", "onClick: clicked on: " + CP.getCPNumber());
-                Toast.makeText(mContext, CP.getCPNumber(), Toast.LENGTH_SHORT).show();
+                Log.d("test", "onClick: clicked on: " + CP.getCarParkStaticInfo().getCPNumber());
+                Toast.makeText(mContext, CP.getCarParkStaticInfo().getCPNumber(), Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(mContext, RouteOverviewActivity.class);
-                intent.putExtra("cp_pop_up", carparkList.get(position).getCPNumber());
+                intent.putExtra("cp_pop_up", carparkList.get(position).getCarParkStaticInfo().getCPNumber());
                 mContext.startActivity(intent);
             }
         });
 
     }
 
+    //function to allow activity to add entire list at one time
+    public void addItems(List<DirectionsAndCPInfo> carparkList){
+        this.carparkList = carparkList;
+        notifyDataSetChanged();
+    }
 
-
-
+    //function to get a certain DirectionsAndCPInfo
+    public DirectionsAndCPInfo getCarParkInfo(int position){
+        return carparkList.get(position);
+    }
     @Override
     public int getItemCount() {
         return carparkList.size();

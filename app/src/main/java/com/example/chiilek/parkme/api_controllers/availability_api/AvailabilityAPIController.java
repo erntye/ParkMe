@@ -43,12 +43,9 @@ public class AvailabilityAPIController implements Callback<Envelope> {
 
     static final private String BASE_URL = "https://api.data.gov.sg/v1/transport/";
     AvailabilityCallback mavailabilityCallback;
-    int mcallbackIndex;
 
-
-    public void makeCall(int callbackIndex, AvailabilityCallback availCallback){
+    public void makeCall(AvailabilityCallback availCallback){
         mavailabilityCallback = availCallback;
-        mcallbackIndex = callbackIndex;
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
@@ -58,7 +55,7 @@ public class AvailabilityAPIController implements Callback<Envelope> {
                 .build();
 
         CarParkAvailabilityAPI carParkAvailabilityAPI = retrofit.create(CarParkAvailabilityAPI.class);
-        Log.d("Check", BASE_URL + "carpark-availability?date_time=" + formatDateTime());
+        Log.d("AvailabilityAPIController", "GET call URL: " + BASE_URL + "carpark-availability?date_time=" + formatDateTime());
         Call<Envelope> call = carParkAvailabilityAPI.getAvailability(formatDateTime());
         call.enqueue(this);
     }
@@ -90,33 +87,36 @@ public class AvailabilityAPIController implements Callback<Envelope> {
 
     @Override
     public void onResponse(@NonNull Call<Envelope> call, @NonNull Response<Envelope> response) {
+        Log.d("AvailabilityAPIController","On Response from call, response code: " + Integer.toString(response.code()));
         Envelope envelope = response.body();
 
         if (envelope != null){
-            Log.d("SUCCESS", "*****************************************************");
+            Log.d("AvailabilityAPIController", "Envelope is not null");
 
             if (envelope.getItem() != null){
-                mavailabilityCallback.onSuccess(mcallbackIndex, envelope.getItem());
+                mavailabilityCallback.onSuccess(envelope.getItem());
                 //APIRepository.setCarParkList(envelope.getItem().getCarParkData());
-                Log.d("Repo_UpdateDateTime", envelope.getItem().getTimestamp());
-                Log.d("Repo_CarParkNumber", envelope.getItem().getCarParkData().get(0).getUpdateDatetime());
-                Log.d("Repo_Avail", Integer.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getLotsAvailable()));
-                Log.d("Repo_Total", Integer.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getTotalLots()));
-                Log.d("Repo_Type", Character.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getLotType()));
-                Log.d("Repo_CarParkDate", envelope.getItem().toString());
+                Log.d("AvailabilityAPIController","Printing out details of first Item in Envelope from availability API call.\n" +
+                        "UpdateDateTime: " + envelope.getItem().getTimestamp() + "\n" +
+                        "CarParkNumber:  " + envelope.getItem().getCarParkData().get(0).getCarParkNumber()+ "\n" +
+                        "Available Lots: " + Integer.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getLotsAvailable()) + "\n" +
+                        "Total Lots:     " + Integer.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getTotalLots())+ "\n" +
+                        "Lots Type:      " + Character.toString(envelope.getItem().getCarParkData().get(0).getCarParkInfo().get(0).getLotType()));
             } else {
-                Log.d("AvailabilityAPIController", "No object pulled: " + response.body().toString());
+                Log.d("AvailabilityAPIController", "No Item in Envelope; No object pulled: " + response.body().toString());
+                mavailabilityCallback.onFailure();
             }
         }
         else {
-            Log.d("Repo_CarPark is Null", "No object pulled: " + response.toString());
+            Log.d("AvailabilityAPIController", " Envelope is Null; No object pulled: " + response.toString());
             mavailabilityCallback.onFailure();
         }
     }
 
     @Override
     public void onFailure(@NonNull Call<Envelope> call, @NonNull Throwable t) {
-        Log.d("Repo_YOU FAILEDDDDDDDDDDDD********@#$%^&*", t.getMessage());
+        Log.d("AvailabilityAPIController", "onFailure, error message: " + t.getMessage());
+        mavailabilityCallback.onFailure();
         t.getStackTrace();
     }
 }

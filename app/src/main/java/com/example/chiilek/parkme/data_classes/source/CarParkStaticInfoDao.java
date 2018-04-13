@@ -14,8 +14,6 @@ import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 @Dao
 public interface CarParkStaticInfoDao {
 
-
-
     @Query("SELECT * FROM CarParkInfo")
     List<CarParkStaticInfo> getAll();
 

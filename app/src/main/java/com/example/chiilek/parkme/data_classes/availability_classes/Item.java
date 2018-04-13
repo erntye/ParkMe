@@ -1,5 +1,7 @@
 package com.example.chiilek.parkme.data_classes.availability_classes;
 
+import android.util.Log;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -34,6 +36,8 @@ public class Item {
     }
 
     public CarParkDatum getCarParkDatum(String cpNumber){
+        Log.d("Item", "Size of response from availability API: " + carParkData.size());
+        Log.d("Item", "Searching availability API response for this car park: " + cpNumber);
         return carParkData.stream().filter(o -> o.getCarParkNumber().equals(cpNumber)).findFirst().get();
     }
 
