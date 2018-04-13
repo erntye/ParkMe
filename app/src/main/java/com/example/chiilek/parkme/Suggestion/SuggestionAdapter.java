@@ -78,7 +78,6 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
                 mContext.startActivity(intent);
             }
         });
-
     }
 
     //function to allow activity to add entire list at one time

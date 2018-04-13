@@ -96,9 +96,9 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
 //        LatLng endPoint = new LatLng(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
 
-        //TODO place the code below to correct place
-        //SHOW MESSAGE WHEN REACHED     /**********************************************************/
-        startActivity(new Intent(NavigationActivity.this, ReachMessageActivity.class));
+//        //TODO place the code below to correct place
+//        //SHOW MESSAGE WHEN REACHED     /**********************************************************/
+//        startActivity(new Intent(NavigationActivity.this, ReachMessageActivity.class));
     }
 
 
