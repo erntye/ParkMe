@@ -20,7 +20,6 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.List;
 
 public class SelectRouteViewModel extends AndroidViewModel {
-    private CarParkStaticInfo chosenCarPark;
     private MutableLiveData<LatLng> endPoint;
     private MutableLiveData<LatLng> startPoint;
     private MutableLiveData<List<DirectionsAndCPInfo>> directionsAndCarParksList;
@@ -37,22 +36,20 @@ public class SelectRouteViewModel extends AndroidViewModel {
 
 
     //to be set up by SelectRouteActivity
-    public SelectRouteViewModel(Application application, CarParkStaticInfo chosenCarPark){
+    public SelectRouteViewModel(Application application, LatLng chosenDestination){
         super(application);
-        this.chosenCarPark = chosenCarPark;
         this.mRepository = Repository.getInstance(this.getApplication());
         mLocationRepo = LocationRepository.getLocationRepository(this.getApplication());
         //TODO get endPoint from user from activity
         endPoint = new MutableLiveData<>();
         //endPoint.setValue(new LatLng(1.378455, 103.755149));
-        endPoint.setValue(chosenCarPark.getLatLng());
+        endPoint.setValue(chosenDestination);
         currentLocation = mLocationRepo.getLocation();
         //start point initializes at current location but the user can type into the bar to set it
         startPoint = new MutableLiveData<>();
         startPoint.setValue(currentLocation.getValue());
         previousLocation = currentLocation.getValue();
         directionsAndCarParksList = new MutableLiveData<>();
-
 
         updatingRouteDirections = new MutableLiveData<>();
 
@@ -136,6 +133,7 @@ public class SelectRouteViewModel extends AndroidViewModel {
         //TODO initialize carParkList and route(?)
 
     }
+/*
     //overloaded constructor in the meantime before the frontend can pass the backend information
     public SelectRouteViewModel(Application application){
         super(application);
@@ -211,6 +209,7 @@ public class SelectRouteViewModel extends AndroidViewModel {
             }
         });
     }
+*/
 
     //called by SelectRouteActivity whenever user inputs a new search term endPoint
     public void setEndPoint(LatLng searchTerm){

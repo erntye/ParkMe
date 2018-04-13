@@ -19,6 +19,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +33,7 @@ import com.example.chiilek.parkme.MultiSearchFragment;
 import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.ViewMap.ViewMapActivity;
 import com.example.chiilek.parkme.ViewMap.ViewMapViewModel;
+import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.repository.LocationService;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -74,7 +76,7 @@ public class RouteOverviewActivity extends FragmentActivity
     private LocationService mLocationService;
     private final int REQUEST_PERMISSION_LOCATION = 1;
     private List<LatLng> sampleWayPoints;
-
+    private DirectionsAndCPInfo mChosenRoute;
     // ---------------------------------------
     //             CHECK PERMISSIONS
     // ---------------------------------------
@@ -88,8 +90,9 @@ public class RouteOverviewActivity extends FragmentActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        mChosenRoute = (DirectionsAndCPInfo) getIntent().getSerializableExtra("chosenRoute");
         //Create a view model and allow re-created activities to get the same view model instance
-        model = ViewModelProviders.of(this).get(NavigationViewModel.class);
+        //model = ViewModelProviders.of(this).get(NavigationViewModel.class);
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
 //        LatLng endPoint = new LatLng(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
@@ -97,7 +100,9 @@ public class RouteOverviewActivity extends FragmentActivity
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(RouteOverviewActivity.this, NavigationActivity.class));
+                Intent intent = new Intent(RouteOverviewActivity.this, NavigationActivity.class);
+                intent.putExtra("chosenRoute",mChosenRoute);
+                startActivity(intent);
             }
         });
 
@@ -159,7 +164,7 @@ public class RouteOverviewActivity extends FragmentActivity
         sampleWayPoints.add(new LatLng(37.4130, -122.0831));
         sampleWayPoints.add(new LatLng(37.4000, -122.0762));
         sampleWayPoints.add(new LatLng(37.3830, -122.0870));
-        PolylineOptions route = model.getInitialRoute();
+        PolylineOptions route = mChosenRoute.getGoogleMapsDirections().getPolylineOptions();
 //        plotPolyline(sampleWayPoints);
         plotPolyline(route);
 
