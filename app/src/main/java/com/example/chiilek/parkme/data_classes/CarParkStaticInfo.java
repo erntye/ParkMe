@@ -97,17 +97,13 @@ public class CarParkStaticInfo implements Serializable{
         return typeOfParkingSystem;
     }
 
-    public void setTypeOfParkingSystem(String typeOfParkingSystem) {
-        this.typeOfParkingSystem = typeOfParkingSystem;
-    }
+    public void setTypeOfParkingSystem(String typeOfParkingSystem) { this.typeOfParkingSystem = typeOfParkingSystem; }
 
     public String getShortTermParking() {
         return shortTermParking;
     }
 
-    public void setShortTermParking(String shortTermParking) {
-        this.shortTermParking = shortTermParking;
-    }
+    public void setShortTermParking(String shortTermParking) { this.shortTermParking = shortTermParking; }
 
     public String getFreeParking() {
         return freeParking;

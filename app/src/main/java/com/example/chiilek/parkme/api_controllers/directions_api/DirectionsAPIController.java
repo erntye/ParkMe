@@ -44,14 +44,26 @@ public class DirectionsAPIController {
 
         Call<GoogleMapsDirections> call = directionsAPI.getDirections(params);
 
-        System.out.println("before enqueue, calling for: " + destination.toString());
+        Log.d("DirectionsAPIController","before enqueue, calling for: " + destination.toString());
 
         call.enqueue(new Callback<GoogleMapsDirections>(){
             @Override
             public void onResponse(Call<GoogleMapsDirections> call, Response<GoogleMapsDirections> response){
                 Log.d("DirectionsAPIController","in response");
                 GoogleMapsDirections gMapsDirections = response.body();
-                repoCallback.onSuccess(gMapsDirections);
+                switch(gMapsDirections.getStatus()){
+                    //either origin or destination is a invalid LatLng pair.
+                    case "NOT_FOUND":
+                        Log.d("DirectionsAPIController", "onResponse but gMaps status NOT_FOUND");
+                        repoCallback.onFailure();
+                        break;
+                    case "ZERO_RESULTS":
+                        Log.d("DirectionsAPIController", "onResponse but gMaps status ZERO_RESULTS");
+                        repoCallback.onFailure();
+                        break;
+                    default:
+                        repoCallback.onSuccess(gMapsDirections);
+                }
             }
 
             @Override

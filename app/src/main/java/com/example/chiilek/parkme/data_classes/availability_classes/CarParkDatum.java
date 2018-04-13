@@ -3,6 +3,7 @@ package com.example.chiilek.parkme.data_classes.availability_classes;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,6 +28,14 @@ import java.util.List;
  */
 
 public class CarParkDatum {
+
+    //for generating default objects
+    public CarParkDatum(){
+        carParkInfo = new ArrayList<CarParkInfo>();
+        carParkInfo.add(new CarParkInfo());
+        carParkNumber = "Unavailable";
+        updateDatetime = "Unavailable";
+    }
 
     @SerializedName("carpark_info")
     @Expose

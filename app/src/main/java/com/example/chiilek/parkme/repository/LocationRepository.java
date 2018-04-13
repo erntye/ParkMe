@@ -45,7 +45,7 @@ public class LocationRepository  {
         mContext = context;
         mFusedClient = LocationServices.getFusedLocationProviderClient(mContext);
         mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(3000);
+        mLocationRequest.setInterval(2000);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationCallback = new LocationCallback() {
@@ -54,14 +54,14 @@ public class LocationRepository  {
                 if (locationResult == null) {return;}
                 Location location = locationResult.getLastLocation();
                 currentLocation.setValue(new LatLng(location.getLatitude(), location.getLongitude()));
-                Log.d("Location Repo","Location Update is" + location.getLatitude() + " "
+                Log.d("Location Repo","Location Update is " + location.getLatitude() + " "
                         + location.getLongitude());
             }
         };
         startLocationUpdate();
         currentLocation = new MutableLiveData<>();
-        currentLocation.setValue(new LatLng(37.4219983,-122.084));
-        Log.d("Location Repo", "created");
+        currentLocation.setValue(new LatLng(1.321,103.850));
+        Log.d("Location Repo", "LocationRepository constructed");
     }
 
     public static LocationRepository getLocationRepository(Context context){
@@ -89,8 +89,8 @@ public class LocationRepository  {
             Log.d("Location Repo","update permission not granted");
         }
     }
-    public LiveData<LatLng> getLocation(){
-        Log.d("Location Repo", "return current location" + currentLocation.getValue().toString());
+    public MutableLiveData<LatLng> getLocation(){
+        Log.d("Location Repo", "getLocation called, returning current location " + currentLocation.getValue().toString());
         return this.currentLocation;
     }
 
@@ -105,7 +105,7 @@ public class LocationRepository  {
                         @Override
                         public void onSuccess(Location location) {
                             if (location != null){
-                                Log.d("Location Repo","getlastlocation is " + location.getLongitude() + location.getLatitude());
+                                Log.d("Location Repo","getLastLocation is " + location.getLongitude() + location.getLatitude());
                                 currentLocation.setValue(new LatLng(location.getLatitude(),location.getLongitude()));
                             }
                         }

@@ -31,7 +31,6 @@ import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityAPIController;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.repository.LocationService;
-import com.example.chiilek.parkme.repository.Repository;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -159,7 +158,6 @@ public class ViewMapActivity extends FragmentActivity
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSION_LOCATION);
-
             return;
         }
         Repository repository = Repository.getInstance(this); // TODO remove this shit bruh
@@ -199,17 +197,17 @@ public class ViewMapActivity extends FragmentActivity
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             String name = className.getClassName();
-            Log.d("Activity", "In Service Connection");
+            Log.d("ViewMapActivity", "In Service Connection");
             if (name.endsWith("LocationService")) {
                 mLocationService = ((LocationService.LocationBinder) service).getService();
                 mLocationService.startLocationUpdate();
-                Log.d("Activity", "Location Update started");
+                Log.d("ViewMapActivity", "Location Update started");
             }
         }
 
         public void onServiceDisconnected(ComponentName className) {
             if (className.getClassName().equals("LocationService")) {
-                Log.d("Activity", "Service disconnected");
+                Log.d("ViewMapActivity", "Service disconnected");
                 mLocationService = null;
             }
         }
@@ -289,6 +287,8 @@ public class ViewMapActivity extends FragmentActivity
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        startActivity(new Intent(ViewMapActivity.this,  CarParkPopUpActivity.class));
+        Log.d("ViewMapActivity","Pressed Init Button");
 
         CarParkStaticInfo cpsi = (CarParkStaticInfo) marker.getTag();
 
@@ -302,7 +302,7 @@ public class ViewMapActivity extends FragmentActivity
 
         intent.putExtra("CarParkStaticInfo", (CarParkStaticInfo) marker.getTag());
         startActivity(intent);
-        Log.d("Activity","Pressed Init Button");
+        Log.d("ViewMapActivity","Pressed Init Button");
         //Toast.makeText(this, "Location:\n" + marker.getPosition(), Toast.LENGTH_LONG).show();
         return false;
     }
