@@ -34,11 +34,16 @@
         <activity
             android:name=".ViewMap.ViewMapActivity"
             android:label="@string/title_activity_view_map">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity
             android:name=".Suggestion.SuggestionsActivity"
             android:label="CarParkSuggestions">
+
         </activity>
 
         <activity
@@ -51,6 +56,7 @@
         <activity
             android:name=".navigation.RouteOverviewActivity"
             android:label="@string/title_activity_route_overview">
+
 
         </activity>
         <activity
@@ -68,10 +74,7 @@
         <activity
             android:name=".navigation.NavigationActivity"
             android:label="@string/title_activity_navigation">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
 
         </activity>
     </application>
