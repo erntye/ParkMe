@@ -159,9 +159,9 @@ public class RouteOverviewActivity extends FragmentActivity
         sampleWayPoints.add(new LatLng(37.4130, -122.0831));
         sampleWayPoints.add(new LatLng(37.4000, -122.0762));
         sampleWayPoints.add(new LatLng(37.3830, -122.0870));
-        PolylineOptions route = model.getInitialRoute();
-//        plotPolyline(sampleWayPoints);
-        plotPolyline(route);
+//        PolylineOptions route = model.getInitialRoute();
+//        plotPolyline(route);
+        plotPolyline(sampleWayPoints);
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -173,7 +173,7 @@ public class RouteOverviewActivity extends FragmentActivity
         for(LatLng latlng:sampleWayPoints)
             builder.include(latlng);
         LatLngBounds bounds = builder.build();
-        CameraUpdate mCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds,width,(int)(height*0.6),10);
+        CameraUpdate mCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds,width,(int)(height*0.5),2);
         mMap.animateCamera(mCameraUpdate);
     }
 
