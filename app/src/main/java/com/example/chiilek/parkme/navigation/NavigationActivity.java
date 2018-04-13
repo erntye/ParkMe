@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -39,6 +40,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.android.gms.maps.model.JointType.ROUND;
 
@@ -104,6 +106,8 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        MapStyleOptions nightStyle = MapStyleOptions.loadRawResourceStyle(this, R.raw.styles_night);
+        googleMap.setMapStyle(nightStyle);
 
         // ---------------------------------------
         //             CHECK PERMISSIONS
@@ -131,7 +135,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         mMap.moveCamera(CameraUpdateFactory.newLatLng(googleplex));
 
         blackPolyLineOptions = new PolylineOptions();
-        blackPolyLineOptions.color(Color.BLACK);
+        blackPolyLineOptions.color(Color.LTGRAY);
         blackPolyLineOptions.width(5);
         blackPolyLineOptions.startCap(new SquareCap());
         blackPolyLineOptions.endCap(new SquareCap());
@@ -232,7 +236,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     public void plotPolyline(List<LatLng> waypoints){
         PolylineOptions plo = new PolylineOptions();
         plo.addAll(waypoints);
-        plo.color(R.color.colorMain);
+        plo.color(Color.LTGRAY);
         plo.width(20);
         mMap.addPolyline(plo);
     }
