@@ -22,4 +22,13 @@
         android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
         />
 
+    <ImageView
+        android:id="@+id/viewmap_recommendations_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="70dp"
+        android:src="@drawable/button_recommendations" />
+
 </RelativeLayout>

@@ -11,7 +11,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -23,11 +22,14 @@ import android.os.Bundle;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.lifecycle.Observer;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 
 import com.example.chiilek.parkme.CarParkPopUp.CarParkPopUpActivity;
 import com.example.chiilek.parkme.R;
+import com.example.chiilek.parkme.Suggestion.SuggestionsActivity;
 import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityAPIController;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.repository.LocationService;
@@ -50,6 +52,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ViewMapActivity extends FragmentActivity
@@ -62,6 +65,8 @@ public class ViewMapActivity extends FragmentActivity
     private FusedLocationProviderClient mFusedLocationClient;
     Bitmap bitmap;
     Bitmap smallMarker;
+
+    List<Marker> MarkerList;
 
     ViewMapViewModel model;
     //needed to bind to service to get location updates
@@ -81,6 +86,8 @@ public class ViewMapActivity extends FragmentActivity
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        MarkerList = new ArrayList<>();
+
         model = ViewModelProviders.of(this).get(ViewMapViewModel.class);
         //TODO pass current location to Viewmodel
         model.getCarParkList().observe(this, new Observer<List<CarParkStaticInfo>>() {
@@ -98,13 +105,15 @@ public class ViewMapActivity extends FragmentActivity
 
         Repository repository = Repository.getInstance(this); // TODO remove this shit bruh
 
-        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cap_park_marker);
-        smallMarker = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
+        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.carpark_sign);
+        smallMarker = Bitmap.createScaledBitmap(bitmap, 80, 80, false);
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
+                mMap.clear();
+
                 Log.d("Maps", "Place selected: " + place.getName());
-                CameraPosition cp = new CameraPosition.Builder().target(place.getLatLng()).zoom(14).build();
+                CameraPosition cp = new CameraPosition.Builder().target(place.getLatLng()).zoom(16).build();
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
                 List<CarParkStaticInfo> list = repository.searchNearbyCarParks(place.getLatLng()).getValue();
 
@@ -117,6 +126,17 @@ public class ViewMapActivity extends FragmentActivity
                             .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)))
                             .setTag(cpsi);
                 }
+
+                mMap.addMarker(new MarkerOptions().position(place.getLatLng()));
+
+                //this makes the RECOMMENDATIONS button go to suggestions
+                ImageView buttonRec = findViewById(R.id.viewmap_recommendations_button);
+                buttonRec.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(ViewMapActivity.this, SuggestionsActivity.class));
+                    }
+                });
             }
 
             @Override
@@ -137,21 +157,8 @@ public class ViewMapActivity extends FragmentActivity
     @Override
     protected void onPause() {
         super.onPause();
-        //unbind to service whenever activity is closed
-//        mLocationService.stopLocationUpdates();
-//        unbindService(mConnection);
-
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -288,28 +295,16 @@ public class ViewMapActivity extends FragmentActivity
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        startActivity(new Intent(ViewMapActivity.this,  CarParkPopUpActivity.class));
-        Log.d("ViewMapActivity","Pressed Init Button");
-
         CarParkStaticInfo cpsi = (CarParkStaticInfo) marker.getTag();
-
         if (cpsi == null){
             Log.d("Marker", "FUCKFUCKFUCK");
+        } else {
+            Log.d("Marker", cpsi.getCPNumber());
         }
-
         Intent intent = new Intent(ViewMapActivity.this,  CarParkPopUpActivity.class);
 
-
-
-        intent.putExtra("CarParkStaticInfo", (CarParkStaticInfo) marker.getTag());
+        intent.putExtra("CarParkStaticInfo", cpsi);
         startActivity(intent);
-        Log.d("ViewMapActivity","Pressed Init Button");
-        //Toast.makeText(this, "Location:\n" + marker.getPosition(), Toast.LENGTH_LONG).show();
         return false;
     }
 }
-
-
-
-
-

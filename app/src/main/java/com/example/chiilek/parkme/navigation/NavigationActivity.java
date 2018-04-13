@@ -2,18 +2,23 @@ package com.example.chiilek.parkme.navigation;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.animation.ValueAnimator;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 
+import com.example.chiilek.parkme.MultiSearchFragment;
 import com.example.chiilek.parkme.NavigationViewModelFactory;
 import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.ViewMap.ViewMapActivity;
@@ -24,10 +29,21 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.google.android.gms.maps.model.JointType.ROUND;
 
 /**
  * Expects following data passed in as extras in Intent:
@@ -40,6 +56,19 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
+    private List<LatLng> sampleWayPoints;
+    private float v;
+    int index, next;
+    private double lat,lng;
+    private Handler handler;
+    private LatLng startPosition, endPosition;
+    private String destination;
+    private MultiSearchFragment searchFragment;
+    private PolylineOptions blackPolyLineOptions;
+    private Polyline blackPolyline;
+    private LatLng myPosition;
+    private Marker marker;
+
     private NavigationViewModel model;
 
     @Override
@@ -50,6 +79,12 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        sampleWayPoints= new ArrayList<>();
+        sampleWayPoints.add(new LatLng(37.4220, -122.0940));
+        sampleWayPoints.add(new LatLng(37.4130, -122.0831));
+        sampleWayPoints.add(new LatLng(37.4000, -122.0762));
+        sampleWayPoints.add(new LatLng(37.3830, -122.0870));
 
         //Create a view model and allow re-created activities to get the same view model instance
         model = ViewModelProviders.of(this).get(NavigationViewModel.class);
@@ -104,7 +139,105 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         LatLng googleplex = new LatLng(37.4220, -122.0940);
         mMap.addMarker(new MarkerOptions().position(googleplex).title("Marker in Googleplex"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(googleplex));
+
+        blackPolyLineOptions = new PolylineOptions();
+        blackPolyLineOptions.color(Color.BLACK);
+        blackPolyLineOptions.width(5);
+        blackPolyLineOptions.startCap(new SquareCap());
+        blackPolyLineOptions.endCap(new SquareCap());
+        blackPolyLineOptions.jointType(JointType.ROUND);
+        blackPolyline = mMap.addPolyline(blackPolyLineOptions);
+
+
+        ValueAnimator polylineAnimator = ValueAnimator.ofInt(0,100);
+        polylineAnimator.setDuration(3000);
+        polylineAnimator.setInterpolator(new LinearInterpolator());
+        polylineAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                List<LatLng> points = blackPolyline.getPoints();
+                int percentValue = (int)animation.getAnimatedValue();
+                int size = points.size();
+                int newPoints = (int) (size*(percentValue / 100.0f));
+                List<LatLng> p = points.subList(0, newPoints);
+                blackPolyline.setPoints(p);
+            }
+        });
+        // polylineAnimator.start();
+
+        LatLng test = new LatLng(37.3830, -122.0870);
+
+        //car marker goes here
+        marker = mMap.addMarker(new MarkerOptions().position(test)
+                .flat(true)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.car)));
+
+        handler = new Handler();
+        index = -1;
+        next = 1;
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(index < sampleWayPoints.size()-1){
+                    index++;
+                    next = index+1;
+                    startPosition = sampleWayPoints.get(index);
+                    endPosition = sampleWayPoints.get(next);
+                }
+
+                ValueAnimator valueAnimator = ValueAnimator.ofInt(0,1);
+                valueAnimator.setDuration(3000);
+                valueAnimator.setInterpolator(new LinearInterpolator());
+                valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        v = valueAnimator.getAnimatedFraction();
+                        lng = v*endPosition.longitude+(1-v)*startPosition.longitude;
+                        lat = v*endPosition.latitude+(1-v)*startPosition.latitude;
+                        LatLng newPos = new LatLng(lat,lng);
+                        marker.setPosition(newPos);
+                        marker.setAnchor(0.5f,0.5f);
+                        marker.setRotation(getBearing(startPosition,newPos));
+                        mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
+                                .target(newPos)
+                                .zoom(15.5f)
+                                .build(
+                                )));
+
+                        plotPolyline(sampleWayPoints);
+
+                    }
+                });
+                valueAnimator.start();
+                handler.postDelayed(this,3000);
+            }
+        }, 3000);
     }
+
+    private float getBearing(LatLng startPosition, LatLng newPos) {
+        double lat = Math.abs(startPosition.latitude - newPos.latitude);
+        double lng = Math.abs(startPosition.longitude - newPos.longitude);
+
+        if (startPosition.latitude< newPos.latitude && startPosition.longitude < newPos.longitude){
+            return (float) Math.toDegrees(Math.atan(lng/lat));
+        }else if (startPosition.latitude >= newPos.latitude && startPosition.longitude < newPos.longitude){
+            return (float) ((90-Math.toDegrees(Math.atan(lng/lat)))+90);
+        }else if (startPosition.latitude >= newPos.latitude && startPosition.longitude >= newPos.longitude){
+            return (float) (Math.toDegrees(Math.atan(lng/lat))+180);
+        }else if (startPosition.latitude< newPos.latitude && startPosition.longitude >= newPos.longitude){
+            return (float) ((90-Math.toDegrees(Math.atan(lng/lat)))+270);
+        }
+        else return -1;
+    }
+
+    public void plotPolyline(List<LatLng> waypoints){
+        PolylineOptions plo = new PolylineOptions();
+        plo.addAll(waypoints);
+        plo.color(R.color.colorMain);
+        plo.width(20);
+        mMap.addPolyline(plo);
+    }
+
 
 
 
@@ -147,3 +280,8 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 }
+
+//model.getGoogleMapsDirections().observe(this, newDirections ->{
+//        polopt = newDirections.getPolylineOptions();
+//        plotPolyline(polopt);
+//        });

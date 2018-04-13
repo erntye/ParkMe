@@ -1,5 +1,6 @@
 package com.example.chiilek.parkme.navigation;
 
+import android.animation.ValueAnimator;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.arch.lifecycle.ViewModelProviders;
@@ -9,34 +10,50 @@ import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Camera;
+import android.graphics.Color;
 import android.location.Location;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.content.Intent;
 import android.widget.Toast;
 
+import com.example.chiilek.parkme.MultiSearchFragment;
 import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.ViewMap.ViewMapActivity;
 import com.example.chiilek.parkme.ViewMap.ViewMapViewModel;
 import com.example.chiilek.parkme.repository.LocationService;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Expects following data passed in as extras in Intent:
@@ -57,11 +74,7 @@ public class RouteOverviewActivity extends FragmentActivity
     //needed to bind to service to get location updates
     private LocationService mLocationService;
     private final int REQUEST_PERMISSION_LOCATION = 1;
-
-    private LatLng[] sampleWayPoints = new LatLng[]{new LatLng(37.4220, -122.0940),
-                                                    new LatLng(37.4130, -122.0831),
-                                                    new LatLng(37.4000, -122.0762),
-                                                    new LatLng(37.3830, -122.0870)};
+    private List<LatLng> sampleWayPoints;
 
     // ---------------------------------------
     //             CHECK PERMISSIONS
@@ -109,7 +122,7 @@ public class RouteOverviewActivity extends FragmentActivity
         }
 
         // Pass in either list of LatLng or PolylineOptions object
-        plotPolyline(sampleWayPoints);
+        //plotPolyline(sampleWayPoints);
 
         // MAP CAMERA TO GOOGLEPLEX
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -120,7 +133,7 @@ public class RouteOverviewActivity extends FragmentActivity
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             CameraPosition cp = new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(13).build();
-                            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
+                            // mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
                         }
                     }
                 });
@@ -138,9 +151,31 @@ public class RouteOverviewActivity extends FragmentActivity
         // Add a marker in Googleplex and move the camera
         LatLng googleplex = new LatLng(37.4220, -122.0940);
         mMap.addMarker(new MarkerOptions().position(googleplex).title("Marker in Googleplex"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(googleplex));
+        // mMap.moveCamera(CameraUpdateFactory.newLatLng(googleplex));
 
         mMap.setMyLocationEnabled(true);
+
+        // SAMPLE HARDCODED ROUTE
+        sampleWayPoints= new ArrayList<>();
+        sampleWayPoints.add(new LatLng(37.4220, -122.0940));
+        sampleWayPoints.add(new LatLng(37.4130, -122.0831));
+        sampleWayPoints.add(new LatLng(37.4000, -122.0762));
+        sampleWayPoints.add(new LatLng(37.3830, -122.0870));
+
+        plotPolyline(sampleWayPoints);
+
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+
+        int width = dm.widthPixels;
+        int height = dm.heightPixels;
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for(LatLng latlng:sampleWayPoints)
+            builder.include(latlng);
+        LatLngBounds bounds = builder.build();
+        CameraUpdate mCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds,width,(int)(height*0.6),10);
+        mMap.animateCamera(mCameraUpdate);
     }
 
     //establish service connection needed to bind to service
@@ -231,15 +266,18 @@ public class RouteOverviewActivity extends FragmentActivity
     @Override
     public void onMyLocationClick(@NonNull Location location) {
         Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(googleplex));
+
+
     }
 
     /**
      * Plots the Polyline
      * Given an array of waypoints
      */
-    public void plotPolyline(LatLng[] waypoints){
+    public void plotPolyline(List<LatLng> waypoints){
         PolylineOptions plo = new PolylineOptions();
-        plo.add(waypoints);
+        plo.addAll(waypoints);
         plo.color(R.color.colorMain);
         plo.width(20);
         mMap.addPolyline(plo);

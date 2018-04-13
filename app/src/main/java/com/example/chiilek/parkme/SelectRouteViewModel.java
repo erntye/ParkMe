@@ -125,11 +125,11 @@ public class SelectRouteViewModel extends AndroidViewModel {
 //                                    public void onFailure() {
 //
 //                                    }
-//                                }));//whenever endPoint is changed by SelectRouteVM.search()
+//                                }));//whenever destination is changed by SelectRouteVM.search()
 //
 //        //calls repository to search again whenever start point is changed
 //        directionsAndCarParksList = Transformations.switchMap(startPoint, (LatLng newStartPoint)->
-//                mRepository.getDirectionsAndCPs(newStartPoint, endPoint.getValue()));
+//                mRepository.getDirectionsAndCPs(newStartPoint, destination.getValue()));
        /*routeToPlot = Transformations.switchMap(chosenCarPark, (CarParkDatum carpark)->
                 mRepository.getRoutePolyline(carpark));*/
         //TODO initialize carParkList and route(?)
@@ -269,4 +269,7 @@ public class SelectRouteViewModel extends AndroidViewModel {
         super.onCleared();
         mLocationRepo.stopLocationUpdates();
     }
+    public LiveData<GoogleMapsDirections> getGoogleMapsDirections(){ return updatingRouteDirections; }
+
+
 }

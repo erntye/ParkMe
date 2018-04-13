@@ -90,6 +90,10 @@ public class MultiSearchFragment extends Fragment {
         mListener = null;
     }
 
+    public String returnDestination(){
+        return mParam2;
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -104,4 +108,5 @@ public class MultiSearchFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
 }
