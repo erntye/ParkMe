@@ -185,5 +185,7 @@ public class SelectRouteViewModel extends AndroidViewModel {
         return navigationStarted;
     }
 
+    public LiveData<GoogleMapsDirections> getGoogleMapsDirections(){ return updatingRouteDirections; }
+
 
 }

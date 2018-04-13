@@ -137,7 +137,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 
 
         ValueAnimator polylineAnimator = ValueAnimator.ofInt(0,100);
-        polylineAnimator.setDuration(2000);
+        polylineAnimator.setDuration(3000);
         polylineAnimator.setInterpolator(new LinearInterpolator());
         polylineAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -150,14 +150,14 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                 blackPolyline.setPoints(p);
             }
         });
-        polylineAnimator.start();
+        // polylineAnimator.start();
 
         LatLng test = new LatLng(37.3830, -122.0870);
 
         //car marker goes here
         marker = mMap.addMarker(new MarkerOptions().position(test)
                 .flat(true)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.cap_park_marker)));
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.car)));
 
         handler = new Handler();
         index = -1;
@@ -191,13 +191,14 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                                 .build(
                                 )));
 
+                        plotPolyline(sampleWayPoints);
+
                     }
                 });
                 valueAnimator.start();
+                handler.postDelayed(this,3000);
             }
         }, 3000);
-
-        plotPolyline(sampleWayPoints);
     }
 
     private float getBearing(LatLng startPosition, LatLng newPos) {
@@ -266,3 +267,8 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 }
+
+//model.getGoogleMapsDirections().observe(this, newDirections ->{
+//        polopt = newDirections.getPolylineOptions();
+//        plotPolyline(polopt);
+//        });
