@@ -26,7 +26,7 @@ public abstract class AppDatabase extends RoomDatabase {
         synchronized (sLock) {
             if (INSTANCE == null) {
                 INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                        AppDatabase.class, "newParkMe.db")
+                        AppDatabase.class, "newParkMe2.db")
                         .openHelperFactory(new AssetSQLiteOpenHelperFactory())
                         .allowMainThreadQueries()
                         .build();

@@ -48,6 +48,15 @@ public class CarParkStaticInfo {
 
     private String longitude;
 
+    @ColumnInfo(name="available_car_lots")
+    private String availableCarLots;
+
+    @ColumnInfo(name="total_car_lots")
+    private String totalCarLots;
+
+    @ColumnInfo(name="last_update_datetime")
+    private String lastUpdateDatetime;
+
 
     //Getters and Setters
     @NonNull
@@ -134,4 +143,16 @@ public class CarParkStaticInfo {
     public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
+
+    public String getAvailableCarLots() { return availableCarLots; }
+
+    public void setAvailableCarLots(String availableCarLots) { this.availableCarLots = availableCarLots; }
+
+    public String getTotalCarLots() { return totalCarLots; }
+
+    public void setTotalCarLots(String totalCarLots) { this.totalCarLots = totalCarLots; }
+
+    public String getLastUpdateDatetime() { return lastUpdateDatetime; }
+
+    public void setLastUpdateDatetime(String lastUpdateDatetime) { this.lastUpdateDatetime = lastUpdateDatetime; }
 }
