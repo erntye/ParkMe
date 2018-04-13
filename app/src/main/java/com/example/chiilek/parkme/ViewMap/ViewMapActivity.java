@@ -143,6 +143,7 @@ public class ViewMapActivity extends FragmentActivity
                 //this makes the RECOMMENDATIONS button go to suggestions
                 destination = place.getLatLng();
                 suggestCarParks.setVisibility(View.VISIBLE);
+                Log.d("Visibility", Integer.toString(suggestCarParks.getVisibility()));
             }
 
             @Override
