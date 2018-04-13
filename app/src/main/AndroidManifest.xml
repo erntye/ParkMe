@@ -71,8 +71,15 @@
         <activity
             android:name=".navigation.NavigationActivity"
             android:label="@string/title_activity_navigation">
+        </activity>
+
+        <activity
+            android:name=".navigation.ReachMessageActivity"
+            android:label="ReachMessage"
+            android:theme="@style/AppTheme.PopUpTheme">
 
         </activity>
+
         <activity android:name=".test.TestActivity2">
         </activity>
     </application>
