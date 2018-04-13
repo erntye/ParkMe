@@ -315,12 +315,12 @@
 
     <ImageView
         android:id="@+id/pop_up_select_button"
-        android:layout_width="105dp"
-        android:layout_height="40dp"
-        android:layout_below="@+id/pop_up_miscellaneous_layout"
+        android:layout_width="115dp"
+        android:layout_height="50dp"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_marginTop="15dp"
-        app:srcCompat="@drawable/select_selector" />
+        android:layout_marginTop="30dp"
+        app:srcCompat="@drawable/select_selector"
+        android:layout_below="@+id/pop_up_miscellaneous_layout" />
 
 </RelativeLayout>
