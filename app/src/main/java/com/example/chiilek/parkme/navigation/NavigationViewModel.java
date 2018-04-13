@@ -13,6 +13,7 @@ import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDire
 import com.example.chiilek.parkme.repository.LocationRepository;
 import com.example.chiilek.parkme.repository.Repository;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 public class NavigationViewModel extends AndroidViewModel {
 
@@ -104,6 +105,11 @@ public class NavigationViewModel extends AndroidViewModel {
             }
         });
     }
+
+    public PolylineOptions getInitialRoute(){
+        return chosenRoute.getGoogleMapsDirections().getPolylineOptions();
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();

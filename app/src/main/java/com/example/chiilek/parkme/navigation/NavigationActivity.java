@@ -294,6 +294,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
             }
         }
     }
+
 }
 
 //model.getGoogleMapsDirections().observe(this, newDirections ->{
