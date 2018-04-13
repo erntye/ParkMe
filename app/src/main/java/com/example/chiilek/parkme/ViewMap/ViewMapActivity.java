@@ -143,6 +143,7 @@ public class ViewMapActivity extends FragmentActivity
                 //this makes the RECOMMENDATIONS button go to suggestions
                 destination = place.getLatLng();
                 suggestCarParks.setVisibility(View.VISIBLE);
+                Log.d("Visibility", Integer.toString(suggestCarParks.getVisibility()));
             }
 
             @Override
@@ -308,7 +309,6 @@ public class ViewMapActivity extends FragmentActivity
             Log.d("Marker", cpsi.getCPNumber());
         }
         Intent intent = new Intent(ViewMapActivity.this,  CarParkPopUpActivity.class);
-
         intent.putExtra("CarParkStaticInfo", cpsi);
         startActivity(intent);
         return false;
