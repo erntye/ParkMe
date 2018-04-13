@@ -1,7 +1,7 @@
 package com.example.chiilek.parkme.Suggestion;
 
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -10,17 +10,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
-import com.example.chiilek.parkme.MultiSearchFragment;
 import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.SelectRouteViewModel;
-import com.example.chiilek.parkme.ViewMap.ViewMapViewModel;
+import com.example.chiilek.parkme.SelectRouteViewModelFactory;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
-import com.google.android.gms.maps.model.LatLng;
+import com.example.chiilek.parkme.test.TestEntity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
 public class SuggestionsActivity extends AppCompatActivity{
@@ -60,6 +58,13 @@ public class SuggestionsActivity extends AppCompatActivity{
 
         //code to observe viewmodel
         model = ViewModelProviders.of(this).get(SelectRouteViewModel.class);
+/*      //TODO to replace above when intent from popup works
+        Intent parentIntent = getIntent();
+        CarParkStaticInfo chosenCarPark = (CarParkStaticInfo) parentIntent.getSerializableExtra("chosenCarPark");
+        model = ViewModelProviders
+                .of(this, new SelectRouteViewModelFactory(this.getApplication(),chosenCarPark))
+                .get(SelectRouteViewModel.class);
+        */
         model.getMediatorCurrentLoc().observe(this, newData->
                 Log.d("SuggestionsActivity", "observing mediator current location")
         );
@@ -73,7 +78,7 @@ public class SuggestionsActivity extends AppCompatActivity{
 
                     // for testing, remove soon
                     if (!model.getNavigationStarted()) {
-                        model.setDestination(mAdapter.getCarParkInfo(0).getDestinationLatLng());
+                        model.setEndPoint(mAdapter.getCarParkInfo(0).getDestinationLatLng());
                         model.setChosenRoute(mAdapter.getCarParkInfo(0));
                         model.setNavigationStarted();
                     }
