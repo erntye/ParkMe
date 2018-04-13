@@ -3,8 +3,6 @@ package com.example.chiilek.parkme.navigation;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.animation.ValueAnimator;
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,12 +17,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
-import com.example.chiilek.parkme.CarParkPopUp.CarParkPopUpActivity;
 import com.example.chiilek.parkme.MultiSearchFragment;
-import com.example.chiilek.parkme.NavigationViewModelFactory;
 import com.example.chiilek.parkme.R;
-import com.example.chiilek.parkme.Suggestion.SuggestionsActivity;
-import com.example.chiilek.parkme.ViewMap.ViewMapActivity;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -46,9 +40,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import static com.google.android.gms.maps.model.JointType.ROUND;
 
 /**
  * Expects following data passed in as extras in Intent:
@@ -92,13 +83,13 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         sampleWayPoints.add(new LatLng(37.3830, -122.0870));
 
         //Create a view model and allow re-created activities to get the same view model instance
-        model = ViewModelProviders.of(this).get(NavigationViewModel.class);
+        //model = ViewModelProviders.of(this).get(NavigationViewModel.class);
         //TODO update the above with the below once completed
-/*        Intent parentIntent = getIntent();
-        DirectionsAndCPInfo InitialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("initialChosenRoute");
+        Intent parentIntent = getIntent();
+        DirectionsAndCPInfo initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("initialChosenRoute");
         model = ViewModelProviders
-                .of(this,new NavigationViewModelFactory(this.getApplication(),))
-                .get(NavigationViewModel.class );*/
+                .of(this,new NavigationViewModelFactory(this.getApplication(),initialChosenRoute))
+                .get(NavigationViewModel.class );
 
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
