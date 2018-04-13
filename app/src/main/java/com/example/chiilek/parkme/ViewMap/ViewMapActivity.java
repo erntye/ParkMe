@@ -22,11 +22,14 @@ import android.os.Bundle;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.lifecycle.Observer;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 
 import com.example.chiilek.parkme.CarParkPopUp.CarParkPopUpActivity;
 import com.example.chiilek.parkme.R;
+import com.example.chiilek.parkme.Suggestion.SuggestionsActivity;
 import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityAPIController;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.repository.LocationService;
@@ -102,15 +105,15 @@ public class ViewMapActivity extends FragmentActivity
 
         Repository repository = Repository.getInstance(this); // TODO remove this shit bruh
 
-        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cap_park_marker);
-        smallMarker = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
+        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.carpark_sign);
+        smallMarker = Bitmap.createScaledBitmap(bitmap, 80, 80, false);
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
                 mMap.clear();
 
                 Log.d("Maps", "Place selected: " + place.getName());
-                CameraPosition cp = new CameraPosition.Builder().target(place.getLatLng()).zoom(14).build();
+                CameraPosition cp = new CameraPosition.Builder().target(place.getLatLng()).zoom(16).build();
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
                 List<CarParkStaticInfo> list = repository.searchNearbyCarParks(place.getLatLng()).getValue();
 
@@ -125,6 +128,15 @@ public class ViewMapActivity extends FragmentActivity
                 }
 
                 mMap.addMarker(new MarkerOptions().position(place.getLatLng()));
+
+                //this makes the RECOMMENDATIONS button go to suggestions
+                ImageView buttonRec = findViewById(R.id.viewmap_recommendations_button);
+                buttonRec.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(ViewMapActivity.this, SuggestionsActivity.class));
+                    }
+                });
             }
 
             @Override
