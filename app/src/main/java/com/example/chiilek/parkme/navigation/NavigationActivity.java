@@ -3,8 +3,6 @@ package com.example.chiilek.parkme.navigation;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.animation.ValueAnimator;
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,15 +13,12 @@ import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
-import com.example.chiilek.parkme.CarParkPopUp.CarParkPopUpActivity;
 import com.example.chiilek.parkme.MultiSearchFragment;
-import com.example.chiilek.parkme.NavigationViewModelFactory;
 import com.example.chiilek.parkme.R;
-import com.example.chiilek.parkme.Suggestion.SuggestionsActivity;
-import com.example.chiilek.parkme.ViewMap.ViewMapActivity;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -45,9 +40,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import static com.google.android.gms.maps.model.JointType.ROUND;
 
 /**
  * Expects following data passed in as extras in Intent:
@@ -91,19 +83,21 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         sampleWayPoints.add(new LatLng(37.3830, -122.0870));
 
         //Create a view model and allow re-created activities to get the same view model instance
-        model = ViewModelProviders.of(this).get(NavigationViewModel.class);
+        //model = ViewModelProviders.of(this).get(NavigationViewModel.class);
         //TODO update the above with the below once completed
-/*        Intent parentIntent = getIntent();
-        DirectionsAndCPInfo InitialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("initialChosenRoute");
+        Intent parentIntent = getIntent();
+        DirectionsAndCPInfo initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("initialChosenRoute");
         model = ViewModelProviders
-                .of(this,new NavigationViewModelFactory(this.getApplication(),))
-                .get(NavigationViewModel.class );*/
+                .of(this,new NavigationViewModelFactory(this.getApplication(),initialChosenRoute))
+                .get(NavigationViewModel.class );
 
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
 //        LatLng endPoint = new LatLng(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
 
-
+//        //TODO place the code below to correct place
+//        //SHOW MESSAGE WHEN REACHED     /**********************************************************/
+//        startActivity(new Intent(NavigationActivity.this, ReachMessageActivity.class));
     }
 
 
@@ -148,7 +142,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 
         blackPolyLineOptions = new PolylineOptions();
         blackPolyLineOptions.color(Color.LTGRAY);
-        blackPolyLineOptions.width(5);
+        blackPolyLineOptions.width(30);
         blackPolyLineOptions.startCap(new SquareCap());
         blackPolyLineOptions.endCap(new SquareCap());
         blackPolyLineOptions.jointType(JointType.ROUND);
@@ -156,7 +150,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 
 
         ValueAnimator polylineAnimator = ValueAnimator.ofInt(0,100);
-        polylineAnimator.setDuration(3000);
+        polylineAnimator.setDuration(50000);
         polylineAnimator.setInterpolator(new LinearInterpolator());
         polylineAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -176,7 +170,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         //car marker goes here
         marker = mMap.addMarker(new MarkerOptions().position(test)
                 .flat(true)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.car_icon)));
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor)));
 
         handler = new Handler();
         index = -1;
@@ -200,7 +194,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 //                }
 
                 ValueAnimator valueAnimator = ValueAnimator.ofInt(0,1);
-                valueAnimator.setDuration(3000);
+                valueAnimator.setDuration(50000);
                 valueAnimator.setInterpolator(new LinearInterpolator());
 
                 valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -210,21 +204,22 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                         lng = v*endPosition.longitude+(1-v)*startPosition.longitude;
                         lat = v*endPosition.latitude+(1-v)*startPosition.latitude;
                         LatLng newPos = new LatLng(lat,lng);
+                        float bearing = getBearing(startPosition,newPos);
                         marker.setPosition(newPos);
                         marker.setAnchor(0.5f,0.5f);
-                        marker.setRotation(getBearing(startPosition,newPos));
+                        marker.setRotation(bearing);
                         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
                                 .target(newPos)
-                                .zoom(15.5f)
+                                .zoom(18f)
+                                .bearing(bearing)
                                 .build(
                                 )));
-
                         plotPolyline(sampleWayPoints);
 
                     }
                 });
                 valueAnimator.start();
-                handler.postDelayed(this,3000);
+                handler.postDelayed(this,50000);
             }
         }, 0);
     }
@@ -249,7 +244,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         PolylineOptions plo = new PolylineOptions();
         plo.addAll(waypoints);
         plo.color(Color.LTGRAY);
-        plo.width(20);
+        plo.width(30);
         mMap.addPolyline(plo);
     }
 

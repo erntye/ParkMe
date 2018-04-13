@@ -37,6 +37,11 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+        </activity>
+        <activity
+            android:name=".Suggestion.SuggestionsActivity"
+            android:label="CarParkSuggestions">
         </activity>
         <activity
             android:name=".Suggestion.SuggestionsActivity"
@@ -66,8 +71,15 @@
         <activity
             android:name=".navigation.NavigationActivity"
             android:label="@string/title_activity_navigation">
+        </activity>
+
+        <activity
+            android:name=".navigation.ReachMessageActivity"
+            android:label="ReachMessage"
+            android:theme="@style/AppTheme.PopUpTheme">
 
         </activity>
+
         <activity android:name=".test.TestActivity2">
         </activity>
     </application>

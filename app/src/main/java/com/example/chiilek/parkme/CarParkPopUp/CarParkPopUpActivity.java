@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.example.chiilek.parkme.Suggestion.SuggestionsActivity;
 import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
+import com.example.chiilek.parkme.navigation.RouteOverviewActivity;
 
 import org.w3c.dom.Text;
 
@@ -48,7 +49,9 @@ public class CarParkPopUpActivity extends AppCompatActivity {
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(CarParkPopUpActivity.this, SuggestionsActivity.class));
+                Intent intent = new Intent(CarParkPopUpActivity.this, RouteOverviewActivity.class);
+                intent.putExtra("chosenCarPark",carParkStaticInfo);
+                startActivity(intent);
             }
         });
 
@@ -63,7 +66,7 @@ public class CarParkPopUpActivity extends AppCompatActivity {
         Log.d("dimension", Integer.toString(dm.widthPixels) + Integer.toString(dm.heightPixels));
 
         carParkStaticInfo = (CarParkStaticInfo) getIntent().getSerializableExtra("CarParkStaticInfo");
-
+        Log.d("PopUpActivity", "pop up carpark is "+ carParkStaticInfo.getCPNumber());
 
 
         titleText = findViewById(R.id.pop_up_title_location);
