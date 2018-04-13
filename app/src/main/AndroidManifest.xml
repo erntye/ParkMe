@@ -30,19 +30,19 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_api_key" />
 
-
         <activity
             android:name=".ViewMap.ViewMapActivity"
             android:label="@string/title_activity_view_map">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
-
         <activity
             android:name=".Suggestion.SuggestionsActivity"
             android:label="CarParkSuggestions">
         </activity>
-
-        <activity
-            android:name=".test.TestActivity">
+        <activity android:name=".test.TestActivity">
 
         </activity>
 <!--        <service android:name="com.example.chiilek.parkme.repository.LocationRepository"/>
@@ -51,28 +51,24 @@
         <activity
             android:name=".navigation.RouteOverviewActivity"
             android:label="@string/title_activity_route_overview">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
 
         </activity>
         <activity
             android:name=".CarParkPopUp.CarParkPopUpActivity"
             android:label="CarParkPopUp"
             android:theme="@style/AppTheme.PopUpTheme">
-
         </activity>
         <activity
             android:name=".ReroutePopUp.ReroutePopUpActivity"
             android:label="ReroutePopUp"
             android:theme="@style/AppTheme.PopUpTheme">
-
         </activity>
         <activity
             android:name=".navigation.NavigationActivity"
             android:label="@string/title_activity_navigation">
 
+        </activity>
+        <activity android:name=".test.TestActivity2">
         </activity>
     </application>
 
