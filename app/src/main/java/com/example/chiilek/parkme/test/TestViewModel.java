@@ -35,12 +35,13 @@ public class TestViewModel extends AndroidViewModel{
         //initialize variables
         searchTerm = new MutableLiveData<>();
         testList = testRepo.getAllEntity();
+        //Log.d("TestViewModel", "test list size is "+ testList.getValue().size());
         mLocationRepo = LocationRepository.getLocationRepository(application.getApplicationContext());
         currentLocation = mLocationRepo.getLocation();
 
 
         mediatorData.addSource(currentLocation, newLocation ->{
-                Log.d("TestViewModel","inside mediator live data ");
+                Log.d("TestViewModel","location changed: inside mediator live data ");
                 testRepo.testMediatorFunc();
                 }
         );

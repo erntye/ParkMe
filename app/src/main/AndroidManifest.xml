@@ -44,9 +44,7 @@
             android:name=".Suggestion.SuggestionsActivity"
             android:label="CarParkSuggestions">
         </activity>
-
-        <activity
-            android:name=".test.TestActivity">
+        <activity android:name=".test.TestActivity">
 
         </activity>
 <!--        <service android:name="com.example.chiilek.parkme.repository.LocationRepository"/>
@@ -56,24 +54,23 @@
             android:name=".navigation.RouteOverviewActivity"
             android:label="@string/title_activity_route_overview">
 
-
         </activity>
         <activity
             android:name=".CarParkPopUp.CarParkPopUpActivity"
             android:label="CarParkPopUp"
             android:theme="@style/AppTheme.PopUpTheme">
-
         </activity>
         <activity
             android:name=".ReroutePopUp.ReroutePopUpActivity"
             android:label="ReroutePopUp"
             android:theme="@style/AppTheme.PopUpTheme">
-
         </activity>
         <activity
             android:name=".navigation.NavigationActivity"
             android:label="@string/title_activity_navigation">
 
+        </activity>
+        <activity android:name=".test.TestActivity2">
         </activity>
     </application>
 
