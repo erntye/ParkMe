@@ -58,9 +58,11 @@ public class LocationRepository  {
                         + location.getLongitude());
             }
         };
-        startLocationUpdate();
+        startLocationUpdate(mLocationCallback);
         currentLocation = new MutableLiveData<>();
+        //TODO find out how to not hardcode this value without getting a null pointer
         currentLocation.setValue(new LatLng(1.321,103.850));
+
         Log.d("Location Repo", "LocationRepository constructed");
     }
 
@@ -71,7 +73,7 @@ public class LocationRepository  {
         return INSTANCE;
     }
 
-    private void startLocationUpdate(){
+    private void startLocationUpdate(LocationCallback mLocationCallback){
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationRequest);
         LocationSettingsRequest locationSettingsRequest = builder.build();
@@ -124,5 +126,4 @@ public class LocationRepository  {
     public void stopLocationUpdates(){
         mFusedClient.removeLocationUpdates(mLocationCallback);
     }
-
 }

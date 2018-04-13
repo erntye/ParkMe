@@ -66,18 +66,20 @@ public class SuggestionsActivity extends AppCompatActivity{
         model.getMediatorDirAndCPList().observe(this,newData->
                 Log.d("SuggestionsActivity", "observing mediator dir and CP list")
         );
-        model.getDirectionsAndCarParks().observe(this, newDirections ->
+        model.getDirectionsAndCarParks().observe(this, newRoutes ->
                 {
                     Log.d("SuggestionsActivity", "observer activated directionsandcarparklist changed");
-                    mAdapter.addItems(newDirections);
-                    // for testing:: model.setStartPoint(new LatLng(1.3209983,104.888));
-                    model.setDestination(mAdapter.getCarParkInfo(0).getDestinationLatLng());
-                    model.setChosenRoute(mAdapter.getCarParkInfo(0));
-                    model.setNavigationStarted();
+                    mAdapter.addItems(newRoutes);
+
+                    // for testing, remove soon
+                    if (!model.getNavigationStarted()) {
+                        model.setDestination(mAdapter.getCarParkInfo(0).getDestinationLatLng());
+                        model.setChosenRoute(mAdapter.getCarParkInfo(0));
+                        model.setNavigationStarted();
+                    }
                 }
         );
 
-        //testing code to replot the polyline
 
     }
 

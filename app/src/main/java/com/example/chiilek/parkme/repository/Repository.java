@@ -61,6 +61,8 @@ public class Repository {
             Log.d("Repository", "In getDirectionsAndCPs: closestCarParks is null");
             routesCallback.onFailure();
         }
+        else if (closestCarParks.size() == 0 )
+            Log.d("Repository", "In getDirectionsAndCPs: There are no closest carparks \n*******") ;
         else
             Log.d("Repository", "In getDirectionsAndCPs: closestCarParks size: " + closestCarParks.size()) ;
         //generates directions to each car park, stores in DirectionsAndCPInfo class

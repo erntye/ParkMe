@@ -61,6 +61,10 @@
         <activity
             android:name=".navigation.RouteOverviewActivity"
             android:label="@string/title_activity_route_overview">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 
         </activity>
         <activity
@@ -78,6 +82,7 @@
         <activity
             android:name=".navigation.NavigationActivity"
             android:label="@string/title_activity_navigation">
+
         </activity>
     </application>
 
