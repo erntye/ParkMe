@@ -5,12 +5,14 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
+
 /**
  * Created by QuekYufei on 27/3/18.
  */
 
 @Entity(tableName = "CarParkInfo")
-public class CarParkStaticInfo {
+public class CarParkStaticInfo implements Serializable{
 
     public CarParkStaticInfo(String CPNumber){
         this.CPNumber = CPNumber;
