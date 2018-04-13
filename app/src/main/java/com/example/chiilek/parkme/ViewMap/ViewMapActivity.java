@@ -308,7 +308,6 @@ public class ViewMapActivity extends FragmentActivity
             Log.d("Marker", cpsi.getCPNumber());
         }
         Intent intent = new Intent(ViewMapActivity.this,  CarParkPopUpActivity.class);
-
         intent.putExtra("CarParkStaticInfo", cpsi);
         startActivity(intent);
         return false;
