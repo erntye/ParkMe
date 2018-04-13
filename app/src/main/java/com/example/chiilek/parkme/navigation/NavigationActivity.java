@@ -14,11 +14,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.view.animation.LinearInterpolator;
 
 import com.example.chiilek.parkme.MultiSearchFragment;
 import com.example.chiilek.parkme.R;
+import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -64,7 +64,8 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     private Polyline blackPolyline;
     private LatLng myPosition;
     private Marker marker;
-
+    private DirectionsAndCPInfo initialChosenRoute;
+    private CarParkStaticInfo initialCarPark;
     private NavigationViewModel model;
 
     @Override
@@ -83,14 +84,27 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         sampleWayPoints.add(new LatLng(37.3830, -122.0870));
 
         //Create a view model and allow re-created activities to get the same view model instance
-        //model = ViewModelProviders.of(this).get(NavigationViewModel.class);
-        //TODO update the above with the below once completed
         Intent parentIntent = getIntent();
-        DirectionsAndCPInfo initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
-        Log.d("NavigationActivity", "InitialChosenRoute passed from intent is  " + initialChosenRoute.getCarParkStaticInfo().getCPNumber());
-        model = ViewModelProviders
-                .of(this,new NavigationViewModelFactory(this.getApplication(),initialChosenRoute))
-                .get(NavigationViewModel.class );
+        if (parentIntent.getSerializableExtra("chosenRoute") != null) {
+            initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
+            Log.d("NavigationActivity", "InitialChosenRoute passed from intent is  " + initialChosenRoute.getCarParkStaticInfo().getCPNumber());
+            model = ViewModelProviders
+                    .of(this, new NavigationViewModelRouteFactory(this.getApplication(), initialChosenRoute))
+                    .get(NavigationViewModel.class);
+        } else {
+            initialCarPark = (CarParkStaticInfo) parentIntent.getSerializableExtra("chosenCarPark");
+            Log.d("NavigationActivity", "ChosenCarPark passed from intent is  " + initialCarPark.getCPNumber());
+            model = ViewModelProviders
+                    .of(this, new NavigationViewModelCarParkFactory(this.getApplication(), initialCarPark))
+                    .get(NavigationViewModel.class);
+        }
+        //TODO use thie initial route to plot
+        model.getInitialRoute();
+
+        model.getUpdatingRoute().observe(this,newRoute ->{
+            //TODO update your Polyline object here
+            }
+        );
 
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));

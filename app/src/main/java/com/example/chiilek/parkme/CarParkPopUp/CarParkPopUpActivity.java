@@ -51,6 +51,7 @@ public class CarParkPopUpActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(CarParkPopUpActivity.this, RouteOverviewActivity.class);
                 intent.putExtra("chosenCarPark",carParkStaticInfo);
+                Log.d("CarParkPopUpActivity", "Starting new RouteOverview Intent, chosen carpark is" + carParkStaticInfo.getCPNumber());
                 startActivity(intent);
             }
         });
@@ -66,7 +67,7 @@ public class CarParkPopUpActivity extends AppCompatActivity {
         Log.d("dimension", Integer.toString(dm.widthPixels) + Integer.toString(dm.heightPixels));
 
         carParkStaticInfo = (CarParkStaticInfo) getIntent().getSerializableExtra("CarParkStaticInfo");
-        Log.d("PopUpActivity", "pop up carpark is "+ carParkStaticInfo.getCPNumber());
+        Log.d("CarParkPopUpActivity", "pop up carpark is "+ carParkStaticInfo.getCPNumber());
 
 
         titleText = findViewById(R.id.pop_up_title_location);

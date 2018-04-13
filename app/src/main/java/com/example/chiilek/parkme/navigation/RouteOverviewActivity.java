@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.widget.Toast;
 
 import com.example.chiilek.parkme.R;
+import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.repository.LocationService;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -62,6 +63,7 @@ public class RouteOverviewActivity extends FragmentActivity
     private final int REQUEST_PERMISSION_LOCATION = 1;
     private List<LatLng> sampleWayPoints;
     private DirectionsAndCPInfo mChosenRoute;
+    private CarParkStaticInfo mChosenCarPark;
     // ---------------------------------------
     //             CHECK PERMISSIONS
     // ---------------------------------------
@@ -75,12 +77,14 @@ public class RouteOverviewActivity extends FragmentActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        mChosenRoute = (DirectionsAndCPInfo) getIntent().getSerializableExtra("chosenRoute");
-        if (mChosenRoute != null)
-            Log.d("RouteOverviewActivity","Parcelled Chosen Route is "+ mChosenRoute.getCarParkStaticInfo().getCPNumber());
-        else
-            Log.d("RouteOverviewActivity","Parcelled Chosen Route is null");
-        //Create a view model and allow re-created activities to get the same view model instance
+
+        if (getIntent().getSerializableExtra("chosenRoute") != null) {
+            Log.d("RouteOverviewActivity", "Parcelled Chosen Route is " + mChosenRoute.getCarParkStaticInfo().getCPNumber());
+            mChosenRoute = (DirectionsAndCPInfo) getIntent().getSerializableExtra("chosenRoute");
+        }else {
+            Log.d("RouteOverviewActivity", "Parcelled Chosen Route is null");
+            mChosenCarPark = (CarParkStaticInfo) getIntent().getSerializableExtra("CarParkStaticInfo");
+        }//Create a view model and allow re-created activities to get the same view model instance
         //model = ViewModelProviders.of(this).get(NavigationViewModel.class);
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
@@ -91,6 +95,7 @@ public class RouteOverviewActivity extends FragmentActivity
             public void onClick(View v) {
                 Intent intent = new Intent(RouteOverviewActivity.this, NavigationActivity.class);
                 intent.putExtra("chosenRoute",mChosenRoute);
+                intent.putExtra("chosenCarPark",mChosenCarPark);
                 Log.d("RouteOverviewActivity","starting intent for Navigation Activity");
                 startActivity(intent);
             }
