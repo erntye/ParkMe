@@ -18,9 +18,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 
+import com.example.chiilek.parkme.CarParkPopUp.CarParkPopUpActivity;
 import com.example.chiilek.parkme.MultiSearchFragment;
 import com.example.chiilek.parkme.NavigationViewModelFactory;
 import com.example.chiilek.parkme.R;
+import com.example.chiilek.parkme.Suggestion.SuggestionsActivity;
 import com.example.chiilek.parkme.ViewMap.ViewMapActivity;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -33,6 +35,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -42,6 +45,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.android.gms.maps.model.JointType.ROUND;
 
@@ -114,6 +118,8 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        MapStyleOptions nightStyle = MapStyleOptions.loadRawResourceStyle(this, R.raw.styles_night);
+        googleMap.setMapStyle(nightStyle);
 
         // ---------------------------------------
         //             CHECK PERMISSIONS
@@ -141,7 +147,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         mMap.moveCamera(CameraUpdateFactory.newLatLng(googleplex));
 
         blackPolyLineOptions = new PolylineOptions();
-        blackPolyLineOptions.color(Color.BLACK);
+        blackPolyLineOptions.color(Color.LTGRAY);
         blackPolyLineOptions.width(5);
         blackPolyLineOptions.startCap(new SquareCap());
         blackPolyLineOptions.endCap(new SquareCap());
@@ -170,7 +176,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         //car marker goes here
         marker = mMap.addMarker(new MarkerOptions().position(test)
                 .flat(true)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.car)));
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.car_icon)));
 
         handler = new Handler();
         index = -1;
@@ -178,16 +184,25 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(index < sampleWayPoints.size()-1){
+                if(index < sampleWayPoints.size()-1) {
                     index++;
-                    next = index+1;
+                    next = index + 1;
+                }
+                if(index < sampleWayPoints.size()-1) {
                     startPosition = sampleWayPoints.get(index);
                     endPosition = sampleWayPoints.get(next);
+
                 }
+//                else if(index >= sampleWayPoints.size()-1){
+//                    Intent intent = new Intent(NavigationActivity.this, ViewMapActivity.class);
+//                    startActivity(intent);
+//                    finish();
+//                }
 
                 ValueAnimator valueAnimator = ValueAnimator.ofInt(0,1);
                 valueAnimator.setDuration(3000);
                 valueAnimator.setInterpolator(new LinearInterpolator());
+
                 valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
@@ -211,7 +226,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                 valueAnimator.start();
                 handler.postDelayed(this,3000);
             }
-        }, 3000);
+        }, 0);
     }
 
     private float getBearing(LatLng startPosition, LatLng newPos) {
@@ -233,7 +248,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     public void plotPolyline(List<LatLng> waypoints){
         PolylineOptions plo = new PolylineOptions();
         plo.addAll(waypoints);
-        plo.color(R.color.colorMain);
+        plo.color(Color.LTGRAY);
         plo.width(20);
         mMap.addPolyline(plo);
     }
@@ -279,6 +294,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
             }
         }
     }
+
 }
 
 //model.getGoogleMapsDirections().observe(this, newDirections ->{
