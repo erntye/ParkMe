@@ -17,7 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class DirectionsAPIController {
 
     static final private String GMAPS_DIRECTION_API_BASE_URL = "https://maps.googleapis.com/maps/api/directions/";
-    static final private String GMAPS_API_KEY = "AIzaSyCMcA56knRPYgayHU95ceIL2nNyLkpIeUo";
+    static final private String GMAPS_API_KEY = "AIzaSyABzCIW6HUOYdcEvkVJnuNa4HhIiZvOhmo";
 
     private static DirectionsAPIController INSTANCE;
 

@@ -3,14 +3,16 @@ package com.example.chiilek.parkme.ViewMap;
 
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
+import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
+import android.util.Log;
 
-import com.example.chiilek.parkme.data_classes.availability_classes.CarParkDatum;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.repository.LocationRepository;
 import com.example.chiilek.parkme.repository.Repository;
+import com.example.chiilek.parkme.repository.SearchNearbyCallback;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
@@ -18,10 +20,13 @@ import java.util.List;
 public class ViewMapViewModel extends AndroidViewModel{
     private MutableLiveData<LatLng> msearchTerm;
     //list of nearest carparks to search term
-    private LiveData<List<CarParkStaticInfo>> mcarParkList;
+    private MutableLiveData<List<CarParkStaticInfo>> mcpListFromRepo;
+    private MutableLiveData<List<CarParkStaticInfo>> mcpListForActivity;
+    private MediatorLiveData mcpListMediator = new MediatorLiveData();
     private LiveData<LatLng> currentLocation;
     private Repository mRepository;
     private LocationRepository mLocationRepo;
+
 
     public ViewMapViewModel(Application application){
         super(application);
@@ -29,11 +34,31 @@ public class ViewMapViewModel extends AndroidViewModel{
         mLocationRepo = LocationRepository.getLocationRepository(this.getApplication());
         msearchTerm = new MutableLiveData<>();
         currentLocation = mLocationRepo.getLocation();
-        mcarParkList = mRepository.searchNearbyCarParks(currentLocation.getValue());
+        mcpListForActivity = mRepository.searchNearbyCarParks(currentLocation.getValue(), new SearchNearbyCallback() {
+            @Override
+            public void onSuccess() {
+                Log.d("ViewMapViewModel", "In constructor onSuccess, Availability call in repository completed.");
+                mcpListFromRepo = mRepository.getViewMapCPList();
+                //mediator live data. when mcarparklist, the live data from repo, changes, it updates the to return which is observed by activity
+                mcpListMediator.addSource(mcpListFromRepo, newCPList -> {
+                    Log.d("ViewMapViewModel", "Constructor onSuccess, within add source code; CPList was updated. posting now.");
+                    mcpListForActivity.postValue((List<CarParkStaticInfo>)newCPList);
+                });
+            }
+
+            @Override
+            public void onFailure() {
+                Log.d("ViewMapViewModel", "In constructor onFailure, Availability call in repository failed.");
+            }
+        });
+
+
+
+
 
         //searches nearby everytime msearchterm changes, when called by VMMP.setSearchTerm()
-        mcarParkList = Transformations.switchMap(msearchTerm, (LatLng newDestination)->
-                mRepository.searchNearbyCarParks(newDestination));
+//        mcpListFromRepo = Transformations.switchMap(msearchTerm, (LatLng newDestination)->
+//                mRepository.searchNearbyCarParks(newDestination));
         //update currentLocation
         currentLocation = Transformations.map(mLocationRepo.getLocation(),newLocation->{
             return newLocation;
@@ -54,24 +79,30 @@ public class ViewMapViewModel extends AndroidViewModel{
         }
      */
 
-    //displays popup carpark info
-    //TODO find out what google maps returns when you press on a pin
-    public CarParkDatum getCarParkInfo(String toFind){
-        /*if (mcarParkList != null){
-            for ( CarParkStaticInfo carpark: mcarParkList.getValue()){
-                if (carpark.getCarParkNumber().equals(toFind))
-                    return carpark;
+    //displays popup car park info
+    public MutableLiveData<List<CarParkStaticInfo>> getCarParkInfo(LatLng location){
+        mcpListForActivity = mRepository.searchNearbyCarParks(location, new SearchNearbyCallback() {
+            @Override
+            public void onSuccess() {
+                Log.d("ViewMapViewModel", "In SearchNearbyCallback onSuccess, Availability call in repository completed.");
+                mcpListFromRepo = mRepository.getViewMapCPList();
             }
-        }*/
-        return null;
+
+            @Override
+            public void onFailure() {
+                Log.d("ViewMapViewModel", "In SearchNearbyCallback onFailure, Availability call in repository failed.");
+            }
+        });
+        return mcpListForActivity;
     }
+
+
+    public MutableLiveData<List<CarParkStaticInfo>> getCarParkInfo() { return mcpListForActivity; }
+
+    public MediatorLiveData getMcpListMediator() { return mcpListMediator; }
 
     public LiveData<LatLng> getSearchTerm() {
         return msearchTerm;
-    }
-
-    public LiveData<List<CarParkStaticInfo>> getCarParkList() {
-        return mcarParkList;
     }
 
     public LiveData<LatLng> getCurrentLocation(){return currentLocation;}

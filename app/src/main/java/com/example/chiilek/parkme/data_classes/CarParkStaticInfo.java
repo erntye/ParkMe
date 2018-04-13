@@ -5,6 +5,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import com.example.chiilek.parkme.data_classes.availability_classes.CarParkDatum;
+
 import java.io.Serializable;
 
 /**
@@ -58,6 +60,13 @@ public class CarParkStaticInfo implements Serializable{
 
     @ColumnInfo(name="last_update_datetime")
     private String lastUpdateDatetime;
+
+
+    public void setAvailInfo(CarParkDatum cpDatum){
+        setLastUpdateDatetime(cpDatum.getUpdateDatetime());
+        setTotalCarLots(Integer.toString(cpDatum.getCarParkInfo().get(0).getTotalLots()));
+        setAvailableCarLots(Integer.toString(cpDatum.getCarParkInfo().get(0).getLotsAvailable()));
+    }
 
 
     //Getters and Setters

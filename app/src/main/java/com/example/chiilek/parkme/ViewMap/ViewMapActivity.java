@@ -2,6 +2,8 @@ package com.example.chiilek.parkme.ViewMap;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -70,6 +72,8 @@ public class ViewMapActivity extends FragmentActivity
     private LocationService mLocationService;
     private final int REQUEST_PERMISSION_LOCATION = 1;
 
+
+    private MutableLiveData<List<CarParkStaticInfo>> cpList = new MutableLiveData<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +91,7 @@ public class ViewMapActivity extends FragmentActivity
 
         model = ViewModelProviders.of(this).get(ViewMapViewModel.class);
         //TODO pass current location to Viewmodel
-        model.getCarParkList().observe(this, new Observer<List<CarParkStaticInfo>>() {
+        model.getCarParkInfo().observe(this, new Observer<List<CarParkStaticInfo>>() {
             @Override
             public void onChanged(@Nullable List<CarParkStaticInfo> newCarParkList) {
             }
@@ -112,11 +116,10 @@ public class ViewMapActivity extends FragmentActivity
                 Log.d("Maps", "Place selected: " + place.getName());
                 CameraPosition cp = new CameraPosition.Builder().target(place.getLatLng()).zoom(14).build();
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
-                List<CarParkStaticInfo> list = repository.searchNearbyCarParks(place.getLatLng()).getValue();
 
-                Log.d("Marker", Integer.toString(list.size()));
+                cpList.setValue(model.getCarParkInfo(place.getLatLng()).getValue());
 
-                for (CarParkStaticInfo cpsi : list){
+                for (CarParkStaticInfo cpsi : cpList.getValue()){
                     Log.d("Marker", cpsi.getAddress());
                     mMap.addMarker(new MarkerOptions()
                             .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
@@ -165,11 +168,21 @@ public class ViewMapActivity extends FragmentActivity
                         if (location != null) {
                             CameraPosition cp = new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(14).build();
                             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
-                            List<CarParkStaticInfo> list = repository.searchNearbyCarParks(new LatLng(location.getLatitude(), location.getLongitude())).getValue();
+                            cpList.setValue(model.getCarParkInfo().getValue());
+                            model.getMcpListMediator().observe(ViewMapActivity.this, newdata ->{
+                                Log.d("ViewMapActivity", "On map ready, in mediator observe");
+                            });
+                            model.getCarParkInfo().observe(ViewMapActivity.this, new Observer<List<CarParkStaticInfo>>(){
+                                @Override
+                                public void onChanged(@Nullable List<CarParkStaticInfo> carParkStaticInfos) {
+                                    Log.d("ViewMapActivity", "getCarParkInfo onChanged, availability info: " + carParkStaticInfos.get(0).getAvailableCarLots());
+                                    cpList.setValue(carParkStaticInfos);
+                                }
+                            });
+                            
+                            Log.d("Marker", Integer.toString(cpList.getValue().size()));
 
-                            Log.d("Marker", Integer.toString(list.size()));
-
-                            for (CarParkStaticInfo cpsi : list){
+                            for (CarParkStaticInfo cpsi : cpList.getValue()){
                                 mMap.addMarker(new MarkerOptions()
                                         .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
                                         .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)))
