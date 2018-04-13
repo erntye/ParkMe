@@ -103,6 +103,7 @@ public class ViewMapActivity extends FragmentActivity
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
+                Toast.makeText(getApplicationContext(), place.getName(), Toast.LENGTH_LONG).show();
                 Log.d("Maps", "Place selected: " + place.getName());
                 CameraPosition cp = new CameraPosition.Builder().target(place.getLatLng()).zoom(14).build();
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
@@ -191,6 +192,7 @@ public class ViewMapActivity extends FragmentActivity
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
         //mMap.getMyLocation().getLatitude();
+
     }
 
 

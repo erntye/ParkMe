@@ -26,7 +26,7 @@
             android:layout_centerInParent="true"/>
 
         <fragment
-            android:id="@+id/place_autocomplete_fragment2"
+            android:id="@+id/place_autocomplete_fragment_source"
             android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
             android:layout_width="290dp"
             android:layout_height="20dp"
@@ -48,7 +48,7 @@
             android:layout_centerInParent="true"
             />
         <fragment
-            android:id="@+id/place_autocomplete_fragment3"
+            android:id="@+id/place_autocomplete_fragment_destination"
             android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
             android:layout_width="290dp"
             android:layout_height="20dp"

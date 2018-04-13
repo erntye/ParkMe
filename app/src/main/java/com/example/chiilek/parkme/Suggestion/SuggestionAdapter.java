@@ -69,7 +69,7 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                Log.d("test", "onClick: clicked on: " + CP.getCarParkStaticInfo().getCPNumber());
+                Log.d("SuggestionAdapter", "onClick: clicked on: " + CP.getCarParkStaticInfo().getCPNumber());
                 Toast.makeText(mContext, CP.getCarParkStaticInfo().getCPNumber(), Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(mContext, RouteOverviewActivity.class);
