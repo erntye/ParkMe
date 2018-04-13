@@ -1,15 +1,22 @@
 package com.example.chiilek.parkme.navigation;
 
+import android.animation.ValueAnimator;
 import android.arch.lifecycle.ViewModelProviders;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.content.Intent;
 
+import com.example.chiilek.parkme.MultiSearchFragment;
 import com.example.chiilek.parkme.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -19,12 +26,17 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Expects following data passed in as extras in Intent:
@@ -38,10 +50,7 @@ public class RouteOverviewActivity extends FragmentActivity implements OnMapRead
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
     private final int REQUEST_PERMISSION_LOCATION = 1;
-    private LatLng[] sampleWayPoints = new LatLng[]{new LatLng(37.4220, -122.0940),
-                                                    new LatLng(37.4130, -122.0831),
-                                                    new LatLng(37.4000, -122.0762),
-                                                    new LatLng(37.3830, -122.0870)};
+
 
     // ---------------------------------------
     //             CHECK PERMISSIONS
@@ -58,6 +67,11 @@ public class RouteOverviewActivity extends FragmentActivity implements OnMapRead
 
         //Create a view model and allow re-created activities to get the same view model instance
         com.example.chiilek.parkme.navigation.NavigationViewModel model = ViewModelProviders.of(this).get(com.example.chiilek.parkme.navigation.NavigationViewModel.class);
+
+
+
+
+
 
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
@@ -84,8 +98,9 @@ public class RouteOverviewActivity extends FragmentActivity implements OnMapRead
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+
         // Pass in either list of LatLng or PolylineOptions object
-        plotPolyline(sampleWayPoints);
+        //plotPolyline(sampleWayPoints);
 
         // MAP CAMERA TO GOOGLEPLEX
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -114,16 +129,18 @@ public class RouteOverviewActivity extends FragmentActivity implements OnMapRead
         // Add a marker in Googleplex and move the camera
         LatLng googleplex = new LatLng(37.4220, -122.0940);
         mMap.addMarker(new MarkerOptions().position(googleplex).title("Marker in Googleplex"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(googleplex));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(googleplex));
+
+
     }
 
     /**
      * Plots the Polyline
      * Given an array of waypoints
      */
-    public void plotPolyline(LatLng[] waypoints){
+    public void plotPolyline(List<LatLng> waypoints){
         PolylineOptions plo = new PolylineOptions();
-        plo.add(waypoints);
+        plo.addAll(waypoints);
         plo.color(R.color.colorMain);
         plo.width(20);
         mMap.addPolyline(plo);
