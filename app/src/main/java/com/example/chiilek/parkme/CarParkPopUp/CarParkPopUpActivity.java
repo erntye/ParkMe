@@ -59,7 +59,7 @@ public class CarParkPopUpActivity extends AppCompatActivity {
         int width = dm.widthPixels;
         int height = dm.heightPixels;
 
-        getWindow().setLayout((int)(width*.9), (int)(height*.75));
+        getWindow().setLayout((int)(1000), (int)(1600));
 
         carParkStaticInfo = (CarParkStaticInfo) getIntent().getSerializableExtra("CarParkStaticInfo");
 
