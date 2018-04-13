@@ -24,7 +24,6 @@ import android.arch.lifecycle.Observer;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 
@@ -53,7 +52,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ViewMapActivity extends FragmentActivity
@@ -70,6 +68,7 @@ public class ViewMapActivity extends FragmentActivity
     Bitmap parking_lots_smallMarker;
 
     LatLng destination;
+    String name;
 
     Button suggestCarParks;
 
@@ -140,7 +139,8 @@ public class ViewMapActivity extends FragmentActivity
                 mMap.addMarker(new MarkerOptions()
                         .position(place.getLatLng()));
 
-                //this makes the RECOMMENDATIONS button go to suggestions
+                //Sets the fields to pass into suggest_car_parks
+                name = place.getName().toString();
                 destination = place.getLatLng();
                 suggestCarParks.setVisibility(View.VISIBLE);
                 Log.d("Visibility", Integer.toString(suggestCarParks.getVisibility()));
@@ -200,7 +200,6 @@ public class ViewMapActivity extends FragmentActivity
                 });
 
         mMap.setOnMarkerClickListener(this);
-
         mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
@@ -316,12 +315,13 @@ public class ViewMapActivity extends FragmentActivity
 
     public void suggestCarParks(View view) {
 
-        if(destination != null) {
+        if(destination != null && name != null) {
             Intent intent = new Intent(ViewMapActivity.this, SuggestionsActivity.class);
             intent.putExtra("Destination", destination);
+            intent.putExtra("Name", name);
             startActivity(intent);
         } else {
-            Log.d("ViewMapActivity", "destination = null");
+            Log.d("ViewMapActivity", "destination = null || name = null");
         }
 
     }
