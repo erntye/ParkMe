@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.animation.ValueAnimator;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -17,6 +18,7 @@ import android.view.animation.LinearInterpolator;
 import com.example.chiilek.parkme.MultiSearchFragment;
 import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.ViewMap.ViewMapActivity;
+import com.example.chiilek.parkme.navigation.ReachMessageActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -79,8 +81,12 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         sampleWayPoints.add(new LatLng(37.4000, -122.0762));
         sampleWayPoints.add(new LatLng(37.3830, -122.0870));
 
+
         //Create a view model and allow re-created activities to get the same view model instance
         NavigationViewModel model = ViewModelProviders.of(this).get(NavigationViewModel.class);
+
+        //SHOW MESSAGE WHEN REACHED     /**********************************************************/
+        startActivity(new Intent(NavigationActivity.this, ReachMessageActivity.class));
 
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
@@ -201,20 +207,25 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         }, 3000);
     }
 
+
+
+
     private float getBearing(LatLng startPosition, LatLng newPos) {
         double lat = Math.abs(startPosition.latitude - newPos.latitude);
         double lng = Math.abs(startPosition.longitude - newPos.longitude);
-
-        if (startPosition.latitude< newPos.latitude && startPosition.longitude < newPos.longitude){
-            return (float) Math.toDegrees(Math.atan(lng/lat));
-        }else if (startPosition.latitude >= newPos.latitude && startPosition.longitude < newPos.longitude){
-            return (float) ((90-Math.toDegrees(Math.atan(lng/lat)))+90);
-        }else if (startPosition.latitude >= newPos.latitude && startPosition.longitude >= newPos.longitude){
-            return (float) (Math.toDegrees(Math.atan(lng/lat))+180);
-        }else if (startPosition.latitude< newPos.latitude && startPosition.longitude >= newPos.longitude){
-            return (float) ((90-Math.toDegrees(Math.atan(lng/lat)))+270);
+        if (startPosition.latitude < newPos.latitude && startPosition.longitude < newPos.longitude) {
+            return (float) Math.toDegrees(Math.atan(lng / lat));
+        } else if (startPosition.latitude >= newPos.latitude && startPosition.longitude < newPos.longitude) {
+            return (float) ((90 - Math.toDegrees(Math.atan(lng / lat))) + 90);
+        } else if (startPosition.latitude >= newPos.latitude && startPosition.longitude >= newPos.longitude) {
+            return (float) (Math.toDegrees(Math.atan(lng / lat)) + 180);
+        } else if (startPosition.latitude < newPos.latitude && startPosition.longitude >= newPos.longitude) {
+            return (float) ((90 - Math.toDegrees(Math.atan(lng / lat))) + 270);
         }
-        else return -1;
+        else{
+            return -1;
+        }
+
     }
 
     public void plotPolyline(List<LatLng> waypoints){
