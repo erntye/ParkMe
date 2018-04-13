@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -59,9 +60,12 @@ public class CarParkPopUpActivity extends AppCompatActivity {
         int width = dm.widthPixels;
         int height = dm.heightPixels;
 
-        getWindow().setLayout((int)(1000), (int)(1600));
+        getWindow().setLayout(1000, 1500);
+        Log.d("dimension", Integer.toString(dm.widthPixels) + Integer.toString(dm.heightPixels));
 
         carParkStaticInfo = (CarParkStaticInfo) getIntent().getSerializableExtra("CarParkStaticInfo");
+
+
 
         titleText = findViewById(R.id.pop_up_title_location);
         addressText = findViewById(R.id.pop_up_park_address);
@@ -77,15 +81,20 @@ public class CarParkPopUpActivity extends AppCompatActivity {
         shortTermParkingValue = findViewById(R.id.pop_up_short_term_parking_value);
         nightParkingValue = findViewById(R.id.pop_up_night_parking_value);
 
-        titleText.setText(carParkStaticInfo.getCPNumber());
-        addressText.setText(carParkStaticInfo.getAddress());
+        if (carParkStaticInfo == null) {
+            Log.d("CarParkPopUpActivity", "cpsi = null");
+        } else {
+            titleText.setText(carParkStaticInfo.getCPNumber());
+            addressText.setText(carParkStaticInfo.getAddress());
 
-        carParkTypeValue.setText(carParkStaticInfo.getCarParkType());
-        parkingSystemValue.setText(carParkStaticInfo.getTypeOfParkingSystem());
-        freeParkingValue.setText(carParkStaticInfo.getFreeParking());
+            carParkTypeValue.setText(carParkStaticInfo.getCarParkType());
+            parkingSystemValue.setText(carParkStaticInfo.getTypeOfParkingSystem());
+            freeParkingValue.setText(carParkStaticInfo.getFreeParking());
 
-        shortTermParkingValue.setText(carParkStaticInfo.getShortTermParking());
-        nightParkingValue.setText(carParkStaticInfo.getNightParking());
+            shortTermParkingValue.setText(carParkStaticInfo.getShortTermParking());
+            nightParkingValue.setText(carParkStaticInfo.getNightParking());
+            Log.d("CarParkPopUpActivity", "cpsi = not null");
+        }
     }
 
 }

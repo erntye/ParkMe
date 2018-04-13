@@ -62,7 +62,7 @@
             android:fontFamily="arial"
             android:text="Available Lots"
             android:textColor="@color/colorMain"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -75,7 +75,7 @@
             android:fontFamily="arial"
             android:text="Motor Car:"
             android:textColor="@color/colorMain"
-            android:textSize="18sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/pop_up_motor_cycle_text"
@@ -86,7 +86,7 @@
             android:fontFamily="arial"
             android:text="Motor Cycle:"
             android:textColor="@color/colorMain"
-            android:textSize="18sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/pop_up_heavy_vehicle_text"
@@ -97,7 +97,7 @@
             android:fontFamily="arial"
             android:text="Heavy Vehicle:"
             android:textColor="@color/colorMain"
-            android:textSize="18sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/pop_up_motor_car_value"
@@ -107,6 +107,7 @@
             android:layout_marginLeft="220dp"
             android:fontFamily="arial"
             android:text="TextView"
+            android:textSize="14sp"
             android:textColor="@color/colorMain" />
 
         <TextView
@@ -117,17 +118,18 @@
             android:layout_below="@+id/pop_up_motor_car_value"
             android:fontFamily="arial"
             android:text="TextView"
+            android:textSize="14sp"
             android:textColor="@color/colorMain" />
 
         <TextView
             android:id="@+id/pop_up_heavy_vehicle_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:layout_alignStart="@+id/pop_up_motor_car_value"
             android:fontFamily="arial"
             android:layout_below="@+id/pop_up_motor_cycle_value"
             android:text="TextView"
+            android:textSize="14sp"
             android:textColor="@color/colorMain" />
 
 
@@ -160,7 +162,7 @@
             android:fontFamily="arial"
             android:text="Information"
             android:textColor="@color/colorMain"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -172,7 +174,7 @@
             android:fontFamily="arial"
             android:text="Car Park Type:"
             android:textColor="@color/colorMain"
-            android:textSize="18sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/pop_up_parking_system_text"
@@ -183,7 +185,7 @@
             android:fontFamily="arial"
             android:text="Parking System:"
             android:textColor="@color/colorMain"
-            android:textSize="18sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/pop_up_free_parking_text"
@@ -194,7 +196,7 @@
             android:fontFamily="arial"
             android:text="Free Parking:"
             android:textColor="@color/colorMain"
-            android:textSize="18sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/pop_up_car_park_type_value"
@@ -204,6 +206,7 @@
             android:layout_below="@id/pop_up_information_text"
             android:fontFamily="arial"
             android:text="TextView"
+            android:textSize="14sp"
             android:textColor="@color/colorMain" />
 
         <TextView
@@ -215,6 +218,7 @@
             android:layout_below="@+id/pop_up_car_park_type_value"
             android:fontFamily="arial"
             android:text="TextView"
+            android:textSize="14sp"
             android:textColor="@color/colorMain" />
 
         <TextView
@@ -226,6 +230,7 @@
             android:fontFamily="arial"
             android:layout_below="@+id/pop_up_parking_system_value"
             android:text="TextView"
+            android:textSize="14sp"
             android:textColor="@color/colorMain" />
 
     </RelativeLayout>
@@ -255,7 +260,7 @@
             android:fontFamily="arial"
             android:text="Miscellaneous"
             android:textColor="@color/colorMain"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -267,7 +272,7 @@
             android:fontFamily="arial"
             android:text="Short-Term Parking:"
             android:textColor="@color/colorMain"
-            android:textSize="18sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/pop_up_night_parking_text"
@@ -279,7 +284,7 @@
             android:fontFamily="arial"
             android:text="Night Parking:"
             android:textColor="@color/colorMain"
-            android:textSize="18sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/pop_up_short-term_parking_value"
@@ -291,6 +296,7 @@
             android:layout_marginLeft="220dp"
             android:fontFamily="arial"
             android:text="TextView"
+            android:textSize="14sp"
             android:textColor="@color/colorMain" />
 
         <TextView
@@ -302,6 +308,7 @@
             android:layout_below="@+id/pop_up_short-term_parking_value"
             android:fontFamily="arial"
             android:text="TextView"
+            android:textSize="14sp"
             android:textColor="@color/colorMain" />
 
     </RelativeLayout>
