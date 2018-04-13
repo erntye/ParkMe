@@ -9,5 +9,7 @@
     +    <color name="color3">#dcdcda</color>
     +    <color name="color4">#e7e7e5</color>
     +    <color name="color5">#fcfcfc</color>
+    +    <color name="color6">#000</color>
+    +    <color name="color7">#00325A</color>
     +    <color name="semiTransparentBlack">#00000000</color>
 </resources>

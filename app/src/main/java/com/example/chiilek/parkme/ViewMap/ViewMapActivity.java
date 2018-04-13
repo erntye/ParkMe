@@ -24,11 +24,14 @@ import android.os.Bundle;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.lifecycle.Observer;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 
 import com.example.chiilek.parkme.CarParkPopUp.CarParkPopUpActivity;
 import com.example.chiilek.parkme.R;
+import com.example.chiilek.parkme.Suggestion.SuggestionsActivity;
 import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityAPIController;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.repository.LocationService;
@@ -51,7 +54,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ViewMapActivity extends FragmentActivity
@@ -62,10 +64,15 @@ public class ViewMapActivity extends FragmentActivity
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
-    Bitmap bitmap;
-    Bitmap smallMarker;
 
-    List<Marker> MarkerList;
+    // To create the bitmap for parking lots
+    Bitmap parking_lots_bitmap;
+    Bitmap parking_lots_smallMarker;
+
+    LatLng destination;
+    String name;
+
+    Button suggestCarParks;
 
     ViewMapViewModel model;
     //needed to bind to service to get location updates
@@ -87,7 +94,7 @@ public class ViewMapActivity extends FragmentActivity
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        MarkerList = new ArrayList<>();
+        suggestCarParks = findViewById(R.id.view_map_recommendations_button);
 
         model = ViewModelProviders.of(this).get(ViewMapViewModel.class);
         //TODO pass current location to Viewmodel
@@ -106,15 +113,19 @@ public class ViewMapActivity extends FragmentActivity
 
         Repository repository = Repository.getInstance(this); // TODO remove this shit bruh
 
-        bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cap_park_marker);
-        smallMarker = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
+        // Create customised markers.
+        // Parking lots markers
+        parking_lots_bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.carpark_sign);
+        parking_lots_smallMarker = Bitmap.createScaledBitmap(parking_lots_bitmap, 80, 80, false);
+
+
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
                 mMap.clear();
 
                 Log.d("Maps", "Place selected: " + place.getName());
-                CameraPosition cp = new CameraPosition.Builder().target(place.getLatLng()).zoom(14).build();
+                CameraPosition cp = new CameraPosition.Builder().target(place.getLatLng()).zoom(16).build();
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
 
                 cpList.setValue(model.getCarParkInfo(place.getLatLng()).getValue());
@@ -123,11 +134,19 @@ public class ViewMapActivity extends FragmentActivity
                     Log.d("Marker", cpsi.getAddress());
                     mMap.addMarker(new MarkerOptions()
                             .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
-                            .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)))
+                            .icon(BitmapDescriptorFactory.fromBitmap(parking_lots_smallMarker)))
                             .setTag(cpsi);
                 }
 
-                mMap.addMarker(new MarkerOptions().position(place.getLatLng()));
+                // Create red marker to mark searched location
+                mMap.addMarker(new MarkerOptions()
+                        .position(place.getLatLng()));
+
+                //Sets the fields to pass into suggest_car_parks
+                name = place.getName().toString();
+                destination = place.getLatLng();
+                suggestCarParks.setVisibility(View.VISIBLE);
+                Log.d("Visibility", Integer.toString(suggestCarParks.getVisibility()));
             }
 
             @Override
@@ -185,7 +204,7 @@ public class ViewMapActivity extends FragmentActivity
                             for (CarParkStaticInfo cpsi : cpList.getValue()){
                                 mMap.addMarker(new MarkerOptions()
                                         .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
-                                        .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)))
+                                        .icon(BitmapDescriptorFactory.fromBitmap(parking_lots_smallMarker)))
                                         .setTag(cpsi);
                             }
 
@@ -194,7 +213,6 @@ public class ViewMapActivity extends FragmentActivity
                 });
 
         mMap.setOnMarkerClickListener(this);
-
         mMap.setMyLocationEnabled(true);
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
@@ -303,9 +321,21 @@ public class ViewMapActivity extends FragmentActivity
             Log.d("Marker", cpsi.getCPNumber());
         }
         Intent intent = new Intent(ViewMapActivity.this,  CarParkPopUpActivity.class);
-
         intent.putExtra("CarParkStaticInfo", cpsi);
         startActivity(intent);
         return false;
+    }
+
+    public void suggestCarParks(View view) {
+
+        if(destination != null && name != null) {
+            Intent intent = new Intent(ViewMapActivity.this, SuggestionsActivity.class);
+            intent.putExtra("Destination", destination);
+            intent.putExtra("Name", name);
+            startActivity(intent);
+        } else {
+            Log.d("ViewMapActivity", "destination = null || name = null");
+        }
+
     }
 }

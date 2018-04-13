@@ -6,7 +6,9 @@ import com.example.chiilek.parkme.data_classes.availability_classes.CarParkDatum
 import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDirections;
 import com.google.android.gms.maps.model.LatLng;
 
-public class DirectionsAndCPInfo {
+import java.io.Serializable;
+
+public class DirectionsAndCPInfo implements Serializable{
     private CarParkStaticInfo carParkStaticInfo;
     private GoogleMapsDirections googleMapsDirections;
     private CarParkDatum carParkDatum;
@@ -57,7 +59,7 @@ public class DirectionsAndCPInfo {
     }
 
     public LatLng getDestinationLatLng(){
-        return new LatLng(getDestinationLatitude(),getDestinationLongitude());
+        return carParkStaticInfo.getLatLng();
     }
 
     //deprecated, to replace getLat and getLong with getDestinationLatLng

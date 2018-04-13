@@ -1,11 +1,12 @@
 
 package com.example.chiilek.parkme.data_classes.directions_classes;
 
+import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class GeocodedWaypoint {
+public class GeocodedWaypoint implements Serializable{
 
     @SerializedName("geocoder_status")
     @Expose

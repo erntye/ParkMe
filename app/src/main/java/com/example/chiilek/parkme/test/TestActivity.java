@@ -76,14 +76,23 @@ public class TestActivity extends AppCompatActivity {
         initbutton.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View v) {
-/*
+
+                      //to initialize database if needed
                         model.initialize();
                         initbutton.setText("Done!");
-                        startActivity(new Intent(TestActivity.this, ReroutePopUpActivity.class));
-                        Log.d("Activity","Pressed Init Button");
-*/
+                        Intent intent = new Intent(TestActivity.this,TestActivity2.class);
+                        if (model.getList().getValue()!= null) {
+                            Log.d("Activity","list size is " + model.getList().getValue().size());
+                            intent.putExtra("TestEntity1", model.getList().getValue().get(0));
+                            Log.d("Activity", "Pressed Init Button");
+                            startActivity(intent);
+
+                        }
+
+/*                       //to test for mediator live data
                         Log.d("TestActivity", "clicked set location");
                         model.setCurrentLocation(new LatLng(1.3209983, 104.888));
+                        */
                     }
                 });
 
@@ -103,6 +112,7 @@ public class TestActivity extends AppCompatActivity {
             {
                 Log.d("Activity", "observed newlocation changed");
             });*/
+
         model.getMediator().observe(this,  newMediator ->
                 Log.d("Activity","mediatorlivedata changed")
         );
@@ -119,6 +129,8 @@ public class TestActivity extends AppCompatActivity {
                         }
                     }
                 });
+
+
 
         AppDatabase mappDatabase = AppDatabase.getInstance(this);
         AvailabilityAPIController mAvailAPI = new AvailabilityAPIController();

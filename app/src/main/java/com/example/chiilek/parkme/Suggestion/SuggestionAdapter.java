@@ -69,15 +69,15 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                Log.d("test", "onClick: clicked on: " + CP.getCarParkStaticInfo().getCPNumber());
+                Log.d("SuggestionsAdapter", "onClick: clicked on: " + CP.getCarParkStaticInfo().getCPNumber());
                 Toast.makeText(mContext, CP.getCarParkStaticInfo().getCPNumber(), Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(mContext, RouteOverviewActivity.class);
-                intent.putExtra("cp_pop_up", carparkList.get(position).getCarParkStaticInfo().getCPNumber());
+                intent.putExtra("chosenRoute", carparkList.get(position));
+                Log.d("SuggestionsAdapter", "starting new context with DirectionsAndCPInfo");
                 mContext.startActivity(intent);
             }
         });
-
     }
 
     //function to allow activity to add entire list at one time
