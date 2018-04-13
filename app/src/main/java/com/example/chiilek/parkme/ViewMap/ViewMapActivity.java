@@ -31,6 +31,7 @@ import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityAPIController;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.repository.LocationService;
+import com.example.chiilek.parkme.repository.Repository;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -287,28 +288,16 @@ public class ViewMapActivity extends FragmentActivity
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        startActivity(new Intent(ViewMapActivity.this,  CarParkPopUpActivity.class));
-        Log.d("ViewMapActivity","Pressed Init Button");
-
         CarParkStaticInfo cpsi = (CarParkStaticInfo) marker.getTag();
-
         if (cpsi == null){
             Log.d("Marker", "FUCKFUCKFUCK");
+        } else {
+            Log.d("Marker", cpsi.getCPNumber());
         }
-
         Intent intent = new Intent(ViewMapActivity.this,  CarParkPopUpActivity.class);
 
-
-
-        intent.putExtra("CarParkStaticInfo", (CarParkStaticInfo) marker.getTag());
+        intent.putExtra("CarParkStaticInfo", cpsi);
         startActivity(intent);
-        Log.d("ViewMapActivity","Pressed Init Button");
-        //Toast.makeText(this, "Location:\n" + marker.getPosition(), Toast.LENGTH_LONG).show();
         return false;
     }
 }
-
-
-
-
-
