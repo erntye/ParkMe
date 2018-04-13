@@ -22,7 +22,6 @@ import org.w3c.dom.Text;
 public class CarParkPopUpActivity extends AppCompatActivity {
 
     TextView titleText;
-    TextView addressText;
 
     TextView motorCarValue;
     TextView motorCycleValue;
@@ -68,7 +67,6 @@ public class CarParkPopUpActivity extends AppCompatActivity {
 
 
         titleText = findViewById(R.id.pop_up_title_location);
-        addressText = findViewById(R.id.pop_up_park_address);
 
         motorCarValue = findViewById(R.id.pop_up_motor_car_value);
         motorCycleValue = findViewById(R.id.pop_up_motor_cycle_value);
@@ -84,8 +82,7 @@ public class CarParkPopUpActivity extends AppCompatActivity {
         if (carParkStaticInfo == null) {
             Log.d("CarParkPopUpActivity", "cpsi = null");
         } else {
-            titleText.setText(carParkStaticInfo.getCPNumber());
-            addressText.setText(carParkStaticInfo.getAddress());
+            titleText.setText(carParkStaticInfo.getAddress());
 
             carParkTypeValue.setText(carParkStaticInfo.getCarParkType());
             parkingSystemValue.setText(carParkStaticInfo.getTypeOfParkingSystem());
