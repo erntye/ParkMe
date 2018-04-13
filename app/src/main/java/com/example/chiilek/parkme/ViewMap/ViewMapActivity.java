@@ -11,7 +11,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -50,6 +49,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ViewMapActivity extends FragmentActivity
@@ -62,6 +62,8 @@ public class ViewMapActivity extends FragmentActivity
     private FusedLocationProviderClient mFusedLocationClient;
     Bitmap bitmap;
     Bitmap smallMarker;
+
+    List<Marker> MarkerList;
 
     ViewMapViewModel model;
     //needed to bind to service to get location updates
@@ -80,6 +82,8 @@ public class ViewMapActivity extends FragmentActivity
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        MarkerList = new ArrayList<>();
 
         model = ViewModelProviders.of(this).get(ViewMapViewModel.class);
         //TODO pass current location to Viewmodel
@@ -103,6 +107,8 @@ public class ViewMapActivity extends FragmentActivity
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
+                mMap.clear();
+
                 Log.d("Maps", "Place selected: " + place.getName());
                 CameraPosition cp = new CameraPosition.Builder().target(place.getLatLng()).zoom(14).build();
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
@@ -117,6 +123,8 @@ public class ViewMapActivity extends FragmentActivity
                             .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)))
                             .setTag(cpsi);
                 }
+
+                mMap.addMarker(new MarkerOptions().position(place.getLatLng()));
             }
 
             @Override
@@ -137,21 +145,8 @@ public class ViewMapActivity extends FragmentActivity
     @Override
     protected void onPause() {
         super.onPause();
-        //unbind to service whenever activity is closed
-//        mLocationService.stopLocationUpdates();
-//        unbindService(mConnection);
-
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
