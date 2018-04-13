@@ -69,8 +69,7 @@ public class RouteOverviewActivity extends FragmentActivity
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
-
-    ViewMapViewModel model;
+    private NavigationViewModel model;
     //needed to bind to service to get location updates
     private LocationService mLocationService;
     private final int REQUEST_PERMISSION_LOCATION = 1;
@@ -90,8 +89,7 @@ public class RouteOverviewActivity extends FragmentActivity
         mapFragment.getMapAsync(this);
 
         //Create a view model and allow re-created activities to get the same view model instance
-        NavigationViewModel model = ViewModelProviders.of(this).get(NavigationViewModel.class);
-
+        model = ViewModelProviders.of(this).get(NavigationViewModel.class);
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
 //        LatLng endPoint = new LatLng(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
@@ -161,8 +159,9 @@ public class RouteOverviewActivity extends FragmentActivity
         sampleWayPoints.add(new LatLng(37.4130, -122.0831));
         sampleWayPoints.add(new LatLng(37.4000, -122.0762));
         sampleWayPoints.add(new LatLng(37.3830, -122.0870));
-
-        plotPolyline(sampleWayPoints);
+        PolylineOptions route = model.getInitialRoute();
+//        plotPolyline(sampleWayPoints);
+        plotPolyline(route);
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);

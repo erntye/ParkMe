@@ -5,6 +5,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.Serializable;
 
 /**
@@ -136,4 +138,6 @@ public class CarParkStaticInfo implements Serializable{
     public void setLongitude(String longitude) {
         this.longitude = longitude;
     }
+
+    public LatLng getLatLng(){return new LatLng(Double.parseDouble(latitude),Double.parseDouble(longitude));}
 }

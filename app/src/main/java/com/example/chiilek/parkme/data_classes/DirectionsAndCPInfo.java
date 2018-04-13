@@ -57,7 +57,7 @@ public class DirectionsAndCPInfo {
     }
 
     public LatLng getDestinationLatLng(){
-        return new LatLng(getDestinationLatitude(),getDestinationLongitude());
+        return carParkStaticInfo.getLatLng();
     }
 
     //deprecated, to replace getLat and getLong with getDestinationLatLng

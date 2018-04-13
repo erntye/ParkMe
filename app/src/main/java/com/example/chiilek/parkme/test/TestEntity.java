@@ -5,6 +5,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  */
 
 @Entity(tableName = "TestEntity")
-public class TestEntity {
+public class TestEntity implements Serializable{
 
     public TestEntity(int id, String name){
         this.id = id;
