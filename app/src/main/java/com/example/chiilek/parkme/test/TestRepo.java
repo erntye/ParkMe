@@ -69,7 +69,7 @@ public class TestRepo {
             protected Void doInBackground(Void... voids) {
                 TestEntity entity4 = new TestEntity(4,"testing4");
                 testDatabase.getModelDAO().save(entity4);
-                Log.d("repo","Initialize Saved");
+                Log.d("repo","Testing Mediator function Saved");
                 return null;
             }
         }.execute();

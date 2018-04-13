@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import com.example.chiilek.parkme.MultiSearchFragment;
 import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.SelectRouteViewModel;
 import com.example.chiilek.parkme.ViewMap.ViewMapViewModel;
@@ -34,20 +35,8 @@ public class SuggestionsActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
 
-        model = ViewModelProviders.of(this).get(SelectRouteViewModel.class);
-        model.getDirectionsAndCarParks().observe(this, newDirections ->
-            {
-                Log.d("SuggestionsActivity", "observer activated directionsandcarparklist changed");
-                mAdapter.addItems(newDirections);
-                model.setStartPoint(new LatLng(1.3209983,104.888));
-                }
-            );
-
-        //TODO LOAD REAL DATA BELOW HERE
-        //--------------
-
-        //---------------
         setContentView(R.layout.activity_suggestions);
+        //MultiSearchFragment searchFragment = (MultiSearchFragment) getFragmentManager().findFragmentById(R.id.from_to_fragment);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -68,6 +57,29 @@ public class SuggestionsActivity extends AppCompatActivity{
         // specify an adapter
         mAdapter = new SuggestionAdapter(mCarparkList, this);
         mRecyclerView.setAdapter(mAdapter);
+
+        //code to observe viewmodel
+        model = ViewModelProviders.of(this).get(SelectRouteViewModel.class);
+        model.getMediatorCurrentLoc().observe(this, newData->
+                Log.d("SuggestionsActivity", "observing mediator current location")
+        );
+        model.getMediatorDirAndCPList().observe(this,newData->
+                Log.d("SuggestionsActivity", "observing mediator dir and CP list")
+        );
+        model.getDirectionsAndCarParks().observe(this, newRoutes ->
+                {
+                    Log.d("SuggestionsActivity", "observer activated directionsandcarparklist changed");
+                    mAdapter.addItems(newRoutes);
+
+                    // for testing, remove soon
+                    if (!model.getNavigationStarted()) {
+                        model.setDestination(mAdapter.getCarParkInfo(0).getDestinationLatLng());
+                        model.setChosenRoute(mAdapter.getCarParkInfo(0));
+                        model.setNavigationStarted();
+                    }
+                }
+        );
+
 
     }
 

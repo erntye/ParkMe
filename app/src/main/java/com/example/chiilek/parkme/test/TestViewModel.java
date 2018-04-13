@@ -37,6 +37,8 @@ public class TestViewModel extends AndroidViewModel{
         testList = testRepo.getAllEntity();
         mLocationRepo = LocationRepository.getLocationRepository(application.getApplicationContext());
         currentLocation = mLocationRepo.getLocation();
+
+
         mediatorData.addSource(currentLocation, newLocation ->{
                 Log.d("TestViewModel","inside mediator live data ");
                 testRepo.testMediatorFunc();
@@ -45,15 +47,6 @@ public class TestViewModel extends AndroidViewModel{
         //calls repository to search again whenever newDestination is changed by SelectRouteVM.search()
         testList = Transformations.switchMap(searchTerm, (Integer id) ->
                 testRepo.getEntityById(id));
-
-        LiveData<LatLng> thingy;
-        LiveData<String> live = Transformations.map(mLocationRepo.getLocation(), newLocation ->
-        {
-            Log.d("TestViewModel","switch map");
-            return newLocation.toString();
-        }
-        );
-
     }
 
     public LiveData<Integer> getSearchTerm(){
@@ -69,10 +62,20 @@ public class TestViewModel extends AndroidViewModel{
         }*/
         return this.testList;
     }
+    public LiveData<LatLng> getCurrentLocation(){
+        return this.currentLocation;
+    }
+
+    public MediatorLiveData getMediator(){
+        return mediatorData;
+    }
 
     public void setData(int newTerm){
         Log.d("ViewModel","Data set to " + newTerm);
         this.searchTerm.setValue(newTerm);
+    }
+    public void setCurrentLocation(LatLng location){
+        this.currentLocation.setValue(location);
     }
 
     public void initialize() {

@@ -31,6 +31,7 @@ import com.example.chiilek.parkme.data_classes.availability_classes.CarParkDatum
 import com.example.chiilek.parkme.data_classes.availability_classes.Item;
 import com.example.chiilek.parkme.data_classes.source.AppDatabase;
 import com.example.chiilek.parkme.repository.LocationRepository;
+import com.google.android.gms.maps.model.LatLng;
 import com.example.chiilek.parkme.repository.Repository;
 
 import java.util.List;
@@ -64,21 +65,25 @@ public class TestActivity extends AppCompatActivity {
         button.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View v) {
-//                        Log.d("Activity","Pressed Set Button");
-//                        model.setData(Integer.parseInt(textInput.getText().toString()));
-//                        Log.d("Activity","Data set to " + Integer.parseInt(textInput.getText().toString()));
-//                        button.setText(textInput.getText());
-                        startActivity(new Intent(TestActivity.this, CarParkPopUpActivity.class));
+                        Log.d("Activity","Pressed Set Button");
+                        model.setData(Integer.parseInt(textInput.getText().toString()));
+                        Log.d("Activity","Data set to " + Integer.parseInt(textInput.getText().toString()));
+                        button.setText(textInput.getText());
+                        //startActivity(new Intent(TestActivity.this, CarParkPopUpActivity.class));
                     }
                 });
 
         initbutton.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View v) {
+/*
                         model.initialize();
                         initbutton.setText("Done!");
                         startActivity(new Intent(TestActivity.this, ReroutePopUpActivity.class));
                         Log.d("Activity","Pressed Init Button");
+*/
+                        Log.d("TestActivity", "clicked set location");
+                        model.setCurrentLocation(new LatLng(1.3209983, 104.888));
                     }
                 });
 
@@ -93,6 +98,14 @@ public class TestActivity extends AppCompatActivity {
                     textInput.setText(newTerm.get(0).name);
             }
         });
+
+/*        model.getCurrentLocation().observe(this, newLocation ->
+            {
+                Log.d("Activity", "observed newlocation changed");
+            });*/
+        model.getMediator().observe(this,  newMediator ->
+                Log.d("Activity","mediatorlivedata changed")
+        );
 
         locationbutton.setOnClickListener(
                 new View.OnClickListener() {

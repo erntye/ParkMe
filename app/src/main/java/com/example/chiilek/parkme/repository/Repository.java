@@ -4,7 +4,6 @@ package com.example.chiilek.parkme.repository;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
-import android.text.Layout;
 import android.util.Log;
 
 import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityAPIController;
@@ -62,6 +61,8 @@ public class Repository {
             Log.d("Repository", "In getDirectionsAndCPs: closestCarParks is null");
             routesCallback.onFailure();
         }
+        else if (closestCarParks.size() == 0 )
+            Log.d("Repository", "In getDirectionsAndCPs: There are no closest carparks \n*******") ;
         else
             Log.d("Repository", "In getDirectionsAndCPs: closestCarParks size: " + closestCarParks.size()) ;
         //generates directions to each car park, stores in DirectionsAndCPInfo class
