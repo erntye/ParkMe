@@ -29,6 +29,7 @@ public class SelectRouteViewModel extends AndroidViewModel {
     private LocationRepository mLocationRepo;
     //used during navigation
     private MediatorLiveData mediatorCurrentLoc = new MediatorLiveData<>();
+    private LatLng previousLocation;
     private MutableLiveData<LatLng> currentLocation;
     private DirectionsAndCPInfo chosenRoute;
     private MutableLiveData<GoogleMapsDirections> updatingRouteDirections;
@@ -38,18 +39,21 @@ public class SelectRouteViewModel extends AndroidViewModel {
     public SelectRouteViewModel(Application application){
         super(application);
         this.mRepository = Repository.getInstance(this.getApplication());
-        destination = new MutableLiveData<>();
-        //TODO get destination from user
-        destination.setValue(new LatLng(1.378455, 103.755149));
         mLocationRepo = LocationRepository.getLocationRepository(this.getApplication());
-        startPoint = new MutableLiveData<>();
-        startPoint.setValue(mLocationRepo.getLocation().getValue());
+        destination = new MutableLiveData<>();
+        //TODO get destination from user from activity
+        destination.setValue(new LatLng(1.378455, 103.755149));
         currentLocation = mLocationRepo.getLocation();
+        startPoint = new MutableLiveData<>();
+        startPoint.setValue(currentLocation.getValue());
+        previousLocation = currentLocation.getValue();
         directionsAndCarParksList = new MutableLiveData<>();
-        //TODO get chosen route from user input
+
+        //TODO get chosen route from user input from activity
+        updatingRouteDirections = new MutableLiveData<>();
 
         mediatorDirAndCPList.addSource(destination,  newDestination -> {
-            Log.d("SelectRouteViewModel","mediator activated on destination changed, get directions and CP called");
+            Log.d("SelectRouteViewModel","mediator activated new destination: " + newDestination.toString() +" get directions and CP called");
             mRepository.getDirectionsAndCPs(startPoint.getValue(), (LatLng)newDestination,
             new GetRoutesCallback() {
                 @Override
@@ -82,19 +86,24 @@ public class SelectRouteViewModel extends AndroidViewModel {
             Log.d("SelectRouteViewModel", "mediatorCurrentLoc changed");
             if(navigationStarted){
                 Log.d("SelectRouteViewModel", "inside navigation started");
-                mRepository.updateRoutes((LatLng) newCurrentLocation, chosenRoute.getDestinationLatLng(),
-                        new DirectionsCallback() {
-                            @Override
-                            public void onSuccess(GoogleMapsDirections gMapsDirections) {
-                                updatingRouteDirections.postValue(gMapsDirections);
-                                Log.d("SelectRouteViewModel", "navigation: updated route directions with new current loc.");
-                            }
+                //if location is changed
+                if (!currentLocation.getValue().equals(previousLocation)){
+                    Log.d("SelectRouteViewModel", "current loc: " + currentLocation.getValue().toString() + " prev loc: " + previousLocation.toString());
+                    mRepository.updateRoutes((LatLng) newCurrentLocation, chosenRoute.getDestinationLatLng(),
+                            new DirectionsCallback() {
+                                @Override
+                                public void onSuccess(GoogleMapsDirections gMapsDirections) {
+                                    updatingRouteDirections.postValue(gMapsDirections);
+                                    Log.d("SelectRouteViewModel", "navigation: updated route directions with new current loc.");
+                                }
 
-                            @Override
-                            public void onFailure() {
-                                Log.d("SelectRouteViewModel", "navigation: update route failed");
-                            }
-                        });
+                                @Override
+                                public void onFailure() {
+                                    Log.d("SelectRouteViewModel", "navigation: update route failed");
+                                }
+                            });
+                    previousLocation = currentLocation.getValue();
+                }else Log.d("SelectRouteViewModel", "location not changed, do not need to update route");
             }
         });
         /*TODO: set navigationStarted when changing to navi activity, onExit set it back to false.
@@ -172,5 +181,9 @@ public class SelectRouteViewModel extends AndroidViewModel {
     public MediatorLiveData getMediatorDirAndCPList() {
         return mediatorDirAndCPList;
     }
+    public boolean getNavigationStarted(){
+        return navigationStarted;
+    }
+
 
 }
