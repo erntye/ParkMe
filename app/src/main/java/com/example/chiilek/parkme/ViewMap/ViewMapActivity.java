@@ -111,8 +111,6 @@ public class ViewMapActivity extends FragmentActivity
 
         autocompleteFragment.setBoundsBias(new LatLngBounds(new LatLng(1.227925, 103.604971), new LatLng(1.456672, 104.003780)));
 
-        Repository repository = Repository.getInstance(this); // TODO remove this shit bruh
-
         // Create customised markers.
         // Parking lots markers
         parking_lots_bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.carpark_sign);
@@ -178,7 +176,7 @@ public class ViewMapActivity extends FragmentActivity
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSION_LOCATION);
             return;
         }
-        Repository repository = Repository.getInstance(this); // TODO remove this shit bruh
+
         mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
@@ -188,7 +186,7 @@ public class ViewMapActivity extends FragmentActivity
                             CameraPosition cp = new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(14).build();
                             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
                             cpList.setValue(model.getCarParkInfo().getValue());
-                            model.getMcpListMediator().observe(ViewMapActivity.this, newdata ->{
+                            model.getMcpListMediator().observe(ViewMapActivity.this, newData ->{
                                 Log.d("ViewMapActivity", "On map ready, in mediator observe");
                             });
                             model.getCarParkInfo().observe(ViewMapActivity.this, new Observer<List<CarParkStaticInfo>>(){
@@ -199,8 +197,7 @@ public class ViewMapActivity extends FragmentActivity
                                 }
                             });
                             
-                            Log.d("Marker", Integer.toString(cpList.getValue().size()));
-
+                            Log.d("ViewMapActivity", "onMapReady, Marker count: " + Integer.toString(cpList.getValue().size()));
                             for (CarParkStaticInfo cpsi : cpList.getValue()){
                                 mMap.addMarker(new MarkerOptions()
                                         .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))

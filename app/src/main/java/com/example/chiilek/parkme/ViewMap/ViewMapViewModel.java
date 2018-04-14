@@ -41,7 +41,7 @@ public class ViewMapViewModel extends AndroidViewModel{
                 mcpListFromRepo = mRepository.getViewMapCPList();
                 //mediator live data. when mcarparklist, the live data from repo, changes, it updates the to return which is observed by activity
                 mcpListMediator.addSource(mcpListFromRepo, newCPList -> {
-                    Log.d("ViewMapViewModel", "Constructor onSuccess, within add source code; CPList was updated. posting now.");
+                    Log.d("ViewMapViewModel", "Mediator Live Data detected change in CPList. posting now.");
                     mcpListForActivity.postValue((List<CarParkStaticInfo>)newCPList);
                 });
             }

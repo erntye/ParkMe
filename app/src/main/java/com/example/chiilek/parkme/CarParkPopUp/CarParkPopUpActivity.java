@@ -88,6 +88,13 @@ public class CarParkPopUpActivity extends AppCompatActivity {
             titleText.setText(carParkStaticInfo.getAddress());
 
             motorCarValue.setText(carParkStaticInfo.getAvailableCarLots());
+            if(carParkStaticInfo.getAvailableMotorcycleLots() != null) {
+                motorCycleValue.setText(carParkStaticInfo.getAvailableMotorcycleLots());
+            }else motorCycleValue.setText("Not Available");
+
+            if(carParkStaticInfo.getAvailableHeavyLots() != null) {
+                heavyVehicleValue.setText(carParkStaticInfo.getAvailableHeavyLots());
+            }else heavyVehicleValue.setText("Not Available");
 
             carParkTypeValue.setText(carParkStaticInfo.getCarParkType());
             parkingSystemValue.setText(carParkStaticInfo.getTypeOfParkingSystem());
