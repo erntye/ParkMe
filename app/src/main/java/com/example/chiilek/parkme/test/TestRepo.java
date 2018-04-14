@@ -32,7 +32,7 @@ public class TestRepo {
     }
 
     public LiveData<List<TestEntity>> getAllEntity(){
-        Log.d("Repo","Called getAllEntity()");
+        Log.d("TestRepo","Called getAllEntity()");
         return testDatabase.getModelDAO().getAllModel();
     }
 

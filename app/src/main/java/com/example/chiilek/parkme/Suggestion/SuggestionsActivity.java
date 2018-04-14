@@ -16,6 +16,7 @@ import com.example.chiilek.parkme.SelectRouteViewModelFactory;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.test.TestEntity;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,14 +58,14 @@ public class SuggestionsActivity extends AppCompatActivity{
         mRecyclerView.setAdapter(mAdapter);
 
         //code to observe viewmodel
-        model = ViewModelProviders.of(this).get(SelectRouteViewModel.class);
-/*      //TODO to replace above when intent from popup works
+        //model = ViewModelProviders.of(this).get(SelectRouteViewModel.class);
+      //TODO to replace above when intent from popup works
         Intent parentIntent = getIntent();
-        CarParkStaticInfo chosenCarPark = (CarParkStaticInfo) parentIntent.getSerializableExtra("chosenCarPark");
+        LatLng destination = parentIntent.getExtras().getParcelable("Destination");
         model = ViewModelProviders
-                .of(this, new SelectRouteViewModelFactory(this.getApplication(),chosenCarPark))
+                .of(this, new SelectRouteViewModelFactory(this.getApplication(),destination))
                 .get(SelectRouteViewModel.class);
-        */
+
         model.getMediatorCurrentLoc().observe(this, newData->
                 Log.d("SuggestionsActivity", "observing mediator current location")
         );

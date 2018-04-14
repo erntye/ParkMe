@@ -3,6 +3,8 @@ package com.example.chiilek.parkme.data_classes.availability_classes;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * @author chiilek
  * @since 24/3/2018.
@@ -17,7 +19,7 @@ import com.google.gson.annotations.SerializedName;
  * Contains only get methods.
  */
 
-public class CarParkInfo {
+public class CarParkInfo implements Serializable{
 
     //for generating default objects
     public CarParkInfo(){

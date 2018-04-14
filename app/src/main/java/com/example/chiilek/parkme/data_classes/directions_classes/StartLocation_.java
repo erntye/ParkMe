@@ -4,7 +4,9 @@ package com.example.chiilek.parkme.data_classes.directions_classes;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class StartLocation_ {
+import java.io.Serializable;
+
+public class StartLocation_ implements Serializable {
 
     @SerializedName("lat")
     @Expose

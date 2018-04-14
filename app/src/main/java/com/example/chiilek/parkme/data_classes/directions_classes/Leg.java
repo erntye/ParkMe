@@ -1,11 +1,12 @@
 
 package com.example.chiilek.parkme.data_classes.directions_classes;
 
+import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Leg {
+public class Leg implements Serializable {
 
     @SerializedName("distance")
     @Expose

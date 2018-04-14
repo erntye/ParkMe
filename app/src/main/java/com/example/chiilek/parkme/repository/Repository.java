@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Repository {
 
     private AppDatabase appDatabase;
+    private MutableLiveData<List<CarParkStaticInfo>> viewMapCPList = new MutableLiveData<List<CarParkStaticInfo>>();
     //singleton pattern
     private static Repository INSTANCE;
 
@@ -208,14 +209,39 @@ public class Repository {
      * @param searchTerm
      * @return
      */
-    public LiveData<List<CarParkStaticInfo>> searchNearbyCarParks(LatLng searchTerm){
+    public MutableLiveData<List<CarParkStaticInfo>> searchNearbyCarParks(LatLng searchTerm, SearchNearbyCallback searchNearbyCallback){
         Log.d("Repository", "Called setSearchTerm(" + searchTerm + ")");
         //call database getClosest10()
         List<CarParkStaticInfo> closestCarParks = appDatabase.CPInfoDao()
                 .getNearestCarParks(searchTerm.latitude, searchTerm.longitude);
-
         MutableLiveData<List<CarParkStaticInfo>> liveData = new MutableLiveData<>();
-        liveData.setValue(closestCarParks);
+
+        AvailabilityAPIController availAPIControl = new AvailabilityAPIController();
+        availAPIControl.makeCall(new AvailabilityCallback() {
+            @Override
+            public void onSuccess(Item cpAPIItem) {
+                if(cpAPIItem.getCarParkData().size() == 0){
+                    Log.d("Repository", "searchNearbyCarParks() - In availability callback success: Size of cpData list in Item object is 0.");
+                    Log.d("Repository", "searchNearbyCarParks() - Availability information will be null.");
+                }else {
+                    for(CarParkStaticInfo carPark : closestCarParks){
+                        carPark.setAvailInfo(cpAPIItem.getCarParkDatum(carPark.getCPNumber()));
+                    }
+                    Log.d("Repository", "searchNearbyCarParks() - In availability callback success: CarParkDatum has been saved for all car parks in static info list.");
+                    Log.d("Repository", "searchNearbyCarParks() - Calling onSuccess from ViewModel's GetRoutesCallback");
+                    viewMapCPList.postValue(closestCarParks);
+                    searchNearbyCallback.onSuccess();
+                }
+            }
+
+            @Override
+            public void onFailure() {
+                Log.e("Repository", "searchNearbyCarParks() - Availability Callback onFailure");
+                Log.d("Repository", "searchNearbyCarParks() - Availability information will be null.");
+            }
+        });
+        viewMapCPList.setValue(closestCarParks);
+        liveData.setValue(viewMapCPList.getValue());
         return liveData;
     }
 
@@ -233,5 +259,10 @@ public class Repository {
             }
         });
 
+    }
+
+    //expose for view map view model
+    public MutableLiveData<List<CarParkStaticInfo>> getViewMapCPList(){
+        return viewMapCPList;
     }
 }

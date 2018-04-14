@@ -1,19 +1,14 @@
 package com.example.chiilek.parkme.navigation;
 
-import android.animation.ValueAnimator;
 import android.Manifest;
 import android.app.AlertDialog;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Camera;
-import android.graphics.Color;
 import android.location.Location;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -22,16 +17,12 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.content.Intent;
 import android.widget.Toast;
 
-import com.example.chiilek.parkme.MultiSearchFragment;
 import com.example.chiilek.parkme.R;
-import com.example.chiilek.parkme.ViewMap.ViewMapActivity;
-import com.example.chiilek.parkme.ViewMap.ViewMapViewModel;
+import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.repository.LocationService;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -42,14 +33,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
@@ -74,7 +61,7 @@ public class RouteOverviewActivity extends FragmentActivity
     private LocationService mLocationService;
     private final int REQUEST_PERMISSION_LOCATION = 1;
     private List<LatLng> sampleWayPoints;
-
+    private DirectionsAndCPInfo mChosenRoute;
     // ---------------------------------------
     //             CHECK PERMISSIONS
     // ---------------------------------------
@@ -88,16 +75,24 @@ public class RouteOverviewActivity extends FragmentActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        mChosenRoute = (DirectionsAndCPInfo) getIntent().getSerializableExtra("chosenRoute");
+        if (mChosenRoute != null)
+            Log.d("RouteOverviewActivity","Parcelled Chosen Route is "+ mChosenRoute.getCarParkStaticInfo().getCPNumber());
+        else
+            Log.d("RouteOverviewActivity","Parcelled Chosen Route is null");
         //Create a view model and allow re-created activities to get the same view model instance
-        model = ViewModelProviders.of(this).get(NavigationViewModel.class);
+        //model = ViewModelProviders.of(this).get(NavigationViewModel.class);
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
 //        LatLng endPoint = new LatLng(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
-        ImageView b = findViewById(R.id.startButton);
-        b.setOnClickListener(new View.OnClickListener() {
+        ImageView startButton = findViewById(R.id.startButton);
+        startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(RouteOverviewActivity.this, NavigationActivity.class));
+                Intent intent = new Intent(RouteOverviewActivity.this, NavigationActivity.class);
+                intent.putExtra("chosenRoute",mChosenRoute);
+                Log.d("RouteOverviewActivity","starting intent for Navigation Activity");
+                startActivity(intent);
             }
         });
 
@@ -159,9 +154,9 @@ public class RouteOverviewActivity extends FragmentActivity
         sampleWayPoints.add(new LatLng(37.4130, -122.0831));
         sampleWayPoints.add(new LatLng(37.4000, -122.0762));
         sampleWayPoints.add(new LatLng(37.3830, -122.0870));
-        PolylineOptions route = model.getInitialRoute();
-//        plotPolyline(sampleWayPoints);
-        plotPolyline(route);
+//        PolylineOptions route = model.getInitialRoute();
+//        plotPolyline(route);
+        plotPolyline(sampleWayPoints);
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -173,7 +168,7 @@ public class RouteOverviewActivity extends FragmentActivity
         for(LatLng latlng:sampleWayPoints)
             builder.include(latlng);
         LatLngBounds bounds = builder.build();
-        CameraUpdate mCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds,width,(int)(height*0.6),10);
+        CameraUpdate mCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds,width,(int)(height*0.5),2);
         mMap.animateCamera(mCameraUpdate);
     }
 

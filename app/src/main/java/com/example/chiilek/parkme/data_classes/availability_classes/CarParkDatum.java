@@ -3,6 +3,7 @@ package com.example.chiilek.parkme.data_classes.availability_classes;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +28,7 @@ import java.util.List;
  *
  */
 
-public class CarParkDatum {
+public class CarParkDatum implements Serializable {
 
     //for generating default objects
     public CarParkDatum(){
