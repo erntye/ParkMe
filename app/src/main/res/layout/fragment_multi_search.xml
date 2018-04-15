@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorMain"
     android:orientation="vertical"
     android:gravity="center"
     tools:context="com.example.chiilek.parkme.MultiSearchFragment">
@@ -14,7 +13,8 @@
     <RelativeLayout
         android:layout_marginTop="20dp"
         android:layout_width="300dp"
-        android:layout_height="32dp">
+        android:layout_height="32dp"
+        android:background="@color/colorMain">
 
         <ImageView
             android:id="@+id/imageView"
@@ -36,7 +36,8 @@
     <RelativeLayout
         android:layout_width="300dp"
         android:layout_height="32dp"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="10dp"
+        android:background="@color/colorMain">
 
         <ImageView
             android:id="@+id/imageView2"

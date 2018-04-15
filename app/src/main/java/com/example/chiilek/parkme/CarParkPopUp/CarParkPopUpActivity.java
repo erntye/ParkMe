@@ -51,6 +51,7 @@ public class CarParkPopUpActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(CarParkPopUpActivity.this, RouteOverviewActivity.class);
                 intent.putExtra("chosenCarPark",carParkStaticInfo);
+                intent.putExtra("destinationAddress", carParkStaticInfo.getAddress());
                 startActivity(intent);
             }
         });

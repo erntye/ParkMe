@@ -26,6 +26,7 @@ import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.repository.LocationService;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -95,6 +96,13 @@ public class RouteOverviewActivity extends FragmentActivity
                 startActivity(intent);
             }
         });
+
+        PlaceAutocompleteFragment autocompleteFragmentSource = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_source);
+        PlaceAutocompleteFragment autocompleteFragmentDsetination = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_destination);
+
+        //Puts text in the search bars
+        autocompleteFragmentSource.setText("Current Location");
+        autocompleteFragmentDsetination.setText(getIntent().getExtras().getString("destinationAddress"));
 
     }
 

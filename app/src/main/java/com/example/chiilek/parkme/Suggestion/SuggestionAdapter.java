@@ -72,11 +72,11 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
             @Override
             public void onClick(View view){
                 Log.d("SuggestionAdapter", "onClick: clicked on: " + CP.getCarParkStaticInfo().getCPNumber());
-                Log.d("SuggestionsAdapter", "onClick: clicked on: " + CP.getCarParkStaticInfo().getCPNumber());
                 Toast.makeText(mContext, CP.getCarParkStaticInfo().getCPNumber(), Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(mContext, RouteOverviewActivity.class);
                 intent.putExtra("chosenRoute", carparkList.get(position));
+                intent.putExtra("destinationAddress", carparkList.get(position).getCarParkStaticInfo().getAddress());
                 Log.d("SuggestionsAdapter", "starting new context with DirectionsAndCPInfo");
                 mContext.startActivity(intent);
             }

@@ -111,6 +111,8 @@ public class ViewMapActivity extends FragmentActivity
 
         autocompleteFragment.setBoundsBias(new LatLngBounds(new LatLng(1.227925, 103.604971), new LatLng(1.456672, 104.003780)));
 
+
+
         // Create customised markers.
         // Parking lots markers
         parking_lots_bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.carpark_sign);

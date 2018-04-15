@@ -4,25 +4,72 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorMain">
+
+    <RelativeLayout
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_width="300dp"
+        android:layout_height="32dp"
+        android:id="@+id/sourceAuto"
+        >
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/rectangle"
+            android:background="@color/color2"
+            android:alpha="0.2"
+            android:layout_centerInParent="true"/>
+
+        <fragment
+            android:id="@+id/place_autocomplete_fragment_source"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            android:layout_width="290dp"
+            android:layout_height="20dp"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_centerHorizontal="true"
+        android:id="@+id/destinationAuto"
+        android:layout_width="300dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/sourceAuto"
+        >
+
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color2"
+            android:src="@drawable/rectangle"
+            android:alpha="0.2"
+            android:layout_centerInParent="true"
+            />
+        <fragment
+            android:id="@+id/place_autocomplete_fragment_destination"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            android:layout_width="290dp"
+            android:layout_height="20dp"
+            android:layout_centerInParent="true"
+            />
+    </RelativeLayout>
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_below="@id/from_to_fragment"
+        android:layout_below="@id/destinationAuto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
-        tools:context=".Navigation.NavigationActivity" />
-
-    <fragment
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:name="com.example.chiilek.parkme.MultiSearchFragment"
-        android:id="@+id/from_to_fragment">
-
+        tools:context=".Navigation.NavigationActivity">
     </fragment>
 
     <ImageButton

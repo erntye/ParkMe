@@ -10,12 +10,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
+import com.example.chiilek.parkme.MultiSearchFragment;
 import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.SelectRouteViewModel;
 import com.example.chiilek.parkme.SelectRouteViewModelFactory;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.test.TestEntity;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -36,6 +38,14 @@ public class SuggestionsActivity extends AppCompatActivity{
 
         setContentView(R.layout.activity_suggestions);
         //MultiSearchFragment searchFragment = (MultiSearchFragment) getFragmentManager().findFragmentById(R.id.from_to_fragment);
+
+
+        PlaceAutocompleteFragment autocompleteFragmentSource = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_source);
+        PlaceAutocompleteFragment autocompleteFragmentDsetination = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_destination);
+
+
+
+
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -85,6 +95,10 @@ public class SuggestionsActivity extends AppCompatActivity{
                     }
                 }
         );
+
+        //Puts text in the search bars
+        autocompleteFragmentSource.setText("Current Location");
+        autocompleteFragmentDsetination.setText(parentIntent.getExtras().getString("Name"));
 
 
     }

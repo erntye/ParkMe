@@ -30,7 +30,7 @@
         android:layout_alignTop="@+id/parking_suggestion_box.png"
         android:layout_marginStart="56dp"
         android:textColor="@color/colorMain"
-        android:textSize="20dp"
+        android:textSize="18dp"
         android:textStyle="bold" />
 
     <TextView
@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/availability"
         android:layout_alignLeft="@id/address"
-        android:textSize="14dp" />
+        android:textSize="12dp" />
 
     <TextView
         android:id="@+id/availability"
@@ -47,15 +47,16 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/address"
         android:layout_alignLeft="@id/address"
-        android:textSize="14dp" />
+        android:textSize="12dp" />
 
     <TextView
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/parking_suggestion_box.png"
+        android:layout_alignBottom="@+id/distance"
         android:layout_alignRight="@id/parking_suggestion_box.png"
-        android:textSize="14dp" />
+
+        android:textSize="12dp" />
 
 
 </RelativeLayout>
