@@ -61,6 +61,7 @@
         android:layout_marginRight="1.8dp"
         android:layout_marginTop="41dp"
         android:background="@drawable/parking_selector"
+        android:enabled="false"
         android:onClick="showCarParks" />
 
 </RelativeLayout>

@@ -14,6 +14,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Handler;
 import android.os.IBinder;
@@ -58,6 +60,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.List;
+import java.util.Locale;
 
 public class ViewMapActivity extends FragmentActivity
         implements OnMapReadyCallback,
@@ -198,8 +201,7 @@ public class ViewMapActivity extends FragmentActivity
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             CameraPosition cp = new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(16).build();
-                            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
-                            cpList.setValue(model.getCarParkInfo().getValue());
+                            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cp));
                             model.getMcpListMediator().observe(ViewMapActivity.this, newData ->{
                                 Log.d("ViewMapActivity", "On map ready, in mediator observe");
                             });
@@ -210,7 +212,12 @@ public class ViewMapActivity extends FragmentActivity
                                     cpList.setValue(carParkStaticInfos);
                                 }
                             });
-                            
+
+                            // To ensure that the button is only enabled when model is ready.
+                            Button button = findViewById(R.id.parking_button);
+                            button.setEnabled(true);
+
+                            cpList.setValue(model.getCarParkInfo(new LatLng(location.getLatitude(), location.getLongitude())).getValue());
                             Log.d("ViewMapActivity", "onMapReady, Marker count: " + Integer.toString(cpList.getValue().size()));
                             for (CarParkStaticInfo cpsi : cpList.getValue()){
                                 mMap.addMarker(new MarkerOptions()
@@ -360,9 +367,9 @@ public class ViewMapActivity extends FragmentActivity
 
         CameraPosition cp = new CameraPosition.Builder().target(latLng).zoom(16).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
-        List<CarParkStaticInfo> list = repository.searchNearbyCarParks(latLng).getValue();
+        cpList.setValue(model.getCarParkInfo(latLng).getValue());
 
-        for (CarParkStaticInfo cpsi : list){
+        for (CarParkStaticInfo cpsi : cpList.getValue()){
             Log.d("Marker", cpsi.getAddress());
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
@@ -371,12 +378,53 @@ public class ViewMapActivity extends FragmentActivity
         }
 
         // Create red marker to mark searched location
-//        mMap.addMarker(new MarkerOptions()
-//                .position(place.getLatLng()));
+        mMap.addMarker(new MarkerOptions()
+                .position(latLng));
 
         //Sets the fields to pass into suggest_car_parks
-        name = "p_button";
+        name = getCompleteAddressString(latLng.latitude, latLng.longitude);
         destination = latLng;
         suggestCarParks.setVisibility(View.VISIBLE);
+    }
+
+    private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
+
+        String strAdd = "";
+
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(LATITUDE,
+                    LONGITUDE, 1);
+
+            if (addresses.get(0) != null) {
+
+                Address returnedAddress = addresses.get(0);
+                StringBuilder strReturnedAddress = new StringBuilder("");
+                String s = returnedAddress.toString();
+                boolean copy = false;
+
+                for (int i = 0; i < s.length(); i++) {
+                    if(s.charAt(i) == ','){
+                        break;
+                    }
+                    if(copy){
+                        strReturnedAddress.append(s.charAt(i));
+                    }
+                    if(s.charAt(i) == '"'){
+                        copy = true;
+                    }
+                }
+
+                strAdd = strReturnedAddress.toString();
+
+                Log.d("getCompleteAddressString", strAdd);
+            } else {
+                Log.d("getCompleteAddressString", "No Address returned!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d("getCompleteAddressString", "Canont get Address!");
+        }
+        return strAdd;
     }
 }
