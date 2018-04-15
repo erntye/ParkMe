@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -22,11 +23,16 @@ import android.content.Intent;
 import android.widget.Toast;
 
 import com.example.chiilek.parkme.R;
+import com.example.chiilek.parkme.ViewMap.ViewMapActivity;
+import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.repository.LocationService;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -98,11 +104,27 @@ public class RouteOverviewActivity extends FragmentActivity
         });
 
         PlaceAutocompleteFragment autocompleteFragmentSource = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_source);
-        PlaceAutocompleteFragment autocompleteFragmentDsetination = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_destination);
+        PlaceAutocompleteFragment autocompleteFragmentDestination = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_destination);
 
         //Puts text in the search bars
         autocompleteFragmentSource.setText("Current Location");
-        autocompleteFragmentDsetination.setText(getIntent().getExtras().getString("destinationAddress"));
+        autocompleteFragmentDestination.setText(getIntent().getExtras().getString("destinationAddress"));
+
+        autocompleteFragmentDestination.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                Intent intent = new Intent(RouteOverviewActivity.this, ViewMapActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("Place", (Parcelable) place);
+                intent.putExtras(bundle);
+                Log.d("RouteOverviewActivityChange","Changing chosen destination on ViewMapActivity");
+                startActivity(intent);
+            }
+            @Override
+            public void onError(Status status) {
+                Log.d("Maps", "An error occurred: " + status);
+            }
+        });
 
     }
 

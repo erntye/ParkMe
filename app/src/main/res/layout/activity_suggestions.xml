@@ -9,10 +9,9 @@
     tools:context=".Suggestion.SuggestionsActivity"
     android:background="@color/colorMain">
 
-
     <RelativeLayout
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:layout_width="300dp"
         android:layout_height="32dp"
         android:id="@+id/sourceAuto"
@@ -41,6 +40,7 @@
         android:layout_width="300dp"
         android:layout_height="32dp"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:layout_below="@+id/sourceAuto"
         >
 
@@ -63,6 +63,15 @@
             />
     </RelativeLayout>
 
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color2"
+        android:layout_below="@id/destinationAuto"
+        android:src="@drawable/rectangle"
+        android:layout_centerInParent="true"
+        />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
@@ -71,5 +80,6 @@
         android:layout_below="@id/destinationAuto"
         android:background="@color/color5"
         />
+
 
 </RelativeLayout>

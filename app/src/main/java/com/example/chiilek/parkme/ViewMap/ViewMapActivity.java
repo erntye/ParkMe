@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -73,6 +74,7 @@ public class ViewMapActivity extends FragmentActivity
     String name;
 
     Button suggestCarParks;
+    Place placeUpdate;
 
     ViewMapViewModel model;
     //needed to bind to service to get location updates
@@ -118,42 +120,49 @@ public class ViewMapActivity extends FragmentActivity
         parking_lots_bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.carpark_sign);
         parking_lots_smallMarker = Bitmap.createScaledBitmap(parking_lots_bitmap, 80, 80, false);
 
+        PlaceSelectionListener listener = new PlaceSelectionListener()
+        {@Override
+        public void onPlaceSelected(Place place) {
+            mMap.clear();
 
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                mMap.clear();
+            Log.d("Maps", "Place selected: " + place.getName());
+            CameraPosition cp = new CameraPosition.Builder().target(place.getLatLng()).zoom(16).build();
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
 
-                Log.d("Maps", "Place selected: " + place.getName());
-                CameraPosition cp = new CameraPosition.Builder().target(place.getLatLng()).zoom(16).build();
-                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
+            cpList.setValue(model.getCarParkInfo(place.getLatLng()).getValue());
 
-                cpList.setValue(model.getCarParkInfo(place.getLatLng()).getValue());
-
-                for (CarParkStaticInfo cpsi : cpList.getValue()){
-                    Log.d("Marker", cpsi.getAddress());
-                    mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
-                            .icon(BitmapDescriptorFactory.fromBitmap(parking_lots_smallMarker)))
-                            .setTag(cpsi);
-                }
-
-                // Create red marker to mark searched location
+            for (CarParkStaticInfo cpsi : cpList.getValue()){
+                Log.d("Marker", cpsi.getAddress());
                 mMap.addMarker(new MarkerOptions()
-                        .position(place.getLatLng()));
-
-                //Sets the fields to pass into suggest_car_parks
-                name = place.getName().toString();
-                destination = place.getLatLng();
-                suggestCarParks.setVisibility(View.VISIBLE);
-                Log.d("Visibility", Integer.toString(suggestCarParks.getVisibility()));
+                        .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
+                        .icon(BitmapDescriptorFactory.fromBitmap(parking_lots_smallMarker)))
+                        .setTag(cpsi);
             }
+
+            // Create red marker to mark searched location
+            mMap.addMarker(new MarkerOptions()
+                    .position(place.getLatLng()));
+
+            //Sets the fields to pass into suggest_car_parks
+            name = place.getName().toString();
+            destination = place.getLatLng();
+            suggestCarParks.setVisibility(View.VISIBLE);
+            Log.d("Visibility", Integer.toString(suggestCarParks.getVisibility()));
+        }
 
             @Override
             public void onError(Status status) {
                 Log.d("Maps", "An error occurred: " + status);
             }
-        });
+        };
+
+
+//        Bundle b = this.getIntent().getExtras();
+//        if (b != null){
+//            placeUpdate = b.getParcelable("Place");
+//            listener.onPlaceSelected(placeUpdate);
+//        }
+        autocompleteFragment.setOnPlaceSelectedListener(listener);
     }
 
     @Override
@@ -332,6 +341,7 @@ public class ViewMapActivity extends FragmentActivity
             intent.putExtra("Destination", destination);
             intent.putExtra("Name", name);
             startActivity(intent);
+
         } else {
             Log.d("ViewMapActivity", "destination = null || name = null");
         }
