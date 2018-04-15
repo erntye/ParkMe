@@ -11,6 +11,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.location.Location;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -43,6 +44,7 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -111,8 +113,8 @@ public class ViewMapActivity extends FragmentActivity
 
         // Create customised markers.
         // Parking lots markers
-        parking_lots_bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.carpark_sign);
-        parking_lots_smallMarker = Bitmap.createScaledBitmap(parking_lots_bitmap, 80, 80, false);
+        parking_lots_bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.carpark_sign_shadow);
+        parking_lots_smallMarker = Bitmap.createScaledBitmap(parking_lots_bitmap, 88, 89, false);
 
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -169,6 +171,7 @@ public class ViewMapActivity extends FragmentActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setPadding(0, 300, 0, 0);
 
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -182,7 +185,7 @@ public class ViewMapActivity extends FragmentActivity
                     public void onSuccess(Location location) {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
-                            CameraPosition cp = new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(14).build();
+                            CameraPosition cp = new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(16).build();
                             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
                             List<CarParkStaticInfo> list = repository.searchNearbyCarParks(new LatLng(location.getLatitude(), location.getLongitude())).getValue();
 
@@ -302,15 +305,16 @@ public class ViewMapActivity extends FragmentActivity
     @Override
     public boolean onMarkerClick(Marker marker) {
         CarParkStaticInfo cpsi = (CarParkStaticInfo) marker.getTag();
+
         if (cpsi == null){
-            Log.d("Marker", "FUCKFUCKFUCK");
+            Log.d("ViewMapActivity", "cpsi = null; unable to pass cpsi");
         } else {
-            Log.d("Marker", cpsi.getCPNumber());
+            Intent intent = new Intent(ViewMapActivity.this,  CarParkPopUpActivity.class);
+            intent.putExtra("CarParkStaticInfo", cpsi);
+            startActivity(intent);
         }
-        Intent intent = new Intent(ViewMapActivity.this,  CarParkPopUpActivity.class);
-        intent.putExtra("CarParkStaticInfo", cpsi);
-        startActivity(intent);
-        return false;
+
+        return true;
     }
 
     public void suggestCarParks(View view) {
@@ -324,5 +328,33 @@ public class ViewMapActivity extends FragmentActivity
             Log.d("ViewMapActivity", "destination = null || name = null");
         }
 
+    }
+
+    public void showCarParks(View view) {
+        Repository repository = Repository.getInstance(this); // TODO remove this shit bruh
+        mMap.clear();
+
+        LatLng latLng = mMap.getCameraPosition().target;
+
+        CameraPosition cp = new CameraPosition.Builder().target(latLng).zoom(16).build();
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
+        List<CarParkStaticInfo> list = repository.searchNearbyCarParks(latLng).getValue();
+
+        for (CarParkStaticInfo cpsi : list){
+            Log.d("Marker", cpsi.getAddress());
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
+                    .icon(BitmapDescriptorFactory.fromBitmap(parking_lots_smallMarker)))
+                    .setTag(cpsi);
+        }
+
+        // Create red marker to mark searched location
+//        mMap.addMarker(new MarkerOptions()
+//                .position(place.getLatLng()));
+
+        //Sets the fields to pass into suggest_car_parks
+        name = "p_button";
+        destination = latLng;
+        suggestCarParks.setVisibility(View.VISIBLE);
     }
 }

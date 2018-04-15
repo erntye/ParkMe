@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Where to shift the map center when user taps on marker -->
+    <dimen name="map_dx">10dp</dimen>
+    <dimen name="map_dy">-100dp</dimen>
+</resources>

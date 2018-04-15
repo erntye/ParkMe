@@ -22,6 +22,8 @@ import org.w3c.dom.Text;
 
 public class CarParkPopUpActivity extends AppCompatActivity {
 
+
+    // These are the fields that will be initialized in onCreate
     TextView titleText;
 
     TextView motorCarValue;
@@ -42,46 +44,20 @@ public class CarParkPopUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.pop_info);
+        //noinspection ConstantConditions
         getSupportActionBar().hide();
-        //TODO Pass the choice over to navigation
-        //this makes the SELECT button go to navigation
-        ImageView b = findViewById(R.id.pop_up_select_button);
-        b.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(CarParkPopUpActivity.this, RouteOverviewActivity.class);
-                intent.putExtra("chosenCarPark",carParkStaticInfo);
-                startActivity(intent);
-            }
-        });
 
-
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-
-        int width = dm.widthPixels;
-        int height = dm.heightPixels;
-
+        // Set fragment size.
         getWindow().setLayout(1000, 1500);
-        Log.d("dimension", Integer.toString(dm.widthPixels) + Integer.toString(dm.heightPixels));
 
+        // Retrieve the car park object from intent.
         carParkStaticInfo = (CarParkStaticInfo) getIntent().getSerializableExtra("CarParkStaticInfo");
-        Log.d("PopUpActivity", "pop up carpark is "+ carParkStaticInfo.getCPNumber());
+        Log.d("CarParkPopUpActivity", "pop up carpark is "+ carParkStaticInfo.getCPNumber());
 
+        // Assign the fields.
+        assignFields();
 
-        titleText = findViewById(R.id.pop_up_title_location);
-
-        motorCarValue = findViewById(R.id.pop_up_motor_car_value);
-        motorCycleValue = findViewById(R.id.pop_up_motor_cycle_value);
-        heavyVehicleValue = findViewById(R.id.pop_up_heavy_vehicle_value);
-
-        carParkTypeValue = findViewById(R.id.pop_up_car_park_type_value);
-        parkingSystemValue = findViewById(R.id.pop_up_parking_system_value);
-        freeParkingValue = findViewById(R.id.pop_up_free_parking_value);
-
-        shortTermParkingValue = findViewById(R.id.pop_up_short_term_parking_value);
-        nightParkingValue = findViewById(R.id.pop_up_night_parking_value);
-
+        // Populate the text views.
         if (carParkStaticInfo == null) {
             Log.d("CarParkPopUpActivity", "cpsi = null");
         } else {
@@ -95,6 +71,29 @@ public class CarParkPopUpActivity extends AppCompatActivity {
             nightParkingValue.setText(carParkStaticInfo.getNightParking());
             Log.d("CarParkPopUpActivity", "cpsi = not null");
         }
+
+        //this makes the SELECT button go to navigation
+        ImageView b = findViewById(R.id.pop_up_select_button);
+        b.setOnClickListener(v -> {
+            Intent intent = new Intent(CarParkPopUpActivity.this, RouteOverviewActivity.class);
+            intent.putExtra("chosenCarPark",carParkStaticInfo);
+            startActivity(intent);
+        });
+    }
+
+    private void assignFields(){
+        titleText = findViewById(R.id.pop_up_title_location);
+
+        motorCarValue = findViewById(R.id.pop_up_motor_car_value);
+        motorCycleValue = findViewById(R.id.pop_up_motor_cycle_value);
+        heavyVehicleValue = findViewById(R.id.pop_up_heavy_vehicle_value);
+
+        carParkTypeValue = findViewById(R.id.pop_up_car_park_type_value);
+        parkingSystemValue = findViewById(R.id.pop_up_parking_system_value);
+        freeParkingValue = findViewById(R.id.pop_up_free_parking_value);
+
+        shortTermParkingValue = findViewById(R.id.pop_up_short_term_parking_value);
+        nightParkingValue = findViewById(R.id.pop_up_night_parking_value);
     }
 
 }
