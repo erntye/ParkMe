@@ -34,6 +34,7 @@ public class NavigationViewModel extends AndroidViewModel {
 
     public NavigationViewModel(@NonNull Application application, DirectionsAndCPInfo initialChosenRoute) {
         super(application);
+        Log.d("NavigationViewModel","creating navigation view model");
         mLocationRepo = LocationRepository.getLocationRepository(application.getApplicationContext());
         currentLocation = mLocationRepo.getLocation();
         previousLocation = currentLocation.getValue();

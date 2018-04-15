@@ -4,7 +4,9 @@ package com.example.chiilek.parkme.data_classes.directions_classes;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Duration_ {
+import java.io.Serializable;
+
+public class Duration_ implements Serializable {
 
     @SerializedName("text")
     @Expose

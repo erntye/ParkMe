@@ -2,6 +2,8 @@ package com.example.chiilek.parkme.ViewMap;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,6 +15,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.location.Location;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -73,12 +76,15 @@ public class ViewMapActivity extends FragmentActivity
     String name;
 
     Button suggestCarParks;
+    Place placeUpdate;
 
     ViewMapViewModel model;
     //needed to bind to service to get location updates
     private LocationService mLocationService;
     private final int REQUEST_PERMISSION_LOCATION = 1;
 
+
+    private MutableLiveData<List<CarParkStaticInfo>> cpList = new MutableLiveData<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,7 +102,7 @@ public class ViewMapActivity extends FragmentActivity
 
         model = ViewModelProviders.of(this).get(ViewMapViewModel.class);
         //TODO pass current location to Viewmodel
-        model.getCarParkList().observe(this, new Observer<List<CarParkStaticInfo>>() {
+        model.getCarParkInfo().observe(this, new Observer<List<CarParkStaticInfo>>() {
             @Override
             public void onChanged(@Nullable List<CarParkStaticInfo> newCarParkList) {
             }
@@ -109,50 +115,56 @@ public class ViewMapActivity extends FragmentActivity
 
         autocompleteFragment.setBoundsBias(new LatLngBounds(new LatLng(1.227925, 103.604971), new LatLng(1.456672, 104.003780)));
 
-        Repository repository = Repository.getInstance(this); // TODO remove this shit bruh
+
 
         // Create customised markers.
         // Parking lots markers
         parking_lots_bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.carpark_sign_shadow);
         parking_lots_smallMarker = Bitmap.createScaledBitmap(parking_lots_bitmap, 88, 89, false);
 
+        PlaceSelectionListener listener = new PlaceSelectionListener()
+        {@Override
+        public void onPlaceSelected(Place place) {
+            mMap.clear();
 
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                mMap.clear();
+            Log.d("Maps", "Place selected: " + place.getName());
+            CameraPosition cp = new CameraPosition.Builder().target(place.getLatLng()).zoom(16).build();
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
 
-                Log.d("Maps", "Place selected: " + place.getName());
-                CameraPosition cp = new CameraPosition.Builder().target(place.getLatLng()).zoom(16).build();
-                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
-                List<CarParkStaticInfo> list = repository.searchNearbyCarParks(place.getLatLng()).getValue();
+            cpList.setValue(model.getCarParkInfo(place.getLatLng()).getValue());
 
-                Log.d("Marker", Integer.toString(list.size()));
-
-                for (CarParkStaticInfo cpsi : list){
-                    Log.d("Marker", cpsi.getAddress());
-                    mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
-                            .icon(BitmapDescriptorFactory.fromBitmap(parking_lots_smallMarker)))
-                            .setTag(cpsi);
-                }
-
-                // Create red marker to mark searched location
+            for (CarParkStaticInfo cpsi : cpList.getValue()){
+                Log.d("Marker", cpsi.getAddress());
                 mMap.addMarker(new MarkerOptions()
-                        .position(place.getLatLng()));
-
-                //Sets the fields to pass into suggest_car_parks
-                name = place.getName().toString();
-                destination = place.getLatLng();
-                suggestCarParks.setVisibility(View.VISIBLE);
-                Log.d("Visibility", Integer.toString(suggestCarParks.getVisibility()));
+                        .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
+                        .icon(BitmapDescriptorFactory.fromBitmap(parking_lots_smallMarker)))
+                        .setTag(cpsi);
             }
+
+            // Create red marker to mark searched location
+            mMap.addMarker(new MarkerOptions()
+                    .position(place.getLatLng()));
+
+            //Sets the fields to pass into suggest_car_parks
+            name = place.getName().toString();
+            destination = place.getLatLng();
+            suggestCarParks.setVisibility(View.VISIBLE);
+            Log.d("Visibility", Integer.toString(suggestCarParks.getVisibility()));
+        }
 
             @Override
             public void onError(Status status) {
                 Log.d("Maps", "An error occurred: " + status);
             }
-        });
+        };
+
+
+//        Bundle b = this.getIntent().getExtras();
+//        if (b != null){
+//            placeUpdate = b.getParcelable("Place");
+//            listener.onPlaceSelected(placeUpdate);
+//        }
+        autocompleteFragment.setOnPlaceSelectedListener(listener);
     }
 
     @Override
@@ -178,7 +190,7 @@ public class ViewMapActivity extends FragmentActivity
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSION_LOCATION);
             return;
         }
-        Repository repository = Repository.getInstance(this); // TODO remove this shit bruh
+
         mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
@@ -187,11 +199,20 @@ public class ViewMapActivity extends FragmentActivity
                         if (location != null) {
                             CameraPosition cp = new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(16).build();
                             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
-                            List<CarParkStaticInfo> list = repository.searchNearbyCarParks(new LatLng(location.getLatitude(), location.getLongitude())).getValue();
-
-                            Log.d("Marker", Integer.toString(list.size()));
-
-                            for (CarParkStaticInfo cpsi : list){
+                            cpList.setValue(model.getCarParkInfo().getValue());
+                            model.getMcpListMediator().observe(ViewMapActivity.this, newData ->{
+                                Log.d("ViewMapActivity", "On map ready, in mediator observe");
+                            });
+                            model.getCarParkInfo().observe(ViewMapActivity.this, new Observer<List<CarParkStaticInfo>>(){
+                                @Override
+                                public void onChanged(@Nullable List<CarParkStaticInfo> carParkStaticInfos) {
+                                    Log.d("ViewMapActivity", "getCarParkInfo onChanged, availability info: " + carParkStaticInfos.get(0).getAvailableCarLots());
+                                    cpList.setValue(carParkStaticInfos);
+                                }
+                            });
+                            
+                            Log.d("ViewMapActivity", "onMapReady, Marker count: " + Integer.toString(cpList.getValue().size()));
+                            for (CarParkStaticInfo cpsi : cpList.getValue()){
                                 mMap.addMarker(new MarkerOptions()
                                         .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
                                         .icon(BitmapDescriptorFactory.fromBitmap(parking_lots_smallMarker)))
@@ -324,6 +345,7 @@ public class ViewMapActivity extends FragmentActivity
             intent.putExtra("Destination", destination);
             intent.putExtra("Name", name);
             startActivity(intent);
+
         } else {
             Log.d("ViewMapActivity", "destination = null || name = null");
         }

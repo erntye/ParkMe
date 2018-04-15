@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorMain"
     android:orientation="vertical"
     android:gravity="center"
     tools:context="com.example.chiilek.parkme.MultiSearchFragment">
@@ -14,7 +13,8 @@
     <RelativeLayout
         android:layout_marginTop="20dp"
         android:layout_width="300dp"
-        android:layout_height="32dp">
+        android:layout_height="32dp"
+        android:background="@color/colorMain">
 
         <ImageView
             android:id="@+id/imageView"
@@ -26,7 +26,7 @@
             android:layout_centerInParent="true"/>
 
         <fragment
-            android:id="@+id/place_autocomplete_fragment2"
+            android:id="@+id/place_autocomplete_fragment_source"
             android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
             android:layout_width="290dp"
             android:layout_height="20dp"
@@ -36,7 +36,8 @@
     <RelativeLayout
         android:layout_width="300dp"
         android:layout_height="32dp"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="10dp"
+        android:background="@color/colorMain">
 
         <ImageView
             android:id="@+id/imageView2"
@@ -48,7 +49,7 @@
             android:layout_centerInParent="true"
             />
         <fragment
-            android:id="@+id/place_autocomplete_fragment3"
+            android:id="@+id/place_autocomplete_fragment_destination"
             android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
             android:layout_width="290dp"
             android:layout_height="20dp"

@@ -86,7 +86,8 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         //model = ViewModelProviders.of(this).get(NavigationViewModel.class);
         //TODO update the above with the below once completed
         Intent parentIntent = getIntent();
-        DirectionsAndCPInfo initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("initialChosenRoute");
+        DirectionsAndCPInfo initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
+        Log.d("NavigationActivity", "InitialChosenRoute passed from intent is  " + initialChosenRoute.getCarParkStaticInfo().getCPNumber());
         model = ViewModelProviders
                 .of(this,new NavigationViewModelFactory(this.getApplication(),initialChosenRoute))
                 .get(NavigationViewModel.class );

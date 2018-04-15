@@ -64,16 +64,19 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
         //TODO add travel time and carpark availability
         //String distanceString = Integer.toString(position);
         holder.buttonImage.setImageResource(drawableID);
-        holder.CPNumber.setText(CP.getCarParkStaticInfo().getCPNumber());
+        holder.address.setText(CP.getCarParkStaticInfo().getAddress());
         holder.distance.setText(Integer.toString((int)CP.getDistance()) + "m away");
+        holder.availability.setText(CP.getAvailability()+ " Available Lots");
+        holder.timeToReach.setText("Time away: "+ CP.getDuration());
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                Log.d("SuggestionsAdapter", "onClick: clicked on: " + CP.getCarParkStaticInfo().getCPNumber());
+                Log.d("SuggestionAdapter", "onClick: clicked on: " + CP.getCarParkStaticInfo().getCPNumber());
                 Toast.makeText(mContext, CP.getCarParkStaticInfo().getCPNumber(), Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(mContext, RouteOverviewActivity.class);
                 intent.putExtra("chosenRoute", carparkList.get(position));
+                intent.putExtra("destinationAddress", carparkList.get(position).getCarParkStaticInfo().getAddress());
                 Log.d("SuggestionsAdapter", "starting new context with DirectionsAndCPInfo");
                 mContext.startActivity(intent);
             }
@@ -98,17 +101,23 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
 
     //This class holds all the Views inside one rectangle in the recycler view
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        private TextView CPNumber;
+        private TextView address;
+        private TextView timeToReach;
         private TextView distance;
+        private TextView availability;
         private ImageView buttonImage;
         private RelativeLayout parentLayout;
 
 
         public MyViewHolder(View view) {
             super(view);
-            distance = view.findViewById(R.id.distance);
+
             parentLayout = view.findViewById(R.id.parent_layout);
-            CPNumber = view.findViewById(R.id.CPNumber);
+
+            distance = view.findViewById(R.id.distance);
+            address = view.findViewById(R.id.address);
+            timeToReach = view.findViewById(R.id.time);
+            availability = view.findViewById(R.id.availability);
             buttonImage = view.findViewById(R.id.parking_suggestion_box_png);
 
         }

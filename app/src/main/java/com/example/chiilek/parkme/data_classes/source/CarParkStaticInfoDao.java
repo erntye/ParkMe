@@ -4,8 +4,11 @@ import java.util.List;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
 
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
+
+import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 
 /**
  * Created by QuekYufei on 27/3/18.
@@ -24,4 +27,7 @@ public interface CarParkStaticInfoDao {
 
     @Query("SELECT * FROM CarParkInfo WHERE car_park_no = :carParkName")
     CarParkStaticInfo getCarParkByID(String carParkName);
+
+    @Update(onConflict = REPLACE)
+    void updateAll(List<CarParkStaticInfo> cpStaticInfo);
 }

@@ -63,6 +63,15 @@ public class CarParkPopUpActivity extends AppCompatActivity {
         } else {
             titleText.setText(carParkStaticInfo.getAddress());
 
+            motorCarValue.setText(carParkStaticInfo.getAvailableCarLots());
+            if(carParkStaticInfo.getAvailableMotorcycleLots() != null) {
+                motorCycleValue.setText(carParkStaticInfo.getAvailableMotorcycleLots());
+            }else motorCycleValue.setText("Not Available");
+
+            if(carParkStaticInfo.getAvailableHeavyLots() != null) {
+                heavyVehicleValue.setText(carParkStaticInfo.getAvailableHeavyLots());
+            }else heavyVehicleValue.setText("Not Available");
+
             carParkTypeValue.setText(carParkStaticInfo.getCarParkType());
             parkingSystemValue.setText(carParkStaticInfo.getTypeOfParkingSystem());
             freeParkingValue.setText(carParkStaticInfo.getFreeParking());
@@ -77,6 +86,7 @@ public class CarParkPopUpActivity extends AppCompatActivity {
         b.setOnClickListener(v -> {
             Intent intent = new Intent(CarParkPopUpActivity.this, RouteOverviewActivity.class);
             intent.putExtra("chosenCarPark",carParkStaticInfo);
+            intent.putExtra("destinationAddress", carParkStaticInfo.getAddress());
             startActivity(intent);
         });
     }

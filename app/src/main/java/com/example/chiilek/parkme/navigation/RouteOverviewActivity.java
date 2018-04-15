@@ -1,42 +1,38 @@
 package com.example.chiilek.parkme.navigation;
 
-import android.animation.ValueAnimator;
 import android.Manifest;
 import android.app.AlertDialog;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Camera;
-import android.graphics.Color;
 import android.location.Location;
-import android.os.Handler;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.text.Layout;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.content.Intent;
 import android.widget.Toast;
 
-import com.example.chiilek.parkme.MultiSearchFragment;
 import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.ViewMap.ViewMapActivity;
-import com.example.chiilek.parkme.ViewMap.ViewMapViewModel;
+import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.repository.LocationService;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -44,14 +40,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
@@ -91,18 +83,46 @@ public class RouteOverviewActivity extends FragmentActivity
         mapFragment.getMapAsync(this);
 
         mChosenRoute = (DirectionsAndCPInfo) getIntent().getSerializableExtra("chosenRoute");
+        if (mChosenRoute != null)
+            Log.d("RouteOverviewActivity","Parcelled Chosen Route is "+ mChosenRoute.getCarParkStaticInfo().getCPNumber());
+        else
+            Log.d("RouteOverviewActivity","Parcelled Chosen Route is null");
         //Create a view model and allow re-created activities to get the same view model instance
         //model = ViewModelProviders.of(this).get(NavigationViewModel.class);
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
 //        LatLng endPoint = new LatLng(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
-        ImageView b = findViewById(R.id.startButton);
-        b.setOnClickListener(new View.OnClickListener() {
+        ImageView startButton = findViewById(R.id.startButton);
+        startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(RouteOverviewActivity.this, NavigationActivity.class);
                 intent.putExtra("chosenRoute",mChosenRoute);
+                Log.d("RouteOverviewActivity","starting intent for Navigation Activity");
                 startActivity(intent);
+            }
+        });
+
+        PlaceAutocompleteFragment autocompleteFragmentSource = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_source);
+        PlaceAutocompleteFragment autocompleteFragmentDestination = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_destination);
+
+        //Puts text in the search bars
+        autocompleteFragmentSource.setText("Current Location");
+        autocompleteFragmentDestination.setText(getIntent().getExtras().getString("destinationAddress"));
+
+        autocompleteFragmentDestination.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                Intent intent = new Intent(RouteOverviewActivity.this, ViewMapActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("Place", (Parcelable) place);
+                intent.putExtras(bundle);
+                Log.d("RouteOverviewActivityChange","Changing chosen destination on ViewMapActivity");
+                startActivity(intent);
+            }
+            @Override
+            public void onError(Status status) {
+                Log.d("Maps", "An error occurred: " + status);
             }
         });
 

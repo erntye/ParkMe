@@ -6,6 +6,9 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 
 
 /**
@@ -19,12 +22,15 @@ import android.view.ViewGroup;
 public class MultiSearchFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM1 = "TEST1";
+    private static final String ARG_PARAM2 = "TEST2";
+    private PlaceAutocompleteFragment placeAutocompleteFragmentSource;
+    private PlaceAutocompleteFragment placeAutocompleteFragmentDestination;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -53,6 +59,9 @@ public class MultiSearchFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -63,6 +72,9 @@ public class MultiSearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        placeAutocompleteFragmentSource = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_source);
+        placeAutocompleteFragmentDestination = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_destination);
+
         return inflater.inflate(R.layout.fragment_multi_search, container, false);
     }
 
@@ -90,10 +102,6 @@ public class MultiSearchFragment extends Fragment {
         mListener = null;
     }
 
-    public String returnDestination(){
-        return mParam2;
-    }
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -108,5 +116,7 @@ public class MultiSearchFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+
 
 }
