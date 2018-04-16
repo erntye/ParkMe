@@ -76,11 +76,11 @@
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="42dp"
-        android:layout_marginStart="37dp"
+        android:layout_marginBottom="60dp"
+        android:layout_marginStart="20dp"
         android:padding="0dip"
-        android:paddingBottom="0dip"
-        android:paddingTop="0dip"
         android:scaleType="fitXY"
         android:src="@drawable/start_button" />
+
+
 </RelativeLayout>
