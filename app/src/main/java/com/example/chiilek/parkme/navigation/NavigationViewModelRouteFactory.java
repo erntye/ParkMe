@@ -8,12 +8,12 @@ import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.navigation.NavigationViewModel;
 
-public class NavigationViewModelFactory extends ViewModelProvider.NewInstanceFactory {
+public class NavigationViewModelRouteFactory extends ViewModelProvider.NewInstanceFactory {
     private Application mApplication;
     private DirectionsAndCPInfo mInitialChosenRoute;
 
 
-    public NavigationViewModelFactory(Application application, DirectionsAndCPInfo initialChosenRoute) {
+    public NavigationViewModelRouteFactory(Application application, DirectionsAndCPInfo initialChosenRoute) {
         mApplication = application;
         mInitialChosenRoute = initialChosenRoute;
     }
