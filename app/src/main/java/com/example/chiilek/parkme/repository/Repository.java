@@ -77,7 +77,7 @@ public class Repository {
                     new DirectionsCallback() {
                 public void onSuccess(GoogleMapsDirections googleMapsDirections) {
                     Log.d("Repository", "onSuccess in DirectionsCallback from CP in closestCarParks");
-                    DirectionsAndCPInfo element = new DirectionsAndCPInfo(carPark, googleMapsDirections);
+                    DirectionsAndCPInfo element = new DirectionsAndCPInfo(carPark, googleMapsDirections, destination);
                     directionsAndCPList.add(element);
                     int i = counter.decrementAndGet();
                     if(i==0){

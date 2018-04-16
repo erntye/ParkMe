@@ -18,26 +18,26 @@ public class DirectionsAndCPInfo implements Serializable{
     private double distanceScore = 0;
     private double durationScore = 0;
     private double availabilityScore = 0;
-    private double distanceScoreWeight = 0.50;
+    private double distanceScoreWeight = 0.25;
     private double durationScoreWeight = 0.25;
-    private double availabilityScoreWeight = 0.25;
+    private double availabilityScoreWeight = 0.50;
 
-    public DirectionsAndCPInfo(CarParkStaticInfo cpInfo, GoogleMapsDirections gmapsDir){
+    public DirectionsAndCPInfo(CarParkStaticInfo cpInfo, GoogleMapsDirections gmapsDir, LatLng userChosenDestination){
         this.carParkStaticInfo = cpInfo;
         this.googleMapsDirections = gmapsDir;
         Log.d("DirectionsAndCPInfo", "gmapsDir status "+ gmapsDir.getStatus() + ", gmapsDir routes size " + gmapsDir.getRoutes().size());
-
-        distance = getDistanceFromLatLngInKm(gmapsDir.getRoutes().get(0).getLegs().get(0).getStartLocation().getLat(),
-                gmapsDir.getRoutes().get(0).getLegs().get(0).getStartLocation().getLng(),
+        distance = getDistanceFromLatLngInM(userChosenDestination.latitude,
+                userChosenDestination.longitude,
                 Double.parseDouble(cpInfo.getLatitude()),
                 Double.parseDouble(cpInfo.getLongitude()));
         duration = gmapsDir.getRoutes().get(0).getLegs().get(0).getDuration().getValue();
     }
 
-    private double getDistanceFromLatLngInKm(double lat1, double lng1, double lat2, double lng2) {
-        double radiusAtEquator = 6378; //in kilometers
+    private double getDistanceFromLatLngInM(double lat1, double lng1, double lat2, double lng2) {
+        double radiusAtEquator = 6378000; //in meters
         double dLat = degToRad(lat2-lat1);  // deg2rad below
         double dLng = degToRad(lng2-lng1);
+
         double a =
                 Math.sin(dLat/2) * Math.sin(dLat/2) +
                         Math.cos(degToRad(lat1)) * Math.cos(degToRad(lat2)) *
