@@ -18,7 +18,7 @@ public class DirectionsAPIController {
 
     static final private String GMAPS_DIRECTION_API_BASE_URL = "https://maps.googleapis.com/maps/api/directions/";
     //TODO NOT HARDCODE THE STRING
-    static final private String GMAPS_API_KEY = "AIzaSyABzCIW6HUOYdcEvkVJnuNa4HhIiZvOhmo";
+    static final private String GMAPS_API_KEY = "AIzaSyCl6vY67OT8SbBtih9kD1zttnk9lOUxbT4";
 
     private static DirectionsAPIController INSTANCE;
 

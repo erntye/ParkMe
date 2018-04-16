@@ -34,6 +34,6 @@ public class ReachMessageActivity extends AppCompatActivity {
 
         Intent intent = new Intent(ReachMessageActivity.this, ViewMapActivity.class);
         Log.d("Reached", "Returning to ViewMapActivity");
-        startActivity(intent);
+        //startActivity(intent);
     }
 }
