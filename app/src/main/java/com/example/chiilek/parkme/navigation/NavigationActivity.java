@@ -164,6 +164,8 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                 .flat(true)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor)));
 
+        mMap.addMarker(new MarkerOptions().position(destLoc).title("Destination Marker"));
+
         model.getCurrentLoc().observe(this, newCurrentLoc -> {
             prevLoc = currentLoc;
             currentLoc = newCurrentLoc;
@@ -181,7 +183,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                     .build(
                     )));
             plotPolyline(updatedRoute);
-            if(checkReached(currentLoc, prevLoc)){
+            if(checkReached(currentLoc, destLoc)){
                 model.getCurrentLoc().removeObservers(this);
                 reached();
             }
