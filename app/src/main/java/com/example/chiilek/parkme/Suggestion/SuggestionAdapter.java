@@ -64,7 +64,7 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
 
         holder.buttonImage.setImageResource(drawableID);
         holder.address.setText(CP.getCarParkStaticInfo().getAddress());
-        holder.distance.setText(Double.toString(CP.getDistance()) + "km away");
+        holder.distance.setText(Double.toString(CP.getDistance()) + "m away");
         holder.availability.setText(CP.getAvailability()+ " Available Lots");
         holder.timeToReach.setText(CP.getDuration()/60+ " minutes away");
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){
