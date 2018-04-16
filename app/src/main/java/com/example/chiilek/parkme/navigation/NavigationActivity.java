@@ -19,6 +19,7 @@ import android.view.animation.LinearInterpolator;
 
 import com.example.chiilek.parkme.MultiSearchFragment;
 import com.example.chiilek.parkme.R;
+import com.example.chiilek.parkme.ReroutePopUp.ReroutePopUpActivity;
 import com.example.chiilek.parkme.api_controllers.directions_api.DirectionsAPIController;
 import com.example.chiilek.parkme.api_controllers.directions_api.DirectionsCallback;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
@@ -98,6 +99,8 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                 .of(this,new NavigationViewModelFactory(this.getApplication(),initialChosenRoute))
                 .get(NavigationViewModel.class );
 
+        model.setNavigationStarted(true);
+
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
 //        LatLng endPoint = new LatLng(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
@@ -151,22 +154,25 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor)));
 
         model.getCurrentLoc().observe(this, newCurrentLoc -> {
-            prevLoc = currentLoc;
-            currentLoc = newCurrentLoc;
-            Log.d("currentLoc", prevLoc.toString());
-            Log.d("currentLoc", newCurrentLoc.toString());
-            PolylineOptions updatedRoute = model.getUpdatingRoute();
-            float bearing = getBearing(prevLoc, newCurrentLoc);
-            marker.setPosition(newCurrentLoc);
-            marker.setAnchor(0.5f, 0.5f);
-            marker.setRotation(bearing);
-            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
-                    .target(newCurrentLoc)
-                    .zoom(18f)
-                    .bearing(bearing)
-                    .build(
-                    )));
-            plotPolyline(updatedRoute);
+            while(model.getNavigationStarted()){
+                prevLoc = currentLoc;
+                currentLoc = newCurrentLoc;
+                Log.d("currentLoc", prevLoc.toString());
+                Log.d("currentLoc", newCurrentLoc.toString());
+                PolylineOptions updatedRoute = model.getUpdatingRoute();
+                float bearing = getBearing(prevLoc, newCurrentLoc);
+                marker.setPosition(newCurrentLoc);
+                marker.setAnchor(0.5f, 0.5f);
+                marker.setRotation(bearing);
+                mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
+                        .target(newCurrentLoc)
+                        .zoom(18f)
+                        .bearing(bearing)
+                        .build(
+                        )));
+                plotPolyline(updatedRoute);
+                checkReached(prevLoc, currentLoc);
+            }
         });
     }
 
@@ -281,9 +287,6 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         mMap.addPolyline(plo);
     }
 
-
-
-
     //ask permission to turn on GPS
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
@@ -321,6 +324,25 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                         MY_PERMISSIONS_REQUEST_LOCATION);
             }
         }
+    }
+
+    public void checkReached(LatLng prevLoc, LatLng currentLoc){
+//        double threshold = 0.0001;
+        double threshold = 0.1;
+        double longDist = prevLoc.longitude - currentLoc.longitude;
+        double latDist = prevLoc.latitude - currentLoc.latitude;
+        if(longDist<0) longDist *= -1;
+        if(latDist<0) longDist *= -1;
+        if (longDist<threshold && latDist < threshold){
+            reached();
+            model.setNavigationStarted(false);
+        }
+    }
+
+    public void reached(){
+        Intent intent = new Intent(NavigationActivity.this, ReroutePopUpActivity.class);
+        Log.d("ReroutePopup","Displaying Reroute Popup Msg");
+        startActivity(intent);
     }
 
 }

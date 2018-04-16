@@ -126,4 +126,12 @@ public class NavigationViewModel extends AndroidViewModel {
     public MutableLiveData<LatLng> getCurrentLoc(){
         return this.currentLocation;
     }
+
+    public void setNavigationStarted(boolean p){
+        navigationStarted = p;
+    }
+
+    public boolean getNavigationStarted(){
+        return this.navigationStarted;
+    }
 }
