@@ -2,6 +2,7 @@ package com.example.chiilek.parkme.api_controllers.directions_api;
 
 import android.util.Log;
 
+import com.example.chiilek.parkme.api_controllers.roads_api.RoadsAPIController;
 import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDirections;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -63,6 +64,7 @@ public class DirectionsAPIController {
                         repoCallback.onFailure();
                         break;
                     default:
+                        gMapsDirections.setgMapsRoads(RoadsAPIController.getInstance().getRoads(gMapsDirections));
                         repoCallback.onSuccess(gMapsDirections);
                 }
             }
