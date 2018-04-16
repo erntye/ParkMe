@@ -113,9 +113,17 @@ public class NavigationViewModel extends AndroidViewModel {
         return chosenRoute.getGoogleMapsDirections().getPolylineOptions();
     }
 
+    public PolylineOptions getUpdatingRoute(){
+        return updatingRouteDirections.getValue().getPolylineOptions();
+    }
+
     @Override
     protected void onCleared() {
         super.onCleared();
         mLocationRepo.stopLocationUpdates();
+    }
+
+    public MutableLiveData<LatLng> getCurrentLoc(){
+        return this.currentLocation;
     }
 }
