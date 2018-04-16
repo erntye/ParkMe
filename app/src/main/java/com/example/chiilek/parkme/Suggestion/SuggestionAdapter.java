@@ -119,7 +119,6 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
             timeToReach = view.findViewById(R.id.time);
             availability = view.findViewById(R.id.availability);
             buttonImage = view.findViewById(R.id.parking_suggestion_box_png);
-
         }
 
     }

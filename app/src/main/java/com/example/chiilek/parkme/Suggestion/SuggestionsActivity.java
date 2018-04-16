@@ -62,7 +62,7 @@ public class SuggestionsActivity extends AppCompatActivity{
         autocompleteFragmentDestination.setBoundsBias(new LatLngBounds(new LatLng(1.227925, 103.604971), new LatLng(1.456672, 104.003780)));
 
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        mRecyclerView = findViewById(R.id.recycler_view);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -104,13 +104,6 @@ public class SuggestionsActivity extends AppCompatActivity{
                 {
                     Log.d("SuggestionsActivity", "observer activated directionsandcarparklist changed");
                     mAdapter.addItems(newRoutes);
-
-                    // for testing, remove soon
-                    if (!model.getNavigationStarted()) {
-                        model.setEndPoint(mAdapter.getCarParkInfo(0).getDestinationLatLng());
-                        model.setChosenRoute(mAdapter.getCarParkInfo(0));
-                        model.setNavigationStarted();
-                    }
                 }
         );
 
