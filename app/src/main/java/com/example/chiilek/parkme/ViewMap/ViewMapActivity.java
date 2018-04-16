@@ -203,8 +203,10 @@ public class ViewMapActivity extends FragmentActivity
                             model.getCarParkInfo().observe(ViewMapActivity.this, new Observer<List<CarParkStaticInfo>>(){
                                 @Override
                                 public void onChanged(@Nullable List<CarParkStaticInfo> carParkStaticInfos) {
-                                    Log.d("ViewMapActivity", "getCarParkInfo onChanged, availability info: " + carParkStaticInfos.get(0).getAvailableCarLots());
-                                    cpList.setValue(carParkStaticInfos);
+                                    if (carParkStaticInfos.size() > 0) {
+                                        Log.d("ViewMapActivity", "getCarParkInfo onChanged, availability info: " + carParkStaticInfos.get(0).getAvailableCarLots());
+                                        cpList.setValue(carParkStaticInfos);
+                                    }
                                 }
                             });
 

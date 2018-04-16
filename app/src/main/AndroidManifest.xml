@@ -77,7 +77,7 @@
         <activity
             android:name=".navigation.ReachMessageActivity"
             android:label="ReachMessage"
-            android:theme="@style/AppTheme.PopUpTheme">
+            android:theme="@style/AppTheme.PopUpTheme2">
 
         </activity>
 

@@ -340,7 +340,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     }
 
     public void reached(){
-        Intent intent = new Intent(NavigationActivity.this, ReroutePopUpActivity.class);
+        Intent intent = new Intent(NavigationActivity.this, ReachMessageActivity.class);
         Log.d("ReroutePopup","Displaying Reroute Popup Msg");
         startActivity(intent);
     }
