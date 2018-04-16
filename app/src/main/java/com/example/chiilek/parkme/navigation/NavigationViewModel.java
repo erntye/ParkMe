@@ -116,4 +116,7 @@ public class NavigationViewModel extends AndroidViewModel {
             }
         });
     }
+    public MutableLiveData<LatLng> getCurrentLoc(){
+        return currentLocation;
+    }
 }

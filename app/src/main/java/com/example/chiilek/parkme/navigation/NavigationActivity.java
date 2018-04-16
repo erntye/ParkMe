@@ -70,6 +70,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     private Polyline blackPolyline;
     private LatLng myPosition;
     private Marker marker;
+    CarParkStaticInfo initialCarPark;
 
     private NavigationViewModel model;
 
@@ -97,12 +98,20 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         destLoc = new LatLng(initialChosenRoute.getDestinationLatitude(), initialChosenRoute.getDestinationLongitude());
 
         Log.d("NavigationActivity", "InitialChosenRoute passed from intent is  " + initialChosenRoute.getCarParkStaticInfo().getCPNumber());
-        model = ViewModelProviders
-                .of(this,new NavigationViewModelFactory(this.getApplication(),initialChosenRoute))
-                .get(NavigationViewModel.class );
 
-        model.setNavigationStarted(true);
-
+        if (parentIntent.getSerializableExtra("chosenRoute") != null) {
+            initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
+            Log.d("NavigationActivity", "InitialChosenRoute passed from intent is  " + initialChosenRoute.getCarParkStaticInfo().getCPNumber());
+            model = ViewModelProviders
+                    .of(this, new NavigationViewModelRouteFactory(this.getApplication(), initialChosenRoute))
+                    .get(NavigationViewModel.class);
+        } else {
+            initialCarPark = (CarParkStaticInfo) parentIntent.getSerializableExtra("chosenCarPark");
+            Log.d("NavigationActivity", "ChosenCarPark passed from intent is  " + initialCarPark.getCPNumber());
+            model = ViewModelProviders
+                    .of(this, new NavigationViewModelCarParkFactory(this.getApplication(), initialCarPark))
+                    .get(NavigationViewModel.class);
+        }
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
 //        LatLng endPoint = new LatLng(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
@@ -155,30 +164,28 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                 .flat(true)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor)));
 
-        if(model.getNavigationStarted()){
-            model.getCurrentLoc().observe(this, newCurrentLoc -> {
-                prevLoc = currentLoc;
-                currentLoc = newCurrentLoc;
-                Log.d("currentLoc", prevLoc.toString());
-                Log.d("currentLoc", newCurrentLoc.toString());
-                PolylineOptions updatedRoute = model.getUpdatingRoute();
-                float bearing = getBearing(prevLoc, newCurrentLoc);
-                marker.setPosition(newCurrentLoc);
-                marker.setAnchor(0.5f, 0.5f);
-                marker.setRotation(bearing);
-                mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
-                        .target(newCurrentLoc)
-                        .zoom(18f)
-                        .bearing(bearing)
-                        .build(
-                        )));
-                plotPolyline(updatedRoute);
-                if(checkReached(currentLoc, prevLoc)){
-                    model.getCurrentLoc().removeObservers(this);
-                    reached();
-                }
-            });
-        }
+        model.getCurrentLoc().observe(this, newCurrentLoc -> {
+            prevLoc = currentLoc;
+            currentLoc = newCurrentLoc;
+            Log.d("currentLoc", prevLoc.toString());
+            Log.d("currentLoc", newCurrentLoc.toString());
+            PolylineOptions updatedRoute = model.getUpdatingRoute().getValue().getPolylineOptions();
+            float bearing = getBearing(prevLoc, newCurrentLoc);
+            marker.setPosition(newCurrentLoc);
+            marker.setAnchor(0.5f, 0.5f);
+            marker.setRotation(bearing);
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
+                    .target(newCurrentLoc)
+                    .zoom(18f)
+                    .bearing(bearing)
+                    .build(
+                    )));
+            plotPolyline(updatedRoute);
+            if(checkReached(currentLoc, prevLoc)){
+                model.getCurrentLoc().removeObservers(this);
+                reached();
+            }
+        });
     }
 
 //        model.getUpdatingRoute().observe(this, newDirections ->{
