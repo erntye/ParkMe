@@ -53,7 +53,7 @@ public class NavigationViewModel extends AndroidViewModel {
                 @Override
                 public void onSuccess(GoogleMapsDirections gMapsDirections) {
                     Log.d("NavigationViewModel","succeeded in creating route from static info in constructor");
-                    DirectionsAndCPInfo generatedRoute = new DirectionsAndCPInfo(carParkStaticInfo,gMapsDirections);
+                    DirectionsAndCPInfo generatedRoute = new DirectionsAndCPInfo(carParkStaticInfo,gMapsDirections,currentLocation.getValue());
                     createMediator();
                 }
 
@@ -115,5 +115,8 @@ public class NavigationViewModel extends AndroidViewModel {
                 }else Log.d("SelectRouteViewModel", "location not changed, do not need to update route");
             }
         });
+    }
+    public MutableLiveData<LatLng> getCurrentLoc(){
+        return currentLocation;
     }
 }

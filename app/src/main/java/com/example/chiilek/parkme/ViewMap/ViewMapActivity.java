@@ -53,6 +53,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -85,6 +86,7 @@ public class ViewMapActivity extends FragmentActivity
 
 
     private MutableLiveData<List<CarParkStaticInfo>> cpList = new MutableLiveData<>();
+    private List<CarParkStaticInfo> carparkList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +109,11 @@ public class ViewMapActivity extends FragmentActivity
             public void onChanged(@Nullable List<CarParkStaticInfo> newCarParkList) {
             }
         });
+        model.getCurrentLocation().observe(this, newLocation ->
+            {
+
+
+            });
 
         AvailabilityAPIController controller = new AvailabilityAPIController();
 
@@ -131,14 +138,16 @@ public class ViewMapActivity extends FragmentActivity
             CameraPosition cp = new CameraPosition.Builder().target(place.getLatLng()).zoom(16).build();
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
 
-            cpList.setValue(model.getCarParkInfo(place.getLatLng()).getValue());
-
-            for (CarParkStaticInfo cpsi : cpList.getValue()){
-                Log.d("Marker", cpsi.getAddress());
-                mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
-                        .icon(BitmapDescriptorFactory.fromBitmap(parking_lots_smallMarker)))
-                        .setTag(cpsi);
+            carparkList = model.getCarParkInfo(place.getLatLng()).getValue();
+            if(carparkList != null) {
+                for (CarParkStaticInfo cpsi : carparkList) {
+                    Log.d("Marker", cpsi.getAddress());
+                    mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
+                            .icon(BitmapDescriptorFactory.fromBitmap(parking_lots_smallMarker)))
+                            .setTag(cpsi);
+                }
+                ;
             }
 
             // Create red marker to mark searched location
@@ -174,6 +183,36 @@ public class ViewMapActivity extends FragmentActivity
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSION_LOCATION);
             return;
         }
+
+ /*       model.getCurrentLocation().observe(this, newLatLng ->{
+            if (newLatLng != null) {
+                CameraPosition cp = new CameraPosition.Builder().target(newLatLng).zoom(16).build();
+                if(b==null) mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cp));
+                model.getMcpListMediator().observe(ViewMapActivity.this, newData ->{
+                    Log.d("ViewMapActivity", "On map ready, in mediator observe");
+                });
+                model.getCarParkInfo().observe(ViewMapActivity.this, carParkStaticInfos -> {
+                    if (carParkStaticInfos.size() > 0) {
+                        Log.d("ViewMapActivity", "getCarParkInfo onChanged, availability info: " + carParkStaticInfos.get(0).getAvailableCarLots());
+                        cpList.setValue(carParkStaticInfos);
+                    }
+                });
+
+                // To ensure that the button is only enabled when model is ready.
+                Button button = findViewById(R.id.parking_button);
+                button.setEnabled(true);
+
+                cpList.setValue(model.getCarParkInfo(new LatLng(location.getLatitude(), location.getLongitude())).getValue());
+                Log.d("ViewMapActivity", "onMapReady, Marker count: " + Integer.toString(cpList.getValue().size()));
+                for (CarParkStaticInfo cpsi : cpList.getValue()){
+                    mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
+                            .icon(BitmapDescriptorFactory.fromBitmap(parking_lots_smallMarker)))
+                            .setTag(cpsi);
+                }
+
+            }
+        });*/
 
         mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
