@@ -2,7 +2,6 @@ package com.example.chiilek.parkme.ViewMap;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.ComponentName;
 import android.content.Context;
@@ -12,11 +11,9 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -47,7 +44,6 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -75,6 +71,7 @@ public class ViewMapActivity extends FragmentActivity
     Bitmap parking_lots_smallMarker;
 
     LatLng destination;
+
     String name;
 
     Button suggestCarParks;
@@ -388,6 +385,7 @@ public class ViewMapActivity extends FragmentActivity
         } else {
             Intent intent = new Intent(ViewMapActivity.this,  CarParkPopUpActivity.class);
             intent.putExtra("CarParkStaticInfo", cpsi);
+            intent.putExtra("Destination", destination);
             startActivity(intent);
         }
 
@@ -409,7 +407,6 @@ public class ViewMapActivity extends FragmentActivity
     }
 
     public void showCarParks(View view) {
-        Repository repository = Repository.getInstance(this); // TODO remove this shit bruh
         mMap.clear();
 
         LatLng latLng = mMap.getCameraPosition().target;

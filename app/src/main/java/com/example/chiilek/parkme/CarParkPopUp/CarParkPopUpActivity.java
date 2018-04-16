@@ -1,5 +1,6 @@
 package com.example.chiilek.parkme.CarParkPopUp;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -48,7 +49,7 @@ public class CarParkPopUpActivity extends AppCompatActivity {
         getSupportActionBar().hide();
 
         // Set fragment size.
-        getWindow().setLayout(1000, 1500);
+        getWindow().setLayout(1200, ActionBar.LayoutParams.WRAP_CONTENT);
 
         // Retrieve the car park object from intent.
         carParkStaticInfo = (CarParkStaticInfo) getIntent().getSerializableExtra("CarParkStaticInfo");
