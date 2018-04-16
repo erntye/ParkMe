@@ -270,7 +270,8 @@ public class ViewMapActivity extends FragmentActivity
 
         if (b != null){
             placeUpdate = b.getParcelable("Place");
-            listener.onPlaceSelected(placeUpdate);
+            if (placeUpdate != null)
+                listener.onPlaceSelected(placeUpdate);
         }
     }
 
@@ -422,6 +423,8 @@ public class ViewMapActivity extends FragmentActivity
         name = getCompleteAddressString(latLng.latitude, latLng.longitude);
         destination = latLng;
         suggestCarParks.setVisibility(View.VISIBLE);
+        PlaceAutocompleteFragment placeAutocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        placeAutocompleteFragment.setText(name);
     }
 
     private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
