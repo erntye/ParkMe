@@ -45,8 +45,8 @@ public class LocationRepository  {
         mContext = context;
         mFusedClient = LocationServices.getFusedLocationProviderClient(mContext);
         mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(500);
-        mLocationRequest.setFastestInterval(250);
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(500);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationCallback = new LocationCallback() {
             @Override

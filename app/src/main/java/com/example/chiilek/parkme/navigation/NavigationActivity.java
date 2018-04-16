@@ -62,7 +62,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     int index, next;
     private double lat,lng;
     private Handler handler;
-    private LatLng prevLoc, currentLoc;
+    private LatLng prevLoc, currentLoc, destLoc;
     float bearing;
     private String destination;
     private MultiSearchFragment searchFragment;
@@ -93,6 +93,8 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         //TODO update the above with the below once completed
         Intent parentIntent = getIntent();
         DirectionsAndCPInfo initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
+
+        destLoc = new LatLng(initialChosenRoute.getDestinationLatitude(), initialChosenRoute.getDestinationLongitude());
 
         Log.d("NavigationActivity", "InitialChosenRoute passed from intent is  " + initialChosenRoute.getCarParkStaticInfo().getCPNumber());
         model = ViewModelProviders
@@ -153,8 +155,8 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                 .flat(true)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor)));
 
-        model.getCurrentLoc().observe(this, newCurrentLoc -> {
-            while(model.getNavigationStarted()){
+        if(model.getNavigationStarted()){
+            model.getCurrentLoc().observe(this, newCurrentLoc -> {
                 prevLoc = currentLoc;
                 currentLoc = newCurrentLoc;
                 Log.d("currentLoc", prevLoc.toString());
@@ -171,9 +173,12 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                         .build(
                         )));
                 plotPolyline(updatedRoute);
-                checkReached(prevLoc, currentLoc);
-            }
-        });
+                if(checkReached(currentLoc, prevLoc)){
+                    model.getCurrentLoc().removeObservers(this);
+                    reached();
+                }
+            });
+        }
     }
 
 //        model.getUpdatingRoute().observe(this, newDirections ->{
@@ -326,17 +331,15 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 
-    public void checkReached(LatLng prevLoc, LatLng currentLoc){
-//        double threshold = 0.0001;
-        double threshold = 0.1;
+    public boolean checkReached(LatLng prevLoc, LatLng currentLoc){
+        double threshold = 0.0001;
         double longDist = prevLoc.longitude - currentLoc.longitude;
         double latDist = prevLoc.latitude - currentLoc.latitude;
         if(longDist<0) longDist *= -1;
-        if(latDist<0) longDist *= -1;
+        if(latDist<0) latDist *= -1;
         if (longDist<threshold && latDist < threshold){
-            reached();
-            model.setNavigationStarted(false);
-        }
+            return true;
+        } else return false;
     }
 
     public void reached(){
