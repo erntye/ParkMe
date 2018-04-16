@@ -180,9 +180,9 @@ public class RouteOverviewActivity extends FragmentActivity
             mMap.addPolyline(chosenRoute);
         }
 
-        mMap.addMarker(new MarkerOptions()
-                .position(mChosenRoute.getDestinationLatLng())
-                .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+//        mMap.addMarker(new MarkerOptions()
+//                .position(mChosenRoute.getDestinationLatLng())
+//                .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
 
         //mMap.getMyLocation().getLatitude();
 

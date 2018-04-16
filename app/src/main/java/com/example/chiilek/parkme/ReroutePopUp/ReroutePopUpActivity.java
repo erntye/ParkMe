@@ -46,7 +46,7 @@ public class ReroutePopUpActivity extends AppCompatActivity {
         int width = dm.widthPixels;
         int height = dm.heightPixels;
 
-        getWindow().setLayout((int)(width*.9), (int)(height*.6));
+        getWindow().setLayout((int)(width*.9), (int)(height*.65));
 
 
 
