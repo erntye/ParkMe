@@ -8,7 +8,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -38,7 +37,6 @@ import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.Suggestion.SuggestionsActivity;
 import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityAPIController;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
-import com.example.chiilek.parkme.repository.LocationService;
 import com.example.chiilek.parkme.repository.Repository;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -85,8 +83,7 @@ public class ViewMapActivity extends FragmentActivity
     Bundle b;
 
     ViewMapViewModel model;
-    //needed to bind to service to get location updates
-    private LocationService mLocationService;
+
     private final int REQUEST_PERMISSION_LOCATION = 1;
 
 
@@ -164,14 +161,6 @@ public class ViewMapActivity extends FragmentActivity
             }
         });
 
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //bind to service whenever start
-        Intent serviceIntent = new Intent(this, LocationService.class);
-        bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -278,25 +267,6 @@ public class ViewMapActivity extends FragmentActivity
     }
 
 
-    //establish service connection needed to bind to service
-    private ServiceConnection mConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            String name = className.getClassName();
-            Log.d("ViewMapActivity", "In Service Connection");
-            if (name.endsWith("LocationService")) {
-                mLocationService = ((LocationService.LocationBinder) service).getService();
-                mLocationService.startLocationUpdate();
-                Log.d("ViewMapActivity", "Location Update started");
-            }
-        }
-
-        public void onServiceDisconnected(ComponentName className) {
-            if (className.getClassName().equals("LocationService")) {
-                Log.d("ViewMapActivity", "Service disconnected");
-                mLocationService = null;
-            }
-        }
-    };
     //ask permission to turn on GPS
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
