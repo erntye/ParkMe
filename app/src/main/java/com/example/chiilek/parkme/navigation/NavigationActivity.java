@@ -102,7 +102,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         model.getInitialRoute();
 
         model.getUpdatingRoute().observe(this,newRoute ->{
-            //TODO update your Polyline object here
+            //TODO
             }
         );
 
