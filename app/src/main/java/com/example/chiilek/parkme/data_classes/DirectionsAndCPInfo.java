@@ -26,7 +26,8 @@ public class DirectionsAndCPInfo implements Serializable{
         this.carParkStaticInfo = cpInfo;
         this.googleMapsDirections = gmapsDir;
         Log.d("DirectionsAndCPInfo", "gmapsDir status "+ gmapsDir.getStatus() + ", gmapsDir routes size " + gmapsDir.getRoutes().size());
-        distance = getDistanceFromLatLngInM(userChosenDestination.latitude,
+        distance = getDistanceFromLatLngInM(
+                userChosenDestination.latitude,
                 userChosenDestination.longitude,
                 Double.parseDouble(cpInfo.getLatitude()),
                 Double.parseDouble(cpInfo.getLongitude()));

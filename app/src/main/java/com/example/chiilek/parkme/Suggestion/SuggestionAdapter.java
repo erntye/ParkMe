@@ -61,13 +61,12 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
             Log.e("ERROR", "Failed to get drawable id", e);
         }
         //----------------------------------------------------------------
-        //TODO add travel time and carpark availability
-        //String distanceString = Integer.toString(position);
+
         holder.buttonImage.setImageResource(drawableID);
         holder.address.setText(CP.getCarParkStaticInfo().getAddress());
-        holder.distance.setText(Integer.toString((int)CP.getDistance()) + "m away");
+        holder.distance.setText(Double.toString(CP.getDistance()) + "m away");
         holder.availability.setText(CP.getAvailability()+ " Available Lots");
-        holder.timeToReach.setText("Time away: "+ CP.getDuration());
+        holder.timeToReach.setText(CP.getDuration()/60+ " minutes away");
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -119,7 +118,6 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
             timeToReach = view.findViewById(R.id.time);
             availability = view.findViewById(R.id.availability);
             buttonImage = view.findViewById(R.id.parking_suggestion_box_png);
-
         }
 
     }
