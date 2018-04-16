@@ -32,8 +32,11 @@ public class ReachMessageActivity extends AppCompatActivity {
 
         getWindow().setLayout((int) (width * .85), (int) (height * .35));
 
-        Intent intent = new Intent(ReachMessageActivity.this, ViewMapActivity.class);
-        Log.d("Reached", "Returning to ViewMapActivity");
-        //startActivity(intent);
+        ImageView b = findViewById(R.id.pop_up_ok_button);
+        b.setOnClickListener(v -> {
+            Intent intent = new Intent(ReachMessageActivity.this, ViewMapActivity.class);
+            Log.d("Reached", "Returning to ViewMapActivity");
+            startActivity(intent);
+        });
     }
 }
