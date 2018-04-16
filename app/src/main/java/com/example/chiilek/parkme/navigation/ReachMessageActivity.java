@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.chiilek.parkme.Suggestion.SuggestionsActivity;
 import com.example.chiilek.parkme.R;
+import com.example.chiilek.parkme.ViewMap.ViewMapActivity;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 
 import org.w3c.dom.Text;
@@ -30,5 +31,9 @@ public class ReachMessageActivity extends AppCompatActivity {
         int height = dm.heightPixels;
 
         getWindow().setLayout((int) (width * .85), (int) (height * .35));
+
+        Intent intent = new Intent(ReachMessageActivity.this, ViewMapActivity.class);
+        Log.d("Reached", "Returning to ViewMapActivity");
+        startActivity(intent);
     }
 }
