@@ -6,20 +6,86 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:showIn="@layout/activity_suggestions"
-    tools:context=".Suggestion.SuggestionsActivity">
+    tools:context=".Suggestion.SuggestionsActivity"
+    android:background="@color/colorMain">
 
-    <fragment
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:name="com.example.chiilek.parkme.MultiSearchFragment"
-        android:id="@+id/from_to_fragment">
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="133dp"
+        android:alpha="0.3"
+        android:src="@drawable/border_suggestion_2"/>
 
-    </fragment>
+    <RelativeLayout
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:layout_width="312dp"
+        android:layout_height="50dp"
+        android:id="@+id/sourceAuto"
+        >
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:alpha="0.9"
+            android:src="@drawable/places_background_2"
+            android:layout_centerInParent="true"/>
+
+        <fragment
+            android:id="@+id/place_autocomplete_fragment_source"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_centerHorizontal="true"
+        android:id="@+id/destinationAuto"
+        android:layout_width="312dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@+id/sourceAuto"
+        >
+
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:alpha="0.9"
+            android:src="@drawable/places_background_2"
+            android:layout_centerInParent="true"/>
+
+
+        <fragment
+            android:id="@+id/place_autocomplete_fragment_destination"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/color2"
+        android:layout_below="@id/destinationAuto"
+        android:src="@drawable/rectangle"
+        android:layout_centerInParent="true"
+        />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="vertical"
-        android:layout_below="@id/from_to_fragment"/>
+        android:layout_below="@id/destinationAuto"
+        android:background="@color/color5"
+        />
+
 
 </RelativeLayout>

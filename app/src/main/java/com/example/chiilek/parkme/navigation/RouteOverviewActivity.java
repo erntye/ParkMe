@@ -2,6 +2,7 @@ package com.example.chiilek.parkme.navigation;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.ServiceConnection;
@@ -10,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -22,11 +24,16 @@ import android.content.Intent;
 import android.widget.Toast;
 
 import com.example.chiilek.parkme.R;
+import com.example.chiilek.parkme.ViewMap.ViewMapActivity;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.repository.LocationService;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -63,7 +70,6 @@ public class RouteOverviewActivity extends FragmentActivity
     private final int REQUEST_PERMISSION_LOCATION = 1;
     private List<LatLng> sampleWayPoints;
     private DirectionsAndCPInfo mChosenRoute;
-    private CarParkStaticInfo mChosenCarPark;
     // ---------------------------------------
     //             CHECK PERMISSIONS
     // ---------------------------------------
@@ -77,14 +83,12 @@ public class RouteOverviewActivity extends FragmentActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-
-        if (getIntent().getSerializableExtra("chosenRoute") != null) {
-            Log.d("RouteOverviewActivity", "Parcelled Chosen Route is " + mChosenRoute.getCarParkStaticInfo().getCPNumber());
-            mChosenRoute = (DirectionsAndCPInfo) getIntent().getSerializableExtra("chosenRoute");
-        }else {
-            Log.d("RouteOverviewActivity", "Parcelled Chosen Route is null");
-            mChosenCarPark = (CarParkStaticInfo) getIntent().getSerializableExtra("CarParkStaticInfo");
-        }//Create a view model and allow re-created activities to get the same view model instance
+        mChosenRoute = (DirectionsAndCPInfo) getIntent().getSerializableExtra("chosenRoute");
+        if (mChosenRoute != null)
+            Log.d("RouteOverviewActivity","Parcelled Chosen Route is "+ mChosenRoute.getCarParkStaticInfo().getCPNumber());
+        else
+            Log.d("RouteOverviewActivity","Parcelled Chosen Route is null");
+        //Create a view model and allow re-created activities to get the same view model instance
         //model = ViewModelProviders.of(this).get(NavigationViewModel.class);
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
@@ -95,12 +99,40 @@ public class RouteOverviewActivity extends FragmentActivity
             public void onClick(View v) {
                 Intent intent = new Intent(RouteOverviewActivity.this, NavigationActivity.class);
                 intent.putExtra("chosenRoute",mChosenRoute);
-                intent.putExtra("chosenCarPark",mChosenCarPark);
                 Log.d("RouteOverviewActivity","starting intent for Navigation Activity");
                 startActivity(intent);
             }
         });
 
+        PlaceAutocompleteFragment autocompleteFragmentSource = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_source);
+        PlaceAutocompleteFragment autocompleteFragmentDestination = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_destination);
+
+        autocompleteFragmentSource.setBoundsBias(new LatLngBounds(new LatLng(1.227925, 103.604971), new LatLng(1.456672, 104.003780)));
+        autocompleteFragmentDestination.setBoundsBias(new LatLngBounds(new LatLng(1.227925, 103.604971), new LatLng(1.456672, 104.003780)));
+
+        //Puts text in the search bars
+        autocompleteFragmentSource.setText("Current Location");
+        autocompleteFragmentDestination.setText(getIntent().getExtras().getString("destinationAddress"));
+
+        autocompleteFragmentDestination.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                Intent intent = new Intent(RouteOverviewActivity.this, ViewMapActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("Place", (Parcelable) place);
+                intent.putExtras(bundle);
+                Log.d("RouteOverviewActivityChange","Changing chosen destination on ViewMapActivity");
+                startActivity(intent);
+            }
+            @Override
+            public void onError(Status status) {
+                Log.d("Maps", "An error occurred: " + status);
+            }
+        });
+
+        model = ViewModelProviders
+                .of(this,new NavigationViewModelFactory(this.getApplication(),mChosenRoute))
+                .get(NavigationViewModel.class );
     }
 
     /**
@@ -140,37 +172,41 @@ public class RouteOverviewActivity extends FragmentActivity
 
         Bitmap smallMarker = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
 
-        mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(37.3830, -122.0870))
-                .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+        mMap.setMyLocationEnabled(true);
+
+        PolylineOptions chosenRoute = mChosenRoute.getGoogleMapsDirections().getPolylineOptions();
+        if(chosenRoute!=null){
+            chosenRoute.width(10).color(R.color.colorMain);
+            mMap.addPolyline(chosenRoute);
+        }
+
+//        mMap.addMarker(new MarkerOptions()
+//                .position(mChosenRoute.getDestinationLatLng())
+//                .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
 
         //mMap.getMyLocation().getLatitude();
 
         // Add a marker in Googleplex and move the camera
         LatLng googleplex = new LatLng(37.4220, -122.0940);
-        mMap.addMarker(new MarkerOptions().position(googleplex).title("Marker in Googleplex"));
+        mMap.addMarker(new MarkerOptions().position(mChosenRoute.getDestinationLatLng()).title("Marker in Destination"));
         // mMap.moveCamera(CameraUpdateFactory.newLatLng(googleplex));
 
-        mMap.setMyLocationEnabled(true);
-
         // SAMPLE HARDCODED ROUTE
-        sampleWayPoints= new ArrayList<>();
-        sampleWayPoints.add(new LatLng(37.4220, -122.0940));
-        sampleWayPoints.add(new LatLng(37.4130, -122.0831));
-        sampleWayPoints.add(new LatLng(37.4000, -122.0762));
-        sampleWayPoints.add(new LatLng(37.3830, -122.0870));
-//        PolylineOptions route = model.getInitialRoute();
-//        plotPolyline(route);
-        plotPolyline(sampleWayPoints);
+//        sampleWayPoints= new ArrayList<>();
+//        sampleWayPoints.add(new LatLng(37.4220, -122.0940));
+//        sampleWayPoints.add(new LatLng(37.4130, -122.0831));
+//        sampleWayPoints.add(new LatLng(37.4000, -122.0762));
+//        sampleWayPoints.add(new LatLng(37.3830, -122.0870));
+//        plotPolyline(sampleWayPoints);
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
-
         int width = dm.widthPixels;
         int height = dm.heightPixels;
 
+        List<LatLng> waypoints = chosenRoute.getPoints();
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        for(LatLng latlng:sampleWayPoints)
+        for(LatLng latlng:waypoints)
             builder.include(latlng);
         LatLngBounds bounds = builder.build();
         CameraUpdate mCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds,width,(int)(height*0.5),2);
