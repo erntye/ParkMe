@@ -19,7 +19,11 @@ import android.view.animation.LinearInterpolator;
 
 import com.example.chiilek.parkme.MultiSearchFragment;
 import com.example.chiilek.parkme.R;
+import com.example.chiilek.parkme.api_controllers.directions_api.DirectionsAPIController;
+import com.example.chiilek.parkme.api_controllers.directions_api.DirectionsCallback;
+import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
+import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDirections;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -87,6 +91,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         //TODO update the above with the below once completed
         Intent parentIntent = getIntent();
         DirectionsAndCPInfo initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
+
         Log.d("NavigationActivity", "InitialChosenRoute passed from intent is  " + initialChosenRoute.getCarParkStaticInfo().getCPNumber());
         model = ViewModelProviders
                 .of(this,new NavigationViewModelFactory(this.getApplication(),initialChosenRoute))

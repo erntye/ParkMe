@@ -86,7 +86,7 @@ public class SuggestionsActivity extends AppCompatActivity{
       //TODO to replace above when intent from popup works
         Intent parentIntent = getIntent();
         LatLng destination = parentIntent.getExtras().getParcelable("Destination");
-        String destinationName= parentIntent.getExtras().getParcelable("Name");
+        String destinationName = parentIntent.getExtras().getParcelable("Name");
         model = ViewModelProviders
                 .of(this, new SelectRouteViewModelFactory(this.getApplication(),destination))
                 .get(SelectRouteViewModel.class);

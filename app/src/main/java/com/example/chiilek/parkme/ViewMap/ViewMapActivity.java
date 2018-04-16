@@ -370,7 +370,7 @@ public class ViewMapActivity extends FragmentActivity
     @Override
     public boolean onMarkerClick(Marker marker) {
         CarParkStaticInfo cpsi = (CarParkStaticInfo) marker.getTag();
-
+        LatLng currentLoc = null;
         if (cpsi == null){
             Log.d("ViewMapActivity", "cpsi = null; unable to pass cpsi");
         } else {
