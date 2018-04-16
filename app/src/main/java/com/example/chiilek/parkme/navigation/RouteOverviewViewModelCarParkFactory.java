@@ -5,14 +5,13 @@ import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
-import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 
-public class NavigationViewModelCarParkFactory extends ViewModelProvider.NewInstanceFactory {
+public class RouteOverviewViewModelCarParkFactory extends ViewModelProvider.NewInstanceFactory {
     private Application mApplication;
     private CarParkStaticInfo mInitialCarPark;
 
 
-    public NavigationViewModelCarParkFactory(Application application, CarParkStaticInfo initialCarPark) {
+    public RouteOverviewViewModelCarParkFactory(Application application, CarParkStaticInfo initialCarPark) {
         mApplication = application;
         mInitialCarPark = initialCarPark;
     }
@@ -20,6 +19,6 @@ public class NavigationViewModelCarParkFactory extends ViewModelProvider.NewInst
 
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
-        return (T) new NavigationViewModel(mApplication, mInitialCarPark);
+        return (T) new RouteOverviewViewModel(mApplication, mInitialCarPark);
     }
 }

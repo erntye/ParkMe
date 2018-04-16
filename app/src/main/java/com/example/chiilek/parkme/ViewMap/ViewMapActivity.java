@@ -88,7 +88,7 @@ public class ViewMapActivity extends FragmentActivity
     private final int REQUEST_PERMISSION_LOCATION = 1;
 
 
-    private MutableLiveData<List<CarParkStaticInfo>> cpList = new MutableLiveData<>();
+    //private MutableLiveData<List<CarParkStaticInfo>> cpList = new MutableLiveData<>();
     private List<CarParkStaticInfo> carparkList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -187,7 +187,7 @@ public class ViewMapActivity extends FragmentActivity
             return;
         }
 
- /*       model.getCurrentLocation().observe(this, newLatLng ->{
+        model.getCurrentLocation().observe(this, newLatLng ->{
             if (newLatLng != null) {
                 CameraPosition cp = new CameraPosition.Builder().target(newLatLng).zoom(16).build();
                 if(b==null) mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cp));
@@ -196,8 +196,7 @@ public class ViewMapActivity extends FragmentActivity
                 });
                 model.getCarParkInfo().observe(ViewMapActivity.this, carParkStaticInfos -> {
                     if (carParkStaticInfos.size() > 0) {
-                        Log.d("ViewMapActivity", "getCarParkInfo onChanged, availability info: " + carParkStaticInfos.get(0).getAvailableCarLots());
-                        cpList.setValue(carParkStaticInfos);
+                        carparkList = carParkStaticInfos;
                     }
                 });
 
@@ -205,9 +204,9 @@ public class ViewMapActivity extends FragmentActivity
                 Button button = findViewById(R.id.parking_button);
                 button.setEnabled(true);
 
-                cpList.setValue(model.getCarParkInfo(new LatLng(location.getLatitude(), location.getLongitude())).getValue());
-                Log.d("ViewMapActivity", "onMapReady, Marker count: " + Integer.toString(cpList.getValue().size()));
-                for (CarParkStaticInfo cpsi : cpList.getValue()){
+                carparkList = model.getCarParkInfo(newLatLng).getValue();
+                Log.d("ViewMapActivity", "onMapReady, Marker count: " + Integer.toString(carparkList.size()));
+                for (CarParkStaticInfo cpsi : carparkList){
                     mMap.addMarker(new MarkerOptions()
                             .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
                             .icon(BitmapDescriptorFactory.fromBitmap(parking_lots_smallMarker)))
@@ -215,9 +214,9 @@ public class ViewMapActivity extends FragmentActivity
                 }
 
             }
-        });*/
+        });
 
-        mFusedLocationClient.getLastLocation()
+        /*mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
@@ -253,7 +252,7 @@ public class ViewMapActivity extends FragmentActivity
 
                         }
                     }
-                });
+                });*/
 
         mMap.setOnMarkerClickListener(this);
         mMap.setMyLocationEnabled(true);
@@ -271,9 +270,10 @@ public class ViewMapActivity extends FragmentActivity
             CameraPosition cp = new CameraPosition.Builder().target(place.getLatLng()).zoom(16).build();
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
 
-            cpList.setValue(model.getCarParkInfo(place.getLatLng()).getValue());
+            //cpList.setValue(model.getCarParkInfo(place.getLatLng()).getValue());
+            carparkList = model.getCarParkInfo(place.getLatLng()).getValue();
 
-            for (CarParkStaticInfo cpsi : cpList.getValue()){
+            for (CarParkStaticInfo cpsi : carparkList){
                 Log.d("Marker", cpsi.getAddress());
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
@@ -386,9 +386,13 @@ public class ViewMapActivity extends FragmentActivity
         if (cpsi == null){
             Log.d("ViewMapActivity", "cpsi = null; unable to pass cpsi");
         } else {
-            Intent intent = new Intent(ViewMapActivity.this,  CarParkPopUpActivity.class);
-            intent.putExtra("CarParkStaticInfo", cpsi);
-            startActivity(intent);
+            for (CarParkStaticInfo carpark: carparkList){
+                if (cpsi.getCPNumber().equals(carpark.getCPNumber())) {
+                    Intent intent = new Intent(ViewMapActivity.this, CarParkPopUpActivity.class);
+                    intent.putExtra("CarParkStaticInfo", carpark);
+                    startActivity(intent);
+                }
+            }
         }
 
         return true;
@@ -416,9 +420,10 @@ public class ViewMapActivity extends FragmentActivity
 
         CameraPosition cp = new CameraPosition.Builder().target(latLng).zoom(16).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
-        cpList.setValue(model.getCarParkInfo(latLng).getValue());
+        //cpList.setValue(model.getCarParkInfo(latLng).getValue());
+        carparkList = model.getCarParkInfo(latLng).getValue();
 
-        for (CarParkStaticInfo cpsi : cpList.getValue()){
+        for (CarParkStaticInfo cpsi : carparkList){
             Log.d("Marker", cpsi.getAddress());
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))

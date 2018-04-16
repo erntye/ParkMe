@@ -17,7 +17,7 @@ import com.example.chiilek.parkme.repository.Repository;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-public class NavigationViewModel extends AndroidViewModel {
+public class RouteOverviewViewModel extends AndroidViewModel {
 
     private MediatorLiveData mediatorCurrentLoc = new MediatorLiveData<>();
 
@@ -33,7 +33,7 @@ public class NavigationViewModel extends AndroidViewModel {
     private MutableLiveData<GoogleMapsDirections> updatingRouteDirections;
     private boolean navigationStarted = false;
 
-    public NavigationViewModel(Application application){
+    public RouteOverviewViewModel(Application application){
         super(application);
         Log.d("RouteOverviewViewModel","creating navigation view model");
         mLocationRepo = LocationRepository.getLocationRepository(application.getApplicationContext());
@@ -42,7 +42,7 @@ public class NavigationViewModel extends AndroidViewModel {
         mRepository = Repository.getInstance(application);
     }
 
-    public NavigationViewModel(Application application, CarParkStaticInfo carParkStaticInfo){
+    public RouteOverviewViewModel(Application application, CarParkStaticInfo carParkStaticInfo){
         this(application);
         Log.d("RouteOverviewViewModel", "constructor with static info");
         mRepository.updateRoutes(currentLocation.getValue(),carParkStaticInfo.getLatLng(),
@@ -61,7 +61,7 @@ public class NavigationViewModel extends AndroidViewModel {
             });
     }
 
-    public NavigationViewModel(@NonNull Application application, DirectionsAndCPInfo initialChosenRoute) {
+    public RouteOverviewViewModel(@NonNull Application application, DirectionsAndCPInfo initialChosenRoute) {
         this(application);
         Log.d("RouteOverviewViewModel", "constructor with chosen route");
         this.chosenRoute = initialChosenRoute;

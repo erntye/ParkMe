@@ -66,7 +66,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     private Marker marker;
     private DirectionsAndCPInfo initialChosenRoute;
     private CarParkStaticInfo initialCarPark;
-    private NavigationViewModel model;
+    private RouteOverviewViewModel model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,20 +84,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         sampleWayPoints.add(new LatLng(37.3830, -122.0870));
 
         //Create a view model and allow re-created activities to get the same view model instance
-        Intent parentIntent = getIntent();
-        if (parentIntent.getSerializableExtra("chosenRoute") != null) {
-            initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
-            Log.d("NavigationActivity", "InitialChosenRoute passed from intent is  " + initialChosenRoute.getCarParkStaticInfo().getCPNumber());
-            model = ViewModelProviders
-                    .of(this, new NavigationViewModelRouteFactory(this.getApplication(), initialChosenRoute))
-                    .get(NavigationViewModel.class);
-        } else {
-            initialCarPark = (CarParkStaticInfo) parentIntent.getSerializableExtra("chosenCarPark");
-            Log.d("NavigationActivity", "ChosenCarPark passed from intent is  " + initialCarPark.getCPNumber());
-            model = ViewModelProviders
-                    .of(this, new NavigationViewModelCarParkFactory(this.getApplication(), initialCarPark))
-                    .get(NavigationViewModel.class);
-        }
+
         //TODO use thie initial route to plot
         model.getInitialRoute();
 
