@@ -130,9 +130,6 @@ public class RouteOverviewActivity extends FragmentActivity
             }
         });
 
-        model = ViewModelProviders
-                .of(this,new NavigationViewModelFactory(this.getApplication(),mChosenRoute))
-                .get(NavigationViewModel.class );
     }
 
     /**

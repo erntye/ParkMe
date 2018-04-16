@@ -7,17 +7,17 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="250dp"
+        android:id="@+id/arrivedTextView"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/imageView3"
         android:layout_centerHorizontal="true"
         android:layout_centerInParent="true"
         android:gravity="center"
         android:textStyle="bold"
-        android:text="You Reached Destination!"
-        android:textSize="40dp"
-        android:fontFamily="ariel"
+        android:text="You have arrived!"
+        android:textSize="35dp"
+        android:fontFamily="arial"
         android:textColor="@color/colorMain" />
 
     <ImageView
@@ -28,4 +28,15 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         app:srcCompat="@drawable/ic_done_black_24dp" />
+
+    <ImageView
+        android:id="@+id/pop_up_ok_button"
+        android:layout_width="115dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="180dp"
+        app:srcCompat="@drawable/ok"
+        android:layout_below="@+id/pop_up_miscellaneous_layout" />
+
 </RelativeLayout>

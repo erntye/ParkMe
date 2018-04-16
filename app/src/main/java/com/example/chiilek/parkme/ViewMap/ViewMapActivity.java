@@ -8,7 +8,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -38,7 +37,6 @@ import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.Suggestion.SuggestionsActivity;
 import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityAPIController;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
-import com.example.chiilek.parkme.repository.LocationService;
 import com.example.chiilek.parkme.repository.Repository;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -59,6 +57,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -85,12 +84,12 @@ public class ViewMapActivity extends FragmentActivity
     Bundle b;
 
     ViewMapViewModel model;
-    //needed to bind to service to get location updates
-    private LocationService mLocationService;
+
     private final int REQUEST_PERMISSION_LOCATION = 1;
 
 
     private MutableLiveData<List<CarParkStaticInfo>> cpList = new MutableLiveData<>();
+    private List<CarParkStaticInfo> carparkList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,6 +112,11 @@ public class ViewMapActivity extends FragmentActivity
             public void onChanged(@Nullable List<CarParkStaticInfo> newCarParkList) {
             }
         });
+        model.getCurrentLocation().observe(this, newLocation ->
+            {
+
+
+            });
 
         AvailabilityAPIController controller = new AvailabilityAPIController();
 
@@ -137,14 +141,16 @@ public class ViewMapActivity extends FragmentActivity
             CameraPosition cp = new CameraPosition.Builder().target(place.getLatLng()).zoom(16).build();
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
 
-            cpList.setValue(model.getCarParkInfo(place.getLatLng()).getValue());
-
-            for (CarParkStaticInfo cpsi : cpList.getValue()){
-                Log.d("Marker", cpsi.getAddress());
-                mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
-                        .icon(BitmapDescriptorFactory.fromBitmap(parking_lots_smallMarker)))
-                        .setTag(cpsi);
+            carparkList = model.getCarParkInfo(place.getLatLng()).getValue();
+            if(carparkList != null) {
+                for (CarParkStaticInfo cpsi : carparkList) {
+                    Log.d("Marker", cpsi.getAddress());
+                    mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
+                            .icon(BitmapDescriptorFactory.fromBitmap(parking_lots_smallMarker)))
+                            .setTag(cpsi);
+                }
+                ;
             }
 
             // Create red marker to mark searched location
@@ -167,14 +173,6 @@ public class ViewMapActivity extends FragmentActivity
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        //bind to service whenever start
-        Intent serviceIntent = new Intent(this, LocationService.class);
-        bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
     }
@@ -188,6 +186,36 @@ public class ViewMapActivity extends FragmentActivity
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSION_LOCATION);
             return;
         }
+
+ /*       model.getCurrentLocation().observe(this, newLatLng ->{
+            if (newLatLng != null) {
+                CameraPosition cp = new CameraPosition.Builder().target(newLatLng).zoom(16).build();
+                if(b==null) mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cp));
+                model.getMcpListMediator().observe(ViewMapActivity.this, newData ->{
+                    Log.d("ViewMapActivity", "On map ready, in mediator observe");
+                });
+                model.getCarParkInfo().observe(ViewMapActivity.this, carParkStaticInfos -> {
+                    if (carParkStaticInfos.size() > 0) {
+                        Log.d("ViewMapActivity", "getCarParkInfo onChanged, availability info: " + carParkStaticInfos.get(0).getAvailableCarLots());
+                        cpList.setValue(carParkStaticInfos);
+                    }
+                });
+
+                // To ensure that the button is only enabled when model is ready.
+                Button button = findViewById(R.id.parking_button);
+                button.setEnabled(true);
+
+                cpList.setValue(model.getCarParkInfo(new LatLng(location.getLatitude(), location.getLongitude())).getValue());
+                Log.d("ViewMapActivity", "onMapReady, Marker count: " + Integer.toString(cpList.getValue().size()));
+                for (CarParkStaticInfo cpsi : cpList.getValue()){
+                    mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
+                            .icon(BitmapDescriptorFactory.fromBitmap(parking_lots_smallMarker)))
+                            .setTag(cpsi);
+                }
+
+            }
+        });*/
 
         mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
@@ -203,8 +231,10 @@ public class ViewMapActivity extends FragmentActivity
                             model.getCarParkInfo().observe(ViewMapActivity.this, new Observer<List<CarParkStaticInfo>>(){
                                 @Override
                                 public void onChanged(@Nullable List<CarParkStaticInfo> carParkStaticInfos) {
-                                    Log.d("ViewMapActivity", "getCarParkInfo onChanged, availability info: " + carParkStaticInfos.get(0).getAvailableCarLots());
-                                    cpList.setValue(carParkStaticInfos);
+                                    if (carParkStaticInfos.size() > 0) {
+                                        Log.d("ViewMapActivity", "getCarParkInfo onChanged, availability info: " + carParkStaticInfos.get(0).getAvailableCarLots());
+                                        cpList.setValue(carParkStaticInfos);
+                                    }
                                 }
                             });
 
@@ -270,30 +300,12 @@ public class ViewMapActivity extends FragmentActivity
 
         if (b != null){
             placeUpdate = b.getParcelable("Place");
-            listener.onPlaceSelected(placeUpdate);
+            if (placeUpdate != null)
+                listener.onPlaceSelected(placeUpdate);
         }
     }
 
 
-    //establish service connection needed to bind to service
-    private ServiceConnection mConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            String name = className.getClassName();
-            Log.d("ViewMapActivity", "In Service Connection");
-            if (name.endsWith("LocationService")) {
-                mLocationService = ((LocationService.LocationBinder) service).getService();
-                mLocationService.startLocationUpdate();
-                Log.d("ViewMapActivity", "Location Update started");
-            }
-        }
-
-        public void onServiceDisconnected(ComponentName className) {
-            if (className.getClassName().equals("LocationService")) {
-                Log.d("ViewMapActivity", "Service disconnected");
-                mLocationService = null;
-            }
-        }
-    };
     //ask permission to turn on GPS
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
@@ -422,6 +434,8 @@ public class ViewMapActivity extends FragmentActivity
         name = getCompleteAddressString(latLng.latitude, latLng.longitude);
         destination = latLng;
         suggestCarParks.setVisibility(View.VISIBLE);
+        PlaceAutocompleteFragment placeAutocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        placeAutocompleteFragment.setText(name);
     }
 
     private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
