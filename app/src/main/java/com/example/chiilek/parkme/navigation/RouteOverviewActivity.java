@@ -2,6 +2,7 @@ package com.example.chiilek.parkme.navigation;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.ServiceConnection;
@@ -106,6 +107,9 @@ public class RouteOverviewActivity extends FragmentActivity
         PlaceAutocompleteFragment autocompleteFragmentSource = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_source);
         PlaceAutocompleteFragment autocompleteFragmentDestination = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_destination);
 
+        autocompleteFragmentSource.setBoundsBias(new LatLngBounds(new LatLng(1.227925, 103.604971), new LatLng(1.456672, 104.003780)));
+        autocompleteFragmentDestination.setBoundsBias(new LatLngBounds(new LatLng(1.227925, 103.604971), new LatLng(1.456672, 104.003780)));
+
         //Puts text in the search bars
         autocompleteFragmentSource.setText("Current Location");
         autocompleteFragmentDestination.setText(getIntent().getExtras().getString("destinationAddress"));
@@ -126,6 +130,9 @@ public class RouteOverviewActivity extends FragmentActivity
             }
         });
 
+        model = ViewModelProviders
+                .of(this,new NavigationViewModelFactory(this.getApplication(),mChosenRoute))
+                .get(NavigationViewModel.class );
     }
 
     /**
@@ -165,37 +172,41 @@ public class RouteOverviewActivity extends FragmentActivity
 
         Bitmap smallMarker = Bitmap.createScaledBitmap(bitmap, 200, 200, false);
 
+        mMap.setMyLocationEnabled(true);
+
+        PolylineOptions chosenRoute = mChosenRoute.getGoogleMapsDirections().getPolylineOptions();
+        if(chosenRoute!=null){
+            chosenRoute.width(10).color(R.color.colorMain);
+            mMap.addPolyline(chosenRoute);
+        }
+
         mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(37.3830, -122.0870))
+                .position(mChosenRoute.getDestinationLatLng())
                 .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
 
         //mMap.getMyLocation().getLatitude();
 
         // Add a marker in Googleplex and move the camera
         LatLng googleplex = new LatLng(37.4220, -122.0940);
-        mMap.addMarker(new MarkerOptions().position(googleplex).title("Marker in Googleplex"));
+        mMap.addMarker(new MarkerOptions().position(mChosenRoute.getDestinationLatLng()).title("Marker in Destination"));
         // mMap.moveCamera(CameraUpdateFactory.newLatLng(googleplex));
 
-        mMap.setMyLocationEnabled(true);
-
         // SAMPLE HARDCODED ROUTE
-        sampleWayPoints= new ArrayList<>();
-        sampleWayPoints.add(new LatLng(37.4220, -122.0940));
-        sampleWayPoints.add(new LatLng(37.4130, -122.0831));
-        sampleWayPoints.add(new LatLng(37.4000, -122.0762));
-        sampleWayPoints.add(new LatLng(37.3830, -122.0870));
-//        PolylineOptions route = model.getInitialRoute();
-//        plotPolyline(route);
-        plotPolyline(sampleWayPoints);
+//        sampleWayPoints= new ArrayList<>();
+//        sampleWayPoints.add(new LatLng(37.4220, -122.0940));
+//        sampleWayPoints.add(new LatLng(37.4130, -122.0831));
+//        sampleWayPoints.add(new LatLng(37.4000, -122.0762));
+//        sampleWayPoints.add(new LatLng(37.3830, -122.0870));
+//        plotPolyline(sampleWayPoints);
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
-
         int width = dm.widthPixels;
         int height = dm.heightPixels;
 
+        List<LatLng> waypoints = chosenRoute.getPoints();
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        for(LatLng latlng:sampleWayPoints)
+        for(LatLng latlng:waypoints)
             builder.include(latlng);
         LatLngBounds bounds = builder.build();
         CameraUpdate mCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds,width,(int)(height*0.5),2);
