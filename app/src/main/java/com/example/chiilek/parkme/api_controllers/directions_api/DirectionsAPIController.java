@@ -2,6 +2,7 @@ package com.example.chiilek.parkme.api_controllers.directions_api;
 
 import android.util.Log;
 
+import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDirections;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -18,8 +19,7 @@ public class DirectionsAPIController {
 
     static final private String GMAPS_DIRECTION_API_BASE_URL = "https://maps.googleapis.com/maps/api/directions/";
     //TODO NOT HARDCODE THE STRING
-    static final private String GMAPS_API_KEY = "AIzaSyCl6vY67OT8SbBtih9kD1zttnk9lOUxbT4";
-
+    static final private String GMAPS_API_KEY = "AIzaSyCMcA56knRPYgayHU95ceIL2nNyLkpIeUo";
     private static DirectionsAPIController INSTANCE;
 
     public static DirectionsAPIController getInstance(){
