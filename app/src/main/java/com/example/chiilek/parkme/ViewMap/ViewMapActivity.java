@@ -2,22 +2,18 @@ package com.example.chiilek.parkme.ViewMap;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Point;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -38,7 +34,6 @@ import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.Suggestion.SuggestionsActivity;
 import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityAPIController;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
-import com.example.chiilek.parkme.repository.LocationService;
 import com.example.chiilek.parkme.repository.Repository;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -49,7 +44,6 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.Projection;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -59,6 +53,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -76,6 +71,7 @@ public class ViewMapActivity extends FragmentActivity
     Bitmap parking_lots_smallMarker;
 
     LatLng destination;
+
     String name;
 
     Button suggestCarParks;
@@ -85,12 +81,12 @@ public class ViewMapActivity extends FragmentActivity
     Bundle b;
 
     ViewMapViewModel model;
-    //needed to bind to service to get location updates
-    private LocationService mLocationService;
+
     private final int REQUEST_PERMISSION_LOCATION = 1;
 
 
-    private MutableLiveData<List<CarParkStaticInfo>> cpList = new MutableLiveData<>();
+    //private MutableLiveData<List<CarParkStaticInfo>> cpList = new MutableLiveData<>();
+    private List<CarParkStaticInfo> carparkList = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,6 +109,11 @@ public class ViewMapActivity extends FragmentActivity
             public void onChanged(@Nullable List<CarParkStaticInfo> newCarParkList) {
             }
         });
+        model.getCurrentLocation().observe(this, newLocation ->
+            {
+
+
+            });
 
         AvailabilityAPIController controller = new AvailabilityAPIController();
 
@@ -137,14 +138,16 @@ public class ViewMapActivity extends FragmentActivity
             CameraPosition cp = new CameraPosition.Builder().target(place.getLatLng()).zoom(16).build();
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
 
-            cpList.setValue(model.getCarParkInfo(place.getLatLng()).getValue());
-
-            for (CarParkStaticInfo cpsi : cpList.getValue()){
-                Log.d("Marker", cpsi.getAddress());
-                mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
-                        .icon(BitmapDescriptorFactory.fromBitmap(parking_lots_smallMarker)))
-                        .setTag(cpsi);
+            carparkList = model.getCarParkInfo(place.getLatLng()).getValue();
+            if(carparkList != null) {
+                for (CarParkStaticInfo cpsi : carparkList) {
+                    Log.d("Marker", cpsi.getAddress());
+                    mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
+                            .icon(BitmapDescriptorFactory.fromBitmap(parking_lots_smallMarker)))
+                            .setTag(cpsi);
+                }
+                ;
             }
 
             // Create red marker to mark searched location
@@ -167,14 +170,6 @@ public class ViewMapActivity extends FragmentActivity
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        //bind to service whenever start
-        Intent serviceIntent = new Intent(this, LocationService.class);
-        bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
     }
@@ -189,7 +184,36 @@ public class ViewMapActivity extends FragmentActivity
             return;
         }
 
-        mFusedLocationClient.getLastLocation()
+        model.getCurrentLocation().observe(this, newLatLng ->{
+            if (newLatLng != null) {
+                CameraPosition cp = new CameraPosition.Builder().target(newLatLng).zoom(16).build();
+                if(b==null) mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cp));
+                model.getMcpListMediator().observe(ViewMapActivity.this, newData ->{
+                    Log.d("ViewMapActivity", "On map ready, in mediator observe");
+                });
+                model.getCarParkInfo().observe(ViewMapActivity.this, carParkStaticInfos -> {
+                    if (carParkStaticInfos.size() > 0) {
+                        carparkList = carParkStaticInfos;
+                    }
+                });
+
+                // To ensure that the button is only enabled when model is ready.
+                Button button = findViewById(R.id.parking_button);
+                button.setEnabled(true);
+
+                carparkList = model.getCarParkInfo(newLatLng).getValue();
+                Log.d("ViewMapActivity", "onMapReady, Marker count: " + Integer.toString(carparkList.size()));
+                for (CarParkStaticInfo cpsi : carparkList){
+                    mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
+                            .icon(BitmapDescriptorFactory.fromBitmap(parking_lots_smallMarker)))
+                            .setTag(cpsi);
+                }
+
+            }
+        });
+
+        /*mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
@@ -225,7 +249,7 @@ public class ViewMapActivity extends FragmentActivity
 
                         }
                     }
-                });
+                });*/
 
         mMap.setOnMarkerClickListener(this);
         mMap.setMyLocationEnabled(true);
@@ -243,9 +267,10 @@ public class ViewMapActivity extends FragmentActivity
             CameraPosition cp = new CameraPosition.Builder().target(place.getLatLng()).zoom(16).build();
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
 
-            cpList.setValue(model.getCarParkInfo(place.getLatLng()).getValue());
+            //cpList.setValue(model.getCarParkInfo(place.getLatLng()).getValue());
+            carparkList = model.getCarParkInfo(place.getLatLng()).getValue();
 
-            for (CarParkStaticInfo cpsi : cpList.getValue()){
+            for (CarParkStaticInfo cpsi : carparkList){
                 Log.d("Marker", cpsi.getAddress());
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
@@ -278,25 +303,6 @@ public class ViewMapActivity extends FragmentActivity
     }
 
 
-    //establish service connection needed to bind to service
-    private ServiceConnection mConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            String name = className.getClassName();
-            Log.d("ViewMapActivity", "In Service Connection");
-            if (name.endsWith("LocationService")) {
-                mLocationService = ((LocationService.LocationBinder) service).getService();
-                mLocationService.startLocationUpdate();
-                Log.d("ViewMapActivity", "Location Update started");
-            }
-        }
-
-        public void onServiceDisconnected(ComponentName className) {
-            if (className.getClassName().equals("LocationService")) {
-                Log.d("ViewMapActivity", "Service disconnected");
-                mLocationService = null;
-            }
-        }
-    };
     //ask permission to turn on GPS
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
@@ -377,9 +383,13 @@ public class ViewMapActivity extends FragmentActivity
         if (cpsi == null){
             Log.d("ViewMapActivity", "cpsi = null; unable to pass cpsi");
         } else {
-            Intent intent = new Intent(ViewMapActivity.this,  CarParkPopUpActivity.class);
-            intent.putExtra("CarParkStaticInfo", cpsi);
-            startActivity(intent);
+            for (CarParkStaticInfo carpark: carparkList){
+                if (cpsi.getCPNumber().equals(carpark.getCPNumber())) {
+                    Intent intent = new Intent(ViewMapActivity.this, CarParkPopUpActivity.class);
+                    intent.putExtra("CarParkStaticInfo", carpark);
+                    startActivity(intent);
+                }
+            }
         }
 
         return true;
@@ -400,16 +410,16 @@ public class ViewMapActivity extends FragmentActivity
     }
 
     public void showCarParks(View view) {
-        Repository repository = Repository.getInstance(this); // TODO remove this shit bruh
         mMap.clear();
 
         LatLng latLng = mMap.getCameraPosition().target;
 
         CameraPosition cp = new CameraPosition.Builder().target(latLng).zoom(16).build();
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
-        cpList.setValue(model.getCarParkInfo(latLng).getValue());
+        //cpList.setValue(model.getCarParkInfo(latLng).getValue());
+        carparkList = model.getCarParkInfo(latLng).getValue();
 
-        for (CarParkStaticInfo cpsi : cpList.getValue()){
+        for (CarParkStaticInfo cpsi : carparkList){
             Log.d("Marker", cpsi.getAddress());
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))

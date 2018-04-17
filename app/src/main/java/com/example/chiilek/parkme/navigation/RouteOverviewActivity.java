@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.content.Intent;
 import android.widget.Toast;
@@ -39,7 +40,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -47,7 +47,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -64,12 +63,14 @@ public class RouteOverviewActivity extends FragmentActivity
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
-    private NavigationViewModel model;
+    private RouteOverviewViewModel model;
     //needed to bind to service to get location updates
     private LocationService mLocationService;
     private final int REQUEST_PERMISSION_LOCATION = 1;
     private List<LatLng> sampleWayPoints;
     private DirectionsAndCPInfo mChosenRoute;
+    private CarParkStaticInfo mChosenCarPark;
+
     // ---------------------------------------
     //             CHECK PERMISSIONS
     // ---------------------------------------
@@ -83,13 +84,20 @@ public class RouteOverviewActivity extends FragmentActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        mChosenRoute = (DirectionsAndCPInfo) getIntent().getSerializableExtra("chosenRoute");
-        if (mChosenRoute != null)
-            Log.d("RouteOverviewActivity","Parcelled Chosen Route is "+ mChosenRoute.getCarParkStaticInfo().getCPNumber());
-        else
-            Log.d("RouteOverviewActivity","Parcelled Chosen Route is null");
-        //Create a view model and allow re-created activities to get the same view model instance
-        //model = ViewModelProviders.of(this).get(NavigationViewModel.class);
+        Intent parentIntent = getIntent();
+        if (parentIntent.getSerializableExtra("chosenRoute") != null) {
+            mChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
+            Log.d("NavigationActivity", "InitialChosenRoute passed from intent is  " + mChosenRoute.getCarParkStaticInfo().getCPNumber());
+            model = ViewModelProviders
+                    .of(this, new RouteOverviewViewModelRouteFactory(this.getApplication(), mChosenRoute))
+                    .get(RouteOverviewViewModel.class);
+        } else {
+            mChosenCarPark = (CarParkStaticInfo) parentIntent.getSerializableExtra("chosenCarPark");
+            Log.d("NavigationActivity", "ChosenCarPark passed from intent is  " + mChosenCarPark.getCPNumber());
+            model = ViewModelProviders
+                    .of(this, new RouteOverviewViewModelCarParkFactory(this.getApplication(), mChosenCarPark))
+                    .get(RouteOverviewViewModel.class);
+        }
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
 //        LatLng endPoint = new LatLng(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
@@ -98,7 +106,7 @@ public class RouteOverviewActivity extends FragmentActivity
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(RouteOverviewActivity.this, NavigationActivity.class);
-                intent.putExtra("chosenRoute",mChosenRoute);
+                intent.putExtra("chosenRoute", model.getChosenRoute());
                 Log.d("RouteOverviewActivity","starting intent for Navigation Activity");
                 startActivity(intent);
             }
@@ -111,6 +119,15 @@ public class RouteOverviewActivity extends FragmentActivity
         autocompleteFragmentDestination.setBoundsBias(new LatLngBounds(new LatLng(1.227925, 103.604971), new LatLng(1.456672, 104.003780)));
 
         //Puts text in the search bars
+        ((EditText)autocompleteFragmentSource.getView().findViewById(R.id.place_autocomplete_search_input)).setTextSize(18.5f);
+        ((EditText)autocompleteFragmentDestination.getView().findViewById(R.id.place_autocomplete_search_input)).setTextSize(18.5f);
+
+        ((EditText)autocompleteFragmentSource.getView().findViewById(R.id.place_autocomplete_search_input)).setTextColor(getResources().getColor(R.color.colorMain));
+        ((EditText)autocompleteFragmentDestination.getView().findViewById(R.id.place_autocomplete_search_input)).setTextColor(getResources().getColor(R.color.colorMain));
+
+        (autocompleteFragmentSource.getView().findViewById(R.id.place_autocomplete_search_input)).setPadding(0,0,0,4);
+        (autocompleteFragmentDestination.getView().findViewById(R.id.place_autocomplete_search_input)).setPadding(0,0,0,4);
+
         autocompleteFragmentSource.setText("Current Location");
         autocompleteFragmentDestination.setText(getIntent().getExtras().getString("destinationAddress"));
 
@@ -130,9 +147,6 @@ public class RouteOverviewActivity extends FragmentActivity
             }
         });
 
-        model = ViewModelProviders
-                .of(this,new NavigationViewModelFactory(this.getApplication(),mChosenRoute))
-                .get(NavigationViewModel.class );
     }
 
     /**
@@ -174,7 +188,7 @@ public class RouteOverviewActivity extends FragmentActivity
 
         mMap.setMyLocationEnabled(true);
 
-        PolylineOptions chosenRoute = mChosenRoute.getGoogleMapsDirections().getPolylineOptions();
+        PolylineOptions chosenRoute = model.getChosenRoute().getGoogleMapsDirections().getPolylineOptions();
         if(chosenRoute!=null){
             chosenRoute.width(10).color(R.color.colorMain);
             mMap.addPolyline(chosenRoute);

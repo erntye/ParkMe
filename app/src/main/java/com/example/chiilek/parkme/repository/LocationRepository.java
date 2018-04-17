@@ -45,8 +45,8 @@ public class LocationRepository  {
         mContext = context;
         mFusedClient = LocationServices.getFusedLocationProviderClient(mContext);
         mLocationRequest = LocationRequest.create();
-        mLocationRequest.setInterval(500);
-        mLocationRequest.setFastestInterval(250);
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(500);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationCallback = new LocationCallback() {
             @Override
@@ -54,7 +54,7 @@ public class LocationRepository  {
                 if (locationResult == null) {return;}
                 Location location = locationResult.getLastLocation();
                 currentLocation.setValue(new LatLng(location.getLatitude(), location.getLongitude()));
-                Log.d("Location Repo","Location Update is " + location.getLatitude() + " "
+                Log.d("LocationRepo","Location Update is " + location.getLatitude() + " "
                         + location.getLongitude());
             }
         };
@@ -63,13 +63,13 @@ public class LocationRepository  {
         //TODO find out how to not hardcode this value without getting a null pointer
         currentLocation.setValue(new LatLng(1.321,103.850));
 
-        Log.d("Location Repo", "LocationRepository constructed");
+        Log.d("LocationRepo", "LocationRepository constructed");
     }
 
     public static LocationRepository getLocationRepository(Context context){
         if (INSTANCE == null)
             INSTANCE = new LocationRepository(context.getApplicationContext());
-        Log.d("Location Repo", "called get singleton");
+        Log.d("LocationRepo", "called get singleton");
         return INSTANCE;
     }
 
@@ -85,14 +85,14 @@ public class LocationRepository  {
                 == PackageManager.PERMISSION_GRANTED) {
             //Location Permission already granted
             mFusedClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
-            Log.d("Location Repo","requested updates");
+            Log.d("LocationRepo","requested updates");
         } else {
             //do not need because we are requesting for permission in UI
-            Log.d("Location Repo","update permission not granted");
+            Log.d("LocationRepo","update permission not granted");
         }
     }
     public MutableLiveData<LatLng> getLocation(){
-        Log.d("Location Repo", "getLocation called, returning current location " + currentLocation.getValue().toString());
+        Log.d("LocationRepo", "getLocation called, returning current location " + currentLocation.getValue().toString());
         return this.currentLocation;
     }
 
@@ -107,7 +107,7 @@ public class LocationRepository  {
                         @Override
                         public void onSuccess(Location location) {
                             if (location != null){
-                                Log.d("Location Repo","getLastLocation is " + location.getLongitude() + location.getLatitude());
+                                Log.d("LocationRepo","getLastLocation is " + location.getLongitude() + location.getLatitude());
                                 currentLocation.setValue(new LatLng(location.getLatitude(),location.getLongitude()));
                             }
                         }
@@ -115,7 +115,7 @@ public class LocationRepository  {
                     .addOnFailureListener(new OnFailureListener(){
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Log.d("Location Repo","Failed to get last location");
+                            Log.d("LocationRepo","Failed to get last location");
                             e.printStackTrace();
                         }
                     });
@@ -124,6 +124,7 @@ public class LocationRepository  {
     }
 
     public void stopLocationUpdates(){
+        Log.d("LocationRepo", "stopping location updates");
         mFusedClient.removeLocationUpdates(mLocationCallback);
     }
 }

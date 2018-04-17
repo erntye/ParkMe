@@ -2,7 +2,6 @@ package com.example.chiilek.parkme.navigation;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.animation.ValueAnimator;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,17 +13,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.view.animation.LinearInterpolator;
 
-import com.example.chiilek.parkme.MultiSearchFragment;
 import com.example.chiilek.parkme.R;
-import com.example.chiilek.parkme.ReroutePopUp.ReroutePopUpActivity;
-import com.example.chiilek.parkme.api_controllers.directions_api.DirectionsAPIController;
-import com.example.chiilek.parkme.api_controllers.directions_api.DirectionsCallback;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
-import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDirections;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -33,17 +25,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -62,16 +51,16 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     int index, next;
     private double lat,lng;
     private Handler handler;
-    private LatLng prevLoc, currentLoc;
+    private LatLng prevLoc, currentLoc, destLoc;
     float bearing;
     private String destination;
-    private MultiSearchFragment searchFragment;
     private PolylineOptions blackPolyLineOptions;
     private Polyline blackPolyline;
     private LatLng myPosition;
     private Marker marker;
-
-    private NavigationViewModel model;
+    private DirectionsAndCPInfo initialChosenRoute;
+    private CarParkStaticInfo initialCarPark;
+    private RouteOverviewViewModel model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,13 +83,23 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         Intent parentIntent = getIntent();
         DirectionsAndCPInfo initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
 
+        destLoc = new LatLng(initialChosenRoute.getDestinationLatitude(), initialChosenRoute.getDestinationLongitude());
+
         Log.d("NavigationActivity", "InitialChosenRoute passed from intent is  " + initialChosenRoute.getCarParkStaticInfo().getCPNumber());
-        model = ViewModelProviders
-                .of(this,new NavigationViewModelFactory(this.getApplication(),initialChosenRoute))
-                .get(NavigationViewModel.class );
 
-        model.setNavigationStarted(true);
-
+        if (parentIntent.getSerializableExtra("chosenRoute") != null) {
+            initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
+            Log.d("NavigationActivity", "InitialChosenRoute passed from intent is  " + initialChosenRoute.getCarParkStaticInfo().getCPNumber());
+            model = ViewModelProviders
+                    .of(this, new NavigationViewModelRouteFactory(this.getApplication(), initialChosenRoute))
+                    .get(NavigationViewModel.class);
+        } else {
+            initialCarPark = (CarParkStaticInfo) parentIntent.getSerializableExtra("chosenCarPark");
+            Log.d("NavigationActivity", "ChosenCarPark passed from intent is  " + initialCarPark.getCPNumber());
+            model = ViewModelProviders
+                    .of(this, new NavigationViewModelCarParkFactory(this.getApplication(), initialCarPark))
+                    .get(NavigationViewModel.class);
+        }
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
 //        LatLng endPoint = new LatLng(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
@@ -153,25 +152,28 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                 .flat(true)
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.cursor)));
 
+        mMap.addMarker(new MarkerOptions().position(destLoc).title("Destination Marker"));
+
         model.getCurrentLoc().observe(this, newCurrentLoc -> {
-            while(model.getNavigationStarted()){
-                prevLoc = currentLoc;
-                currentLoc = newCurrentLoc;
-                Log.d("currentLoc", prevLoc.toString());
-                Log.d("currentLoc", newCurrentLoc.toString());
-                PolylineOptions updatedRoute = model.getUpdatingRoute();
-                float bearing = getBearing(prevLoc, newCurrentLoc);
-                marker.setPosition(newCurrentLoc);
-                marker.setAnchor(0.5f, 0.5f);
-                marker.setRotation(bearing);
-                mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
-                        .target(newCurrentLoc)
-                        .zoom(18f)
-                        .bearing(bearing)
-                        .build(
-                        )));
-                plotPolyline(updatedRoute);
-                checkReached(prevLoc, currentLoc);
+            prevLoc = currentLoc;
+            currentLoc = newCurrentLoc;
+            Log.d("currentLoc", prevLoc.toString());
+            Log.d("currentLoc", newCurrentLoc.toString());
+            PolylineOptions updatedRoute = model.getUpdatingRoute().getValue().getPolylineOptions();
+            float bearing = getBearing(prevLoc, newCurrentLoc);
+            marker.setPosition(newCurrentLoc);
+            marker.setAnchor(0.5f, 0.5f);
+            marker.setRotation(bearing);
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
+                    .target(newCurrentLoc)
+                    .zoom(18f)
+                    .bearing(bearing)
+                    .build(
+                    )));
+            plotPolyline(updatedRoute);
+            if(checkReached(currentLoc, destLoc)){
+                model.getCurrentLoc().removeObservers(this);
+                reached();
             }
         });
     }
@@ -326,17 +328,15 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 
-    public void checkReached(LatLng prevLoc, LatLng currentLoc){
-//        double threshold = 0.0001;
-        double threshold = 0.1;
+    public boolean checkReached(LatLng prevLoc, LatLng currentLoc){
+        double threshold = 0.0001;
         double longDist = prevLoc.longitude - currentLoc.longitude;
         double latDist = prevLoc.latitude - currentLoc.latitude;
         if(longDist<0) longDist *= -1;
-        if(latDist<0) longDist *= -1;
+        if(latDist<0) latDist *= -1;
         if (longDist<threshold && latDist < threshold){
-            reached();
-            model.setNavigationStarted(false);
-        }
+            return true;
+        } else return false;
     }
 
     public void reached(){

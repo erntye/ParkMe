@@ -118,4 +118,27 @@ public class LocationService extends Service {
 
 }
 
+/*
+    //to be put inside the activity bound to the service
+    //establish service connection needed to bind to service
+    private ServiceConnection mConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            String name = className.getClassName();
+            Log.d("ViewMapActivity", "In Service Connection");
+            if (name.endsWith("LocationService")) {
+                mLocationService = ((LocationService.LocationBinder) service).getService();
+                mLocationService.startLocationUpdate();
+                Log.d("ViewMapActivity", "Location Update started");
+            }
+        }
 
+        public void onServiceDisconnected(ComponentName className) {
+            if (className.getClassName().equals("LocationService")) {
+                Log.d("ViewMapActivity", "Service disconnected");
+                mLocationService = null;
+            }
+        }
+    };
+
+
+*/
