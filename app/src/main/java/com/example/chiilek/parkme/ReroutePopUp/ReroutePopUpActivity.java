@@ -1,5 +1,6 @@
 package com.example.chiilek.parkme.ReroutePopUp;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -46,9 +47,7 @@ public class ReroutePopUpActivity extends AppCompatActivity {
         int width = dm.widthPixels;
         int height = dm.heightPixels;
 
-        getWindow().setLayout((int)(width*.9), (int)(height*.65));
-
-
+        getWindow().setLayout((int)(width*.9), ActionBar.LayoutParams.WRAP_CONTENT);
 
 
     }
