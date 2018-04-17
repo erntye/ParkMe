@@ -29,17 +29,18 @@ public class RouteOverviewViewModel extends AndroidViewModel {
 
     private MutableLiveData<LatLng> startPoint;
     private MutableLiveData<LatLng> endPoint;
-    private DirectionsAndCPInfo chosenRoute;
+    private MutableLiveData<DirectionsAndCPInfo> chosenRoute;
     private MutableLiveData<GoogleMapsDirections> updatingRouteDirections;
     private boolean navigationStarted = false;
 
     public RouteOverviewViewModel(Application application){
         super(application);
-        Log.d("RouteOverviewViewModel","creating navigation view model");
+        Log.d("RouteOverviewViewModel","creating Routeoverview view model");
         mLocationRepo = LocationRepository.getLocationRepository(application.getApplicationContext());
         currentLocation = mLocationRepo.getLocation();
         previousLocation = currentLocation.getValue();
         mRepository = Repository.getInstance(application);
+        chosenRoute = new MutableLiveData<>();
     }
 
     public RouteOverviewViewModel(Application application, CarParkStaticInfo carParkStaticInfo){
@@ -50,7 +51,7 @@ public class RouteOverviewViewModel extends AndroidViewModel {
                 @Override
                 public void onSuccess(GoogleMapsDirections gMapsDirections) {
                     Log.d("RouteOverviewViewModel","succeeded in creating route from static info in constructor");
-                    chosenRoute = new DirectionsAndCPInfo(carParkStaticInfo,gMapsDirections,currentLocation.getValue());
+                    chosenRoute.setValue(new DirectionsAndCPInfo(carParkStaticInfo,gMapsDirections,currentLocation.getValue()));
                     createMediator();
                 }
 
@@ -64,18 +65,15 @@ public class RouteOverviewViewModel extends AndroidViewModel {
     public RouteOverviewViewModel(@NonNull Application application, DirectionsAndCPInfo initialChosenRoute) {
         this(application);
         Log.d("RouteOverviewViewModel", "constructor with chosen route");
-        this.chosenRoute = initialChosenRoute;
+        chosenRoute.setValue(initialChosenRoute);
         updatingRouteDirections = new MutableLiveData<>();
-        updatingRouteDirections.setValue(chosenRoute.getGoogleMapsDirections());
+        updatingRouteDirections.setValue(chosenRoute.getValue().getGoogleMapsDirections());
         createMediator();
 
     }
 
-    public DirectionsAndCPInfo getChosenRoute(){
+    public LiveData<DirectionsAndCPInfo> getChosenRoute(){
         return chosenRoute;
-    }
-    public PolylineOptions getInitialRoute(){
-        return chosenRoute.getGoogleMapsDirections().getPolylineOptions();
     }
 
     public LiveData<GoogleMapsDirections> getUpdatingRoute(){
@@ -97,7 +95,7 @@ public class RouteOverviewViewModel extends AndroidViewModel {
                 if (!currentLocation.getValue().equals(previousLocation)){
                     Log.d("SelectRouteViewModel", "current loc: " + currentLocation.getValue().toString() + " prev loc: " + previousLocation.toString());
                     Log.d("SelectRouteViewModel", "current loc != previous loc, calling update routes");
-                    mRepository.updateRoutes((LatLng) newCurrentLocation, chosenRoute.getDestinationLatLng(),
+                    mRepository.updateRoutes((LatLng) newCurrentLocation, chosenRoute.getValue().getDestinationLatLng(),
                             new DirectionsCallback() {
                                 @Override
                                 public void onSuccess(GoogleMapsDirections gMapsDirections) {

@@ -60,7 +60,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     private Marker marker;
     private DirectionsAndCPInfo initialChosenRoute;
     private CarParkStaticInfo initialCarPark;
-    private RouteOverviewViewModel model;
+    private NavigationViewModel model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,22 +83,14 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         Intent parentIntent = getIntent();
         DirectionsAndCPInfo initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
 
-        destLoc = initialChosenRoute.getDestinationLatLng();
+        destLoc = new LatLng(initialChosenRoute.getDestinationLatitude(), initialChosenRoute.getDestinationLongitude());
 
-        Log.d("NavigationActivity", "InitialChosenRoute passed from intent is  " + initialChosenRoute.getCarParkStaticInfo().getCPNumber());
+        model = ViewModelProviders
+                .of(this, new NavigationViewModelFactory(this.getApplication(), initialChosenRoute))
+                .get(NavigationViewModel.class);
 
-        if (parentIntent.getSerializableExtra("chosenRoute") != null) {
-            initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
-            Log.d("NavigationActivity", "InitialChosenRoute passed from intent is  " + initialChosenRoute.getCarParkStaticInfo().getCPNumber());
-            model = ViewModelProviders
-                    .of(this, new RouteOverviewViewModelRouteFactory(this.getApplication(), initialChosenRoute))
-                    .get(RouteOverviewViewModel.class);
-        } else {
-            initialCarPark = (CarParkStaticInfo) parentIntent.getSerializableExtra("chosenCarPark");
-            Log.d("NavigationActivity", "ChosenCarPark passed from intent is  " + initialCarPark.getCPNumber());
-            model = ViewModelProviders
-                    .of(this, new RouteOverviewViewModelCarParkFactory(this.getApplication(), initialCarPark))
-                    .get(RouteOverviewViewModel.class);
+        // Random starting location
+        currentLoc = new LatLng(1.346267,103.707881);
         }
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
@@ -107,12 +99,6 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 //        //TODO place the code below to correct place
 //        //SHOW MESSAGE WHEN REACHED     /**********************************************************/
 //        startActivity(new Intent(NavigationActivity.this, ReachMessageActivity.class));
-
-        sampleWayPoints = initialChosenRoute.getGoogleMapsDirections().getPolylineOptions();
-        // Random starting location
-        currentLoc = new LatLng(1.346267,103.707881);
-    }
-
 
     /**
      * Manipulates the map once available.
