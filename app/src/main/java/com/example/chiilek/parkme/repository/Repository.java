@@ -266,7 +266,6 @@ public class Repository {
                 Log.d("Repository", "updateRoutes callback failure");
             }
         });
-
     }
 
     //expose for view map view model
