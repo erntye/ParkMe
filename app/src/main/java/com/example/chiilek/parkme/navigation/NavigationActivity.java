@@ -92,7 +92,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 
         // Random starting location
         currentLoc = new LatLng(1.346267,103.707881);
-        }
+    }
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
 //        LatLng endPoint = new LatLng(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
@@ -100,6 +100,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 //        //TODO place the code below to correct place
 //        //SHOW MESSAGE WHEN REACHED     /**********************************************************/
 //        startActivity(new Intent(NavigationActivity.this, ReachMessageActivity.class));
+
 
     /**
      * Manipulates the map once available.

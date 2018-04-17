@@ -27,7 +27,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class SuggestionsActivity extends AppCompatActivity{
 
     private RecyclerView mRecyclerView;
