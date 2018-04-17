@@ -83,7 +83,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         Intent parentIntent = getIntent();
         DirectionsAndCPInfo initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
 
-        destLoc = new LatLng(initialChosenRoute.getDestinationLatitude(), initialChosenRoute.getDestinationLongitude());
+        destLoc = initialChosenRoute.getDestinationLatLng();
 
         model = ViewModelProviders
                 .of(this, new NavigationViewModelFactory(this.getApplication(), initialChosenRoute))
