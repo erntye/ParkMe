@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.chiilek.parkme.R;
+import com.example.chiilek.parkme.ReroutePopUp.ReroutePopUpActivity;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -111,6 +112,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setPadding(0, 90, 0, 0);
         MapStyleOptions nightStyle = MapStyleOptions.loadRawResourceStyle(this, R.raw.styles_night);
         googleMap.setMapStyle(nightStyle);
 
@@ -327,6 +329,13 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 
     public void reached(){
         Intent intent = new Intent(NavigationActivity.this, ReachMessageActivity.class);
+        Log.d("ReroutePopup","Displaying Reroute Popup Msg");
+        startActivity(intent);
+    }
+
+    private void reroute(){
+        Intent intent = new Intent(NavigationActivity.this, ReroutePopUpActivity.class);
+        //intent.putExtra("availability", "")
         Log.d("ReroutePopup","Displaying Reroute Popup Msg");
         startActivity(intent);
     }
