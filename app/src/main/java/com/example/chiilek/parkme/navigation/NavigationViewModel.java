@@ -19,6 +19,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class NavigationViewModel extends AndroidViewModel {
 
@@ -34,8 +36,9 @@ public class NavigationViewModel extends AndroidViewModel {
     private MutableLiveData<LatLng> endPoint;
     private DirectionsAndCPInfo chosenRoute;
     private MutableLiveData<GoogleMapsDirections> updatingRouteDirections;
-    private boolean navigationStarted = false;
-    private MutableLiveData<Boolean> availIsZero = new MutableLiveData<Boolean>();
+    private boolean navigationStarted = true;
+    private DirectionsAndCPInfo alternativeRoute;
+    private MutableLiveData<Boolean> isAvailZero;
 
     public NavigationViewModel(Application application){
         super(application);
@@ -44,6 +47,8 @@ public class NavigationViewModel extends AndroidViewModel {
         currentLocation = mLocationRepo.getLocation();
         previousLocation = currentLocation.getValue();
         mRepository = Repository.getInstance(application);
+        isAvailZero = new MutableLiveData<Boolean>();
+        isAvailZero.setValue(false);
     }
 
     public NavigationViewModel(Application application, CarParkStaticInfo carParkStaticInfo){
@@ -116,20 +121,31 @@ public class NavigationViewModel extends AndroidViewModel {
                             });
                     previousLocation = currentLocation.getValue();
                 }else Log.d("NavigationViewModel", "location not changed, do not need to update route");
+
             }
         });
+
+        //timer to simulate availability = 0
+        Timer mTimer = new Timer();
+        mTimer.schedule(new TimerTask(){
+            @Override
+            public void run(){
+                onAvailZero();
+            };
+        },5000,100000000);
     }
 
     private void onAvailZero(){
+        Log.d("NavigationViewModel", "onAvailZero: in avail zero");
         mRepository.getDirectionsAndCPs(currentLocation.getValue(), chosenRoute.getDestinationLatLng(), new GetRoutesCallback() {
             @Override
             public void onSuccess(List<DirectionsAndCPInfo> directionsAndCPInfoList) {
-                String oldCarParkNumber = chosenRoute.getCarParkDatum().getCarParkNumber();
-                if(directionsAndCPInfoList.get(0).getCarParkDatum().getCarParkNumber().equals(oldCarParkNumber)){
+                String oldCarParkNumber = chosenRoute.getCarParkStaticInfo().getCPNumber();
+                if(directionsAndCPInfoList.get(0).getCarParkStaticInfo().getCPNumber().equals(oldCarParkNumber)){
                     directionsAndCPInfoList.remove(0);
                 }
-                chosenRoute = directionsAndCPInfoList.get(0);
-                updatingRouteDirections.postValue(chosenRoute.getGoogleMapsDirections());
+                alternativeRoute = directionsAndCPInfoList.get(0);
+                isAvailZero.setValue(true);
             }
             @Override
             public void onFailure() {
@@ -141,4 +157,13 @@ public class NavigationViewModel extends AndroidViewModel {
     public MutableLiveData<LatLng> getCurrentLoc(){
         return currentLocation;
     }
+
+    private void rerouteToNewCarPark(){
+        chosenRoute = alternativeRoute;
+        updatingRouteDirections.postValue(alternativeRoute.getGoogleMapsDirections());
+    }
+
+    public MutableLiveData<Boolean> getIsAvailZero() { return isAvailZero; }
+
+    public DirectionsAndCPInfo getAlternativeRoute() { return alternativeRoute; }
 }

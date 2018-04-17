@@ -61,7 +61,7 @@ public class LocationRepository  {
         startLocationUpdate(mLocationCallback);
         currentLocation = new MutableLiveData<>();
         //TODO find out how to not hardcode this value without getting a null pointer
-        currentLocation.setValue(new LatLng(1.321,103.850));
+        currentLocation.setValue(new LatLng(1.353675,103.687791));
 
         Log.d("LocationRepo", "LocationRepository constructed");
     }

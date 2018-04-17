@@ -245,7 +245,7 @@ public class RouteOverviewActivity extends FragmentActivity
             for(LatLng latlng:waypoints)
                 builder.include(latlng);
             LatLngBounds bounds = builder.build();
-            CameraUpdate mCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds,width,(int)(height*0.5),2);
+            CameraUpdate mCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds,(int)(width*0.9),(int)(height*0.5),2);
             mMap.animateCamera(mCameraUpdate);
             mMap.addMarker(new MarkerOptions().position(newRoute.getDestinationLatLng()).title("Marker in Destination"));
         }

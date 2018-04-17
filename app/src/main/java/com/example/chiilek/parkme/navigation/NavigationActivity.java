@@ -92,7 +92,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 
         // Random starting location
         currentLoc = new LatLng(1.346267,103.707881);
-        }
+    }
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
 //        LatLng endPoint = new LatLng(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
@@ -162,6 +162,13 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
             if(checkReached(currentLoc, destLoc)){
                 model.getCurrentLoc().removeObservers(this);
                 reached();
+            }
+        });
+
+        model.getIsAvailZero().observe(this, newBoolean -> {
+            if(newBoolean){
+                Log.d("NavigationActivity", "is avail zero observe calling reroute()");
+                reroute();
             }
         });
     }
@@ -336,8 +343,9 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     private void reroute(){
         Intent intent = new Intent(NavigationActivity.this, ReroutePopUpActivity.class);
         //intent.putExtra("availability", "")
-        Log.d("ReroutePopup","Displaying Reroute Popup Msg");
+        intent.putExtra("initialRoute", initialChosenRoute);
+        intent.putExtra("alternativeRoute", model.getAlternativeRoute());
+        Log.d("NavigationActivity", "reroute: calling re route pop up activity");
         startActivity(intent);
     }
-
 }
