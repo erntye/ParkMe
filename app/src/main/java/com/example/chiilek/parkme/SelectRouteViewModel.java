@@ -264,11 +264,11 @@ public class SelectRouteViewModel extends AndroidViewModel {
         return navigationStarted;
     }
 
-    @Override
+/*    @Override
     protected void onCleared() {
         super.onCleared();
         mLocationRepo.stopLocationUpdates();
-    }
+    }*/
     public LiveData<GoogleMapsDirections> getGoogleMapsDirections(){ return updatingRouteDirections; }
 
 }

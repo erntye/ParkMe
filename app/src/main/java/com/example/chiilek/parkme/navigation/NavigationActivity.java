@@ -2,7 +2,6 @@ package com.example.chiilek.parkme.navigation;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.animation.ValueAnimator;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,17 +13,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.view.animation.LinearInterpolator;
 
-import com.example.chiilek.parkme.MultiSearchFragment;
 import com.example.chiilek.parkme.R;
-import com.example.chiilek.parkme.ReroutePopUp.ReroutePopUpActivity;
-import com.example.chiilek.parkme.api_controllers.directions_api.DirectionsAPIController;
-import com.example.chiilek.parkme.api_controllers.directions_api.DirectionsCallback;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
-import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDirections;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -33,17 +25,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -65,13 +54,12 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     private LatLng prevLoc, currentLoc, destLoc;
     float bearing;
     private String destination;
-    private MultiSearchFragment searchFragment;
     private PolylineOptions blackPolyLineOptions;
     private Polyline blackPolyline;
     private LatLng myPosition;
     private Marker marker;
-    CarParkStaticInfo initialCarPark;
-
+    private DirectionsAndCPInfo initialChosenRoute;
+    private CarParkStaticInfo initialCarPark;
     private NavigationViewModel model;
 
     @Override
@@ -95,22 +83,14 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         Intent parentIntent = getIntent();
         DirectionsAndCPInfo initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
 
-        destLoc = new LatLng(initialChosenRoute.getDestinationLatitude(), initialChosenRoute.getDestinationLongitude());
+        destLoc = initialChosenRoute.getDestinationLatLng();
 
-        Log.d("NavigationActivity", "InitialChosenRoute passed from intent is  " + initialChosenRoute.getCarParkStaticInfo().getCPNumber());
+        model = ViewModelProviders
+                .of(this, new NavigationViewModelFactory(this.getApplication(), initialChosenRoute))
+                .get(NavigationViewModel.class);
 
-        if (parentIntent.getSerializableExtra("chosenRoute") != null) {
-            initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
-            Log.d("NavigationActivity", "InitialChosenRoute passed from intent is  " + initialChosenRoute.getCarParkStaticInfo().getCPNumber());
-            model = ViewModelProviders
-                    .of(this, new NavigationViewModelRouteFactory(this.getApplication(), initialChosenRoute))
-                    .get(NavigationViewModel.class);
-        } else {
-            initialCarPark = (CarParkStaticInfo) parentIntent.getSerializableExtra("chosenCarPark");
-            Log.d("NavigationActivity", "ChosenCarPark passed from intent is  " + initialCarPark.getCPNumber());
-            model = ViewModelProviders
-                    .of(this, new NavigationViewModelCarParkFactory(this.getApplication(), initialCarPark))
-                    .get(NavigationViewModel.class);
+        // Random starting location
+        currentLoc = new LatLng(1.346267,103.707881);
         }
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
@@ -119,12 +99,6 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 //        //TODO place the code below to correct place
 //        //SHOW MESSAGE WHEN REACHED     /**********************************************************/
 //        startActivity(new Intent(NavigationActivity.this, ReachMessageActivity.class));
-
-        sampleWayPoints = initialChosenRoute.getGoogleMapsDirections().getPolylineOptions();
-        // Random starting location
-        currentLoc = new LatLng(1.346267,103.707881);
-    }
-
 
     /**
      * Manipulates the map once available.

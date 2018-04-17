@@ -17,7 +17,7 @@ import com.example.chiilek.parkme.repository.Repository;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-public class NavigationViewModel extends AndroidViewModel {
+public class RouteOverviewViewModel extends AndroidViewModel {
 
     private MediatorLiveData mediatorCurrentLoc = new MediatorLiveData<>();
 
@@ -29,53 +29,51 @@ public class NavigationViewModel extends AndroidViewModel {
 
     private MutableLiveData<LatLng> startPoint;
     private MutableLiveData<LatLng> endPoint;
-    private DirectionsAndCPInfo chosenRoute;
+    private MutableLiveData<DirectionsAndCPInfo> chosenRoute;
     private MutableLiveData<GoogleMapsDirections> updatingRouteDirections;
     private boolean navigationStarted = false;
 
-    public NavigationViewModel(Application application){
+    public RouteOverviewViewModel(Application application){
         super(application);
-        Log.d("NavigationViewModel","creating navigation view model");
+        Log.d("RouteOverviewViewModel","creating Routeoverview view model");
         mLocationRepo = LocationRepository.getLocationRepository(application.getApplicationContext());
         currentLocation = mLocationRepo.getLocation();
         previousLocation = currentLocation.getValue();
         mRepository = Repository.getInstance(application);
+        chosenRoute = new MutableLiveData<>();
     }
 
-    public NavigationViewModel(Application application, CarParkStaticInfo carParkStaticInfo){
+    public RouteOverviewViewModel(Application application, CarParkStaticInfo carParkStaticInfo){
         this(application);
-        Log.d("NavigationViewModel", "constructor with static info");
+        Log.d("RouteOverviewViewModel", "constructor with static info");
         mRepository.updateRoutes(currentLocation.getValue(),carParkStaticInfo.getLatLng(),
             new DirectionsCallback(){
                 @Override
                 public void onSuccess(GoogleMapsDirections gMapsDirections) {
-                    Log.d("NavigationViewModel","succeeded in creating route from static info in constructor");
-                    chosenRoute = new DirectionsAndCPInfo(carParkStaticInfo,gMapsDirections,currentLocation.getValue());
+                    Log.d("RouteOverviewViewModel","succeeded in creating route from static info in constructor");
+                    chosenRoute.setValue(new DirectionsAndCPInfo(carParkStaticInfo,gMapsDirections,currentLocation.getValue()));
                     createMediator();
                 }
 
                 @Override
                 public void onFailure() {
-                    Log.d("NavigationViewModel","failed to create route from static info in constructor");
+                    Log.d("RouteOverviewViewModel","failed to create route from static info in constructor");
                 }
             });
     }
 
-    public NavigationViewModel(@NonNull Application application, DirectionsAndCPInfo initialChosenRoute) {
+    public RouteOverviewViewModel(@NonNull Application application, DirectionsAndCPInfo initialChosenRoute) {
         this(application);
-        Log.d("NavigationViewModel", "constructor with chosen route");
-        this.chosenRoute = initialChosenRoute;
+        Log.d("RouteOverviewViewModel", "constructor with chosen route");
+        chosenRoute.setValue(initialChosenRoute);
         updatingRouteDirections = new MutableLiveData<>();
-        updatingRouteDirections.setValue(chosenRoute.getGoogleMapsDirections());
+        updatingRouteDirections.setValue(chosenRoute.getValue().getGoogleMapsDirections());
         createMediator();
 
     }
 
-    public DirectionsAndCPInfo getChosenRoute(){
+    public LiveData<DirectionsAndCPInfo> getChosenRoute(){
         return chosenRoute;
-    }
-    public PolylineOptions getInitialRoute(){
-        return chosenRoute.getGoogleMapsDirections().getPolylineOptions();
     }
 
     public LiveData<GoogleMapsDirections> getUpdatingRoute(){
@@ -90,32 +88,33 @@ public class NavigationViewModel extends AndroidViewModel {
 
     private void createMediator(){
         mediatorCurrentLoc.addSource(currentLocation, newCurrentLocation -> {
-            Log.d("NavigationViewModel", "mediatorCurrentLoc changed");
+            Log.d("SelectRouteViewModel", "mediatorCurrentLoc changed");
             if(navigationStarted){
-                Log.d("NavigationViewModel", "current loc changed and  navigation started");
+                Log.d("SelectRouteViewModel", "current loc changed and  navigation started");
                 //if location is changed
                 if (!currentLocation.getValue().equals(previousLocation)){
-                    Log.d("NavigationViewModel", "current loc: " + currentLocation.getValue().toString() + " prev loc: " + previousLocation.toString());
-                    Log.d("NavigationViewModel", "current loc != previous loc, calling update routes");
-                    mRepository.updateRoutes((LatLng) newCurrentLocation, chosenRoute.getDestinationLatLng(),
+                    Log.d("SelectRouteViewModel", "current loc: " + currentLocation.getValue().toString() + " prev loc: " + previousLocation.toString());
+                    Log.d("SelectRouteViewModel", "current loc != previous loc, calling update routes");
+                    mRepository.updateRoutes((LatLng) newCurrentLocation, chosenRoute.getValue().getDestinationLatLng(),
                             new DirectionsCallback() {
                                 @Override
                                 public void onSuccess(GoogleMapsDirections gMapsDirections) {
                                     updatingRouteDirections.postValue(gMapsDirections);
-                                    Log.d("NavigationViewModel", "navigation: updated route directions with new current loc.");
+                                    Log.d("SelectRouteViewModel", "navigation: updated route directions with new current loc.");
                                 }
 
                                 @Override
                                 public void onFailure() {
-                                    Log.d("NavigationViewModel", "navigation: update route failed");
+                                    Log.d("SelectRouteViewModel", "navigation: update route failed");
                                 }
                             });
                     previousLocation = currentLocation.getValue();
-                }else Log.d("NavigationViewModel", "location not changed, do not need to update route");
+                }else Log.d("SelectRouteViewModel", "location not changed, do not need to update route");
             }
         });
     }
-    public MutableLiveData<LatLng> getCurrentLoc(){
+
+    public LiveData<LatLng> getCurrentLoc(){
         return currentLocation;
     }
 }

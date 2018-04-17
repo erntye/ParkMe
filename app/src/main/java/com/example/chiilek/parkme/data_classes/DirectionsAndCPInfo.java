@@ -5,6 +5,7 @@ import android.util.Log;
 import com.example.chiilek.parkme.data_classes.availability_classes.CarParkDatum;
 import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDirections;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.SphericalUtil;
 
 import java.io.Serializable;
 
@@ -26,14 +27,16 @@ public class DirectionsAndCPInfo implements Serializable{
         this.carParkStaticInfo = cpInfo;
         this.googleMapsDirections = gmapsDir;
         Log.d("DirectionsAndCPInfo", "gmapsDir status "+ gmapsDir.getStatus() + ", gmapsDir routes size " + gmapsDir.getRoutes().size());
-        distance = getDistanceFromLatLngInM(
-                userChosenDestination.latitude,
-                userChosenDestination.longitude,
-                Double.parseDouble(cpInfo.getLatitude()),
-                Double.parseDouble(cpInfo.getLongitude()));
+//        distance = getDistanceFromLatLngInM(userChosenDestination.latitude,
+//                userChosenDestination.longitude,
+//                Double.parseDouble(cpInfo.getLatitude()),
+//                Double.parseDouble(cpInfo.getLongitude()));
+        distance = SphericalUtil.computeDistanceBetween(userChosenDestination,cpInfo.getLatLng());
         duration = gmapsDir.getRoutes().get(0).getLegs().get(0).getDuration().getValue();
     }
 
+
+    //TODO: remove method after confirming that no issues
     private double getDistanceFromLatLngInM(double lat1, double lng1, double lat2, double lng2) {
         double radiusAtEquator = 6378000; //in meters
         double dLat = degToRad(lat2-lat1);  // deg2rad below
@@ -49,6 +52,7 @@ public class DirectionsAndCPInfo implements Serializable{
         return distance;
     }
 
+    //TODO: remove too
     private double degToRad(double deg) {
         return deg * (Math.PI/180);
     }
@@ -61,15 +65,6 @@ public class DirectionsAndCPInfo implements Serializable{
 
     public LatLng getDestinationLatLng(){
         return carParkStaticInfo.getLatLng();
-    }
-
-    //deprecated, to replace getLat and getLong with getDestinationLatLng
-    public double getDestinationLatitude(){
-        return Double.parseDouble(carParkStaticInfo.getLatitude());
-    }
-
-    public double getDestinationLongitude(){
-        return Double.parseDouble(carParkStaticInfo.getLongitude());
     }
 
     public void setCarParkDatum(CarParkDatum carParkDatum) {

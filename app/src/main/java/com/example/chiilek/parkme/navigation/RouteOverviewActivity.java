@@ -40,7 +40,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -48,7 +47,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -65,12 +63,14 @@ public class RouteOverviewActivity extends FragmentActivity
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
-    private NavigationViewModel model;
+    private RouteOverviewViewModel model;
     //needed to bind to service to get location updates
     private LocationService mLocationService;
     private final int REQUEST_PERMISSION_LOCATION = 1;
     private List<LatLng> sampleWayPoints;
     private DirectionsAndCPInfo mChosenRoute;
+    private CarParkStaticInfo mChosenCarPark;
+
     // ---------------------------------------
     //             CHECK PERMISSIONS
     // ---------------------------------------
@@ -84,13 +84,20 @@ public class RouteOverviewActivity extends FragmentActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        mChosenRoute = (DirectionsAndCPInfo) getIntent().getSerializableExtra("chosenRoute");
-        if (mChosenRoute != null)
-            Log.d("RouteOverviewActivity","Parcelled Chosen Route is "+ mChosenRoute.getCarParkStaticInfo().getCPNumber());
-        else
-            Log.d("RouteOverviewActivity","Parcelled Chosen Route is null");
-        //Create a view model and allow re-created activities to get the same view model instance
-        //model = ViewModelProviders.of(this).get(NavigationViewModel.class);
+        Intent parentIntent = getIntent();
+        if (parentIntent.getSerializableExtra("chosenRoute") != null) {
+            mChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
+            Log.d("NavigationActivity", "InitialChosenRoute passed from intent is  " + mChosenRoute.getCarParkStaticInfo().getCPNumber());
+            model = ViewModelProviders
+                    .of(this, new RouteOverviewViewModelRouteFactory(this.getApplication(), mChosenRoute))
+                    .get(RouteOverviewViewModel.class);
+        } else {
+            mChosenCarPark = (CarParkStaticInfo) parentIntent.getSerializableExtra("chosenCarPark");
+            Log.d("NavigationActivity", "ChosenCarPark passed from intent is  " + mChosenCarPark.getCPNumber());
+            model = ViewModelProviders
+                    .of(this, new RouteOverviewViewModelCarParkFactory(this.getApplication(), mChosenCarPark))
+                    .get(RouteOverviewViewModel.class);
+        }
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
 //        LatLng endPoint = new LatLng(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
@@ -98,8 +105,9 @@ public class RouteOverviewActivity extends FragmentActivity
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("RouteOverviewActivity","Start Button pressed");
                 Intent intent = new Intent(RouteOverviewActivity.this, NavigationActivity.class);
-                intent.putExtra("chosenRoute",mChosenRoute);
+                intent.putExtra("chosenRoute", model.getChosenRoute().getValue());
                 Log.d("RouteOverviewActivity","starting intent for Navigation Activity");
                 startActivity(intent);
             }
@@ -181,11 +189,26 @@ public class RouteOverviewActivity extends FragmentActivity
 
         mMap.setMyLocationEnabled(true);
 
-        PolylineOptions chosenRoute = mChosenRoute.getGoogleMapsDirections().getPolylineOptions();
+        //if viewmodel is created from CPSI, it will need to call API hence map cannot be initialized immediately
+        //if viewmodel is created from D&CPI, it can be initialized immediately
+        if (model.getChosenRoute().getValue() == null){
+            model.getChosenRoute().observe(this,newRoute-> {
+                initializeMap(newRoute);
+                model.getChosenRoute().removeObservers(this);
+        });
+        } else {
+            initializeMap(model.getChosenRoute().getValue());
+        }
+
+        //LatLng googleplex = new LatLng(37.4220, -122.0940);
+
+
+    }
+/*        PolylineOptions chosenRoute = model.getChosenRoute().getGoogleMapsDirections().getPolylineOptions();
         if(chosenRoute!=null){
             chosenRoute.width(10).color(R.color.colorMain);
             mMap.addPolyline(chosenRoute);
-        }
+        }*/
 
 //        mMap.addMarker(new MarkerOptions()
 //                .position(mChosenRoute.getDestinationLatLng())
@@ -194,9 +217,7 @@ public class RouteOverviewActivity extends FragmentActivity
         //mMap.getMyLocation().getLatitude();
 
         // Add a marker in Googleplex and move the camera
-        LatLng googleplex = new LatLng(37.4220, -122.0940);
-        mMap.addMarker(new MarkerOptions().position(mChosenRoute.getDestinationLatLng()).title("Marker in Destination"));
-        // mMap.moveCamera(CameraUpdateFactory.newLatLng(googleplex));
+     // mMap.moveCamera(CameraUpdateFactory.newLatLng(googleplex));
 
         // SAMPLE HARDCODED ROUTE
 //        sampleWayPoints= new ArrayList<>();
@@ -206,20 +227,29 @@ public class RouteOverviewActivity extends FragmentActivity
 //        sampleWayPoints.add(new LatLng(37.3830, -122.0870));
 //        plotPolyline(sampleWayPoints);
 
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-        int width = dm.widthPixels;
-        int height = dm.heightPixels;
 
-        List<LatLng> waypoints = chosenRoute.getPoints();
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        for(LatLng latlng:waypoints)
-            builder.include(latlng);
-        LatLngBounds bounds = builder.build();
-        CameraUpdate mCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds,width,(int)(height*0.5),2);
-        mMap.animateCamera(mCameraUpdate);
+
+    private void initializeMap(DirectionsAndCPInfo newRoute) {
+        if (newRoute != null){
+            PolylineOptions polylineToAdd = newRoute.getGoogleMapsDirections().getPolylineOptions();
+            polylineToAdd.width(10).color(R.color.colorMain);
+            mMap.addPolyline(newRoute.getGoogleMapsDirections().getPolylineOptions());
+
+            DisplayMetrics dm = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(dm);
+            int width = dm.widthPixels;
+            int height = dm.heightPixels;
+
+            List<LatLng> waypoints = polylineToAdd.getPoints();
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            for(LatLng latlng:waypoints)
+                builder.include(latlng);
+            LatLngBounds bounds = builder.build();
+            CameraUpdate mCameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds,width,(int)(height*0.5),2);
+            mMap.animateCamera(mCameraUpdate);
+            mMap.addMarker(new MarkerOptions().position(newRoute.getDestinationLatLng()).title("Marker in Destination"));
+        }
     }
-
     //establish service connection needed to bind to service
     private ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
