@@ -35,6 +35,8 @@ public class DirectionsAndCPInfo implements Serializable{
         duration = gmapsDir.getRoutes().get(0).getLegs().get(0).getDuration().getValue();
     }
 
+
+    //TODO: remove method after confirming that no issues
     private double getDistanceFromLatLngInM(double lat1, double lng1, double lat2, double lng2) {
         double radiusAtEquator = 6378000; //in meters
         double dLat = degToRad(lat2-lat1);  // deg2rad below
@@ -50,6 +52,7 @@ public class DirectionsAndCPInfo implements Serializable{
         return distance;
     }
 
+    //TODO: remove too
     private double degToRad(double deg) {
         return deg * (Math.PI/180);
     }
@@ -62,15 +65,6 @@ public class DirectionsAndCPInfo implements Serializable{
 
     public LatLng getDestinationLatLng(){
         return carParkStaticInfo.getLatLng();
-    }
-
-    //deprecated, to replace getLat and getLong with getDestinationLatLng
-    public double getDestinationLatitude(){
-        return Double.parseDouble(carParkStaticInfo.getLatitude());
-    }
-
-    public double getDestinationLongitude(){
-        return Double.parseDouble(carParkStaticInfo.getLongitude());
     }
 
     public void setCarParkDatum(CarParkDatum carParkDatum) {

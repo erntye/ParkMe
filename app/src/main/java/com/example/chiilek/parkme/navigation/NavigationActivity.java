@@ -83,7 +83,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         Intent parentIntent = getIntent();
         DirectionsAndCPInfo initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
 
-        destLoc = new LatLng(initialChosenRoute.getDestinationLatitude(), initialChosenRoute.getDestinationLongitude());
+        destLoc = initialChosenRoute.getDestinationLatLng();
 
         Log.d("NavigationActivity", "InitialChosenRoute passed from intent is  " + initialChosenRoute.getCarParkStaticInfo().getCPNumber());
 
@@ -91,14 +91,14 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
             initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
             Log.d("NavigationActivity", "InitialChosenRoute passed from intent is  " + initialChosenRoute.getCarParkStaticInfo().getCPNumber());
             model = ViewModelProviders
-                    .of(this, new NavigationViewModelRouteFactory(this.getApplication(), initialChosenRoute))
-                    .get(NavigationViewModel.class);
+                    .of(this, new RouteOverviewViewModelRouteFactory(this.getApplication(), initialChosenRoute))
+                    .get(RouteOverviewViewModel.class);
         } else {
             initialCarPark = (CarParkStaticInfo) parentIntent.getSerializableExtra("chosenCarPark");
             Log.d("NavigationActivity", "ChosenCarPark passed from intent is  " + initialCarPark.getCPNumber());
             model = ViewModelProviders
-                    .of(this, new NavigationViewModelCarParkFactory(this.getApplication(), initialCarPark))
-                    .get(NavigationViewModel.class);
+                    .of(this, new RouteOverviewViewModelCarParkFactory(this.getApplication(), initialCarPark))
+                    .get(RouteOverviewViewModel.class);
         }
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));

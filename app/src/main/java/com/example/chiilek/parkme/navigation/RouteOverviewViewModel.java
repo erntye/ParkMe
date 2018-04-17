@@ -115,4 +115,8 @@ public class RouteOverviewViewModel extends AndroidViewModel {
             }
         });
     }
+
+    public LiveData<LatLng> getCurrentLoc(){
+        return currentLocation;
+    }
 }

@@ -13,7 +13,7 @@ import com.example.chiilek.parkme.sqlAsset.AssetSQLiteOpenHelperFactory;
  * Created by QuekYufei on 27/3/18.
  */
 
-@Database(entities = {CarParkStaticInfo.class}, version = 1)
+@Database(entities = {CarParkStaticInfo.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase INSTANCE;
