@@ -101,6 +101,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 //        //SHOW MESSAGE WHEN REACHED     /**********************************************************/
 //        startActivity(new Intent(NavigationActivity.this, ReachMessageActivity.class));
 
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.

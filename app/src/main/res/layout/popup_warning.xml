@@ -8,15 +8,13 @@
 
     <TextView
         android:id="@+id/pop_up_title_location"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="11dp"
-        android:text="BLK 854A JURONG WEST ST 81"
-        android:textAlignment="center"
+        android:text="parkName"
         android:textColor="@color/colorMain"
-        android:textSize="30dp"
+        android:textSize="60dp"
         android:textStyle="bold" />
 
     <TextView
@@ -25,9 +23,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/pop_up_title_location"
         android:layout_centerHorizontal="true"
-        android:text="LOTS REMAINING:"
-        android:textColor="@color/color2"
-        android:textSize="20dp"
+        android:text="0 LOTS REMAINING"
+        android:textColor="@color/colorMain"
+        android:textSize="25dp"
         android:textStyle="bold" />
 
     <TextView
@@ -36,15 +34,17 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView8"
         android:layout_centerHorizontal="true"
-        android:text="200"
+        android:text="New Car Park"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
         android:textColor="@color/color2"
-        android:textSize="120sp"
+        android:textSize="30sp"
         android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/rerouteButton"
         android:layout_width="210dp"
-        android:layout_height="70dp"
+        android:layout_height="75dp"
         android:layout_below="@+id/textView9"
         android:layout_centerHorizontal="true"
         app:srcCompat="@drawable/reroute_button" />
@@ -55,7 +55,6 @@
         android:layout_height="50dp"
         android:layout_below="@+id/rerouteButton"
         android:layout_centerHorizontal="true"
-        app:srcCompat="@drawable/cancel_button"
-        android:layout_marginBottom="20dp"/>
+        app:srcCompat="@drawable/cancel_button" />
 
 </RelativeLayout>
