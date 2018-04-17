@@ -12,10 +12,13 @@ import com.example.chiilek.parkme.api_controllers.directions_api.DirectionsCallb
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDirections;
+import com.example.chiilek.parkme.repository.GetRoutesCallback;
 import com.example.chiilek.parkme.repository.LocationRepository;
 import com.example.chiilek.parkme.repository.Repository;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.List;
 
 public class NavigationViewModel extends AndroidViewModel {
 
@@ -32,6 +35,7 @@ public class NavigationViewModel extends AndroidViewModel {
     private DirectionsAndCPInfo chosenRoute;
     private MutableLiveData<GoogleMapsDirections> updatingRouteDirections;
     private boolean navigationStarted = false;
+    private MutableLiveData<Boolean> availIsZero = new MutableLiveData<Boolean>();
 
     public NavigationViewModel(Application application){
         super(application);
@@ -82,11 +86,11 @@ public class NavigationViewModel extends AndroidViewModel {
         return updatingRouteDirections;
     }
 
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-        mLocationRepo.stopLocationUpdates();
-    }
+//    @Override
+//    protected void onCleared() {
+//        super.onCleared();
+//        mLocationRepo.stopLocationUpdates();
+//    }
 
     private void createMediator(){
         mediatorCurrentLoc.addSource(currentLocation, newCurrentLocation -> {
@@ -115,6 +119,25 @@ public class NavigationViewModel extends AndroidViewModel {
             }
         });
     }
+
+    private void onAvailZero(){
+        mRepository.getDirectionsAndCPs(currentLocation.getValue(), chosenRoute.getDestinationLatLng(), new GetRoutesCallback() {
+            @Override
+            public void onSuccess(List<DirectionsAndCPInfo> directionsAndCPInfoList) {
+                String oldCarParkNumber = chosenRoute.getCarParkDatum().getCarParkNumber();
+                if(directionsAndCPInfoList.get(0).getCarParkDatum().getCarParkNumber().equals(oldCarParkNumber)){
+                    directionsAndCPInfoList.remove(0);
+                }
+                chosenRoute = directionsAndCPInfoList.get(0);
+                updatingRouteDirections.postValue(chosenRoute.getGoogleMapsDirections());
+            }
+            @Override
+            public void onFailure() {
+                Log.d("NavigationViewModel", "on avail zero onFailure: Directions and CP API call failed.");
+            }
+        });
+    }
+
     public MutableLiveData<LatLng> getCurrentLoc(){
         return currentLocation;
     }
