@@ -19,7 +19,7 @@ public class DirectionsAPIController {
 
     static final private String GMAPS_DIRECTION_API_BASE_URL = "https://maps.googleapis.com/maps/api/directions/";
     //TODO NOT HARDCODE THE STRING
-    static final private String GMAPS_API_KEY = "AIzaSyCl6vY67OT8SbBtih9kD1zttnk9lOUxbT4";
+    static final private String GMAPS_API_KEY = "AIzaSyCMcA56knRPYgayHU95ceIL2nNyLkpIeUo";
 
     private static DirectionsAPIController INSTANCE;
 
@@ -64,7 +64,8 @@ public class DirectionsAPIController {
                         repoCallback.onFailure();
                         break;
                     default:
-                        gMapsDirections.setgMapsRoads(RoadsAPIController.getInstance().getRoads(gMapsDirections));
+                        Log.d("DirectionsAPIController","On Response; code: " + response.code());
+                        Log.d("DirectionsAPIController","On Response; directions status: " + gMapsDirections.getStatus());
                         repoCallback.onSuccess(gMapsDirections);
                 }
             }

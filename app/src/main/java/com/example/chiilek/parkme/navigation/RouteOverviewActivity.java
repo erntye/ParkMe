@@ -178,6 +178,7 @@ public class RouteOverviewActivity extends FragmentActivity
         if(chosenRoute!=null){
             chosenRoute.width(10).color(R.color.colorMain);
             mMap.addPolyline(chosenRoute);
+            Log.d("RouteOverviewAcivity", "Added polyline to the map.");
         }
 
 //        mMap.addMarker(new MarkerOptions()

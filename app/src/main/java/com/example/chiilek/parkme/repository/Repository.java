@@ -11,11 +11,13 @@ import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityC
 import com.example.chiilek.parkme.api_controllers.directions_api.DirectionsAPIController;
 import com.example.chiilek.parkme.api_controllers.directions_api.DirectionsCallback;
 import com.example.chiilek.parkme.api_controllers.directions_api.GMapsDirectionsAPI;
+import com.example.chiilek.parkme.api_controllers.roads_api.RoadsAPIController;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.data_classes.availability_classes.CarParkDatum;
 import com.example.chiilek.parkme.data_classes.availability_classes.Item;
 import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDirections;
+import com.example.chiilek.parkme.data_classes.roads_classes.GMapsRoads;
 import com.example.chiilek.parkme.data_classes.source.AppDatabase;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -77,6 +79,9 @@ public class Repository {
                     new DirectionsCallback() {
                 public void onSuccess(GoogleMapsDirections googleMapsDirections) {
                     Log.d("Repository", "onSuccess in DirectionsCallback from CP in closestCarParks");
+                    Log.d("Repository","DIRECTIONS ROUTE: " + googleMapsDirections.getRoutes().get(0).getLegs().get(0).getSteps().toString());
+//                    GMapsRoads roads = RoadsAPIController.getInstance().getRoads(googleMapsDirections);
+//                    googleMapsDirections.setgMapsRoads(roads);
                     DirectionsAndCPInfo element = new DirectionsAndCPInfo(carPark, googleMapsDirections, destination);
                     directionsAndCPList.add(element);
                     int i = counter.decrementAndGet();
@@ -250,6 +255,9 @@ public class Repository {
             @Override
             public void onSuccess(GoogleMapsDirections gMapsDirections) {
                 Log.d("Repository", "updateRoutes callback success");
+                Log.d("Repository","DIRECTIONS ROUTE: " + gMapsDirections.getRoutes().get(0).getLegs().get(0).getSteps().toString());
+//                GMapsRoads roads = RoadsAPIController.getInstance().getRoads(gMapsDirections);
+//                gMapsDirections.setgMapsRoads(roads);
                 directionCallback.onSuccess(gMapsDirections);
             }
 

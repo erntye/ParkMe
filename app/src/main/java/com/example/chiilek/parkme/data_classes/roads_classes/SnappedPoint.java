@@ -4,7 +4,9 @@ package com.example.chiilek.parkme.data_classes.roads_classes;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class SnappedPoint {
+import java.io.Serializable;
+
+public class SnappedPoint implements Serializable{
 
     @SerializedName("location")
     @Expose

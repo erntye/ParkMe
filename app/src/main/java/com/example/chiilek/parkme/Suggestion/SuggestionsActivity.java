@@ -104,13 +104,6 @@ public class SuggestionsActivity extends AppCompatActivity{
                 {
                     Log.d("SuggestionsActivity", "observer activated directionsandcarparklist changed");
                     mAdapter.addItems(newRoutes);
-
-                    // for testing, remove soon
-                    if (!model.getNavigationStarted()) {
-                        model.setEndPoint(mAdapter.getCarParkInfo(0).getDestinationLatLng());
-                        model.setChosenRoute(mAdapter.getCarParkInfo(0));
-                        model.setNavigationStarted();
-                    }
                 }
         );
 

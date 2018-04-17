@@ -1,6 +1,8 @@
 
 package com.example.chiilek.parkme.data_classes.directions_classes;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.google.maps.android.PolyUtil;
 
 public class GoogleMapsDirections implements Serializable{
 
@@ -54,12 +57,18 @@ public class GoogleMapsDirections implements Serializable{
     public void setgMapsRoads(GMapsRoads gMapsRoads) { this.gMapsRoads = gMapsRoads; }
 
     public PolylineOptions getPolylineOptions(){
+        List<LatLng> decodedPath = PolyUtil.decode(getRoutes().get(0).getOverviewPolyline().getPoints());
         PolylineOptions polylineOptions = new PolylineOptions().clickable(true);
-        if(gMapsRoads.getSnappedPoints().size() != 0){
-            for(SnappedPoint point : gMapsRoads.getSnappedPoints()){
-                polylineOptions.add(new LatLng(point.getLocation().getLatitude(), point.getLocation().getLongitude()));
-            }
-        }
+        polylineOptions.addAll(decodedPath);
+//        if(gMapsRoads.getSnappedPoints().size() != 0){
+//            Log.d("GoogleMapDirections", "Polyline Options, snapped points size != 0");
+//            for(SnappedPoint point : gMapsRoads.getSnappedPoints()){
+//                polylineOptions.add(new LatLng(point.getLocation().getLatitude(), point.getLocation().getLongitude()));
+//                Log.d("GoogleMapDirections", "Polyline Options, adding one lat long pair now.");
+//            }
+//        }else{
+//            Log.d("GoogleMapDirections", "Polyline Options, snapped points size = 0");
+//        }
         return polylineOptions;
     }
 }
