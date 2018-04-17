@@ -137,6 +137,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setPadding(0, 90, 0, 0);
         MapStyleOptions nightStyle = MapStyleOptions.loadRawResourceStyle(this, R.raw.styles_night);
         googleMap.setMapStyle(nightStyle);
 
@@ -353,6 +354,13 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 
     public void reached(){
         Intent intent = new Intent(NavigationActivity.this, ReachMessageActivity.class);
+        Log.d("ReroutePopup","Displaying Reroute Popup Msg");
+        startActivity(intent);
+    }
+
+    private void reroute(){
+        Intent intent = new Intent(NavigationActivity.this, ReroutePopUpActivity.class);
+        //intent.putExtra("availability", "")
         Log.d("ReroutePopup","Displaying Reroute Popup Msg");
         startActivity(intent);
     }
