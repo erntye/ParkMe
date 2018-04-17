@@ -82,8 +82,8 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         //model = ViewModelProviders.of(this).get(NavigationViewModel.class);
         //TODO update the above with the below once completed
         Intent parentIntent = getIntent();
-        DirectionsAndCPInfo initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
-
+        initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
+        Log.d("NavigationActivity", "onCreate: initialising initial chosen route: " + initialChosenRoute.getCarParkStaticInfo().getAddress());
         destLoc = initialChosenRoute.getDestinationLatLng();
 
         model = ViewModelProviders
@@ -343,7 +343,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 
     private void reroute(){
         Intent intent = new Intent(NavigationActivity.this, ReroutePopUpActivity.class);
-        //intent.putExtra("availability", "")
+        Log.d("NavigationActivity", "reroute: initial chosen route: " + initialChosenRoute.getCarParkStaticInfo().getAddress());
         intent.putExtra("initialRoute", initialChosenRoute);
         intent.putExtra("alternativeRoute", model.getAlternativeRoute());
         Log.d("NavigationActivity", "reroute: calling re route pop up activity");

@@ -10,6 +10,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
@@ -23,6 +24,7 @@ import com.example.chiilek.parkme.navigation.RouteOverviewActivity;
 public class ReroutePopUpActivity extends AppCompatActivity {
     private DirectionsAndCPInfo alternativeRoute;
     private DirectionsAndCPInfo initialRoute;
+    private TextView oldCarParkName, newCarParkName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +54,11 @@ public class ReroutePopUpActivity extends AppCompatActivity {
             }
         });
 
+        oldCarParkName = findViewById(R.id.pop_up_title_location);
+        newCarParkName = findViewById(R.id.textView9);
+
+        oldCarParkName.setText(initialRoute.getCarParkStaticInfo().getAddress());
+        newCarParkName.setText("New CP: " + alternativeRoute.getCarParkStaticInfo().getAddress());
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -60,8 +67,6 @@ public class ReroutePopUpActivity extends AppCompatActivity {
         int height = dm.heightPixels;
 
         getWindow().setLayout((int)(width*.9), ActionBar.LayoutParams.WRAP_CONTENT);
-
-
     }
 
 }
