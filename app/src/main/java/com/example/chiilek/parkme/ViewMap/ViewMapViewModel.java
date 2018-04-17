@@ -107,10 +107,10 @@ public class ViewMapViewModel extends AndroidViewModel{
 
     public LiveData<LatLng> getCurrentLocation(){return currentLocation;}
 
-    @Override
+/*    @Override
     protected void onCleared() {
         super.onCleared();
         mLocationRepo.stopLocationUpdates();
-    }
+    }*/
 }
 

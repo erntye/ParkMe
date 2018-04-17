@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.chiilek.parkme.R;
+import com.example.chiilek.parkme.ReroutePopUp.ReroutePopUpActivity;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -60,7 +61,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     private Marker marker;
     private DirectionsAndCPInfo initialChosenRoute;
     private CarParkStaticInfo initialCarPark;
-    private RouteOverviewViewModel model;
+    private NavigationViewModel model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,22 +84,14 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         Intent parentIntent = getIntent();
         DirectionsAndCPInfo initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
 
-        destLoc = new LatLng(initialChosenRoute.getDestinationLatitude(), initialChosenRoute.getDestinationLongitude());
+        destLoc = initialChosenRoute.getDestinationLatLng();
 
-        Log.d("NavigationActivity", "InitialChosenRoute passed from intent is  " + initialChosenRoute.getCarParkStaticInfo().getCPNumber());
+        model = ViewModelProviders
+                .of(this, new NavigationViewModelFactory(this.getApplication(), initialChosenRoute))
+                .get(NavigationViewModel.class);
 
-        if (parentIntent.getSerializableExtra("chosenRoute") != null) {
-            initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
-            Log.d("NavigationActivity", "InitialChosenRoute passed from intent is  " + initialChosenRoute.getCarParkStaticInfo().getCPNumber());
-            model = ViewModelProviders
-                    .of(this, new NavigationViewModelRouteFactory(this.getApplication(), initialChosenRoute))
-                    .get(NavigationViewModel.class);
-        } else {
-            initialCarPark = (CarParkStaticInfo) parentIntent.getSerializableExtra("chosenCarPark");
-            Log.d("NavigationActivity", "ChosenCarPark passed from intent is  " + initialCarPark.getCPNumber());
-            model = ViewModelProviders
-                    .of(this, new NavigationViewModelCarParkFactory(this.getApplication(), initialCarPark))
-                    .get(NavigationViewModel.class);
+        // Random starting location
+        currentLoc = new LatLng(1.346267,103.707881);
         }
 //        Bundle extras = getIntent().getExtras();
 //        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
@@ -107,12 +100,6 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 //        //TODO place the code below to correct place
 //        //SHOW MESSAGE WHEN REACHED     /**********************************************************/
 //        startActivity(new Intent(NavigationActivity.this, ReachMessageActivity.class));
-
-        sampleWayPoints = initialChosenRoute.getGoogleMapsDirections().getPolylineOptions();
-        // Random starting location
-        currentLoc = new LatLng(1.346267,103.707881);
-    }
-
 
     /**
      * Manipulates the map once available.
@@ -125,6 +112,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setPadding(0, 90, 0, 0);
         MapStyleOptions nightStyle = MapStyleOptions.loadRawResourceStyle(this, R.raw.styles_night);
         googleMap.setMapStyle(nightStyle);
 
@@ -341,6 +329,13 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 
     public void reached(){
         Intent intent = new Intent(NavigationActivity.this, ReachMessageActivity.class);
+        Log.d("ReroutePopup","Displaying Reroute Popup Msg");
+        startActivity(intent);
+    }
+
+    private void reroute(){
+        Intent intent = new Intent(NavigationActivity.this, ReroutePopUpActivity.class);
+        //intent.putExtra("availability", "")
         Log.d("ReroutePopup","Displaying Reroute Popup Msg");
         startActivity(intent);
     }

@@ -211,6 +211,7 @@ public class ViewMapActivity extends FragmentActivity
                 }
 
             }
+            model.getCurrentLocation().removeObservers(this);
         });
 
         /*mFusedLocationClient.getLastLocation()
