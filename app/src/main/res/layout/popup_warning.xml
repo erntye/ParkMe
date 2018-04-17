@@ -23,8 +23,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/pop_up_title_location"
         android:layout_centerHorizontal="true"
-        android:text="LOTS REMAINING:"
-        android:textColor="@color/color2"
+        android:text="0 LOTS REMAINING"
+        android:textColor="@color/colorMain"
         android:textSize="25dp"
         android:textStyle="bold" />
 
@@ -34,9 +34,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView8"
         android:layout_centerHorizontal="true"
-        android:text="3"
+        android:text="New Car Park"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
         android:textColor="@color/color2"
-        android:textSize="120sp"
+        android:textSize="30sp"
         android:textStyle="bold" />
 
     <ImageView
