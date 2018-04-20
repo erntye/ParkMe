@@ -30,4 +30,6 @@
     <string name="textView25">TextView</string>
     <string name="textView26">TextView</string>
     <string name="textView27">TextView</string>
+
+    <string name="google_api_key">AIzaSyCMcA56knRPYgayHU95ceIL2nNyLkpIeUo</string>
 </resources>

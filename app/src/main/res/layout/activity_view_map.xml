@@ -6,7 +6,7 @@
     android:gravity="center|center_vertical"
     android:orientation="vertical"
     android:background="#000"
-    tools:context="com.example.chiilek.parkme.ViewMap.ViewMapActivity">
+    tools:context="com.example.chiilek.parkme.ui.ViewMapActivity">
 
     <fragment
         android:id="@+id/map"

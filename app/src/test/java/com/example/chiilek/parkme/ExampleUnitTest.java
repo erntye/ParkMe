@@ -1,7 +1,10 @@
 package com.example.chiilek.parkme;
 
+import android.content.res.Resources;
+
 import org.junit.Test;
 
+import static android.util.Log.ASSERT;
 import static org.junit.Assert.*;
 
 /**
@@ -12,6 +15,7 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() throws Exception {
-        assertEquals(4, 2 + 2);
+        String test = Resources.getSystem().getString(R.string.google_api_key);
+        assertEquals("AIzaSyCMcA56knRPYgayHU95ceIL2nNyLkpIeUo",test );
     }
 }

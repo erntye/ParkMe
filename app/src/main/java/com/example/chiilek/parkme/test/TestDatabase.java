@@ -5,9 +5,6 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-import com.example.chiilek.parkme.data_classes.source.AppDatabase;
-import com.example.chiilek.parkme.sqlAsset.AssetSQLiteOpenHelperFactory;
-
 /**
  * Created by Ernest on 28/3/2018.
  */

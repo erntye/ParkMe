@@ -31,7 +31,7 @@
             android:value="@string/google_api_key" />
 
         <activity
-            android:name=".ViewMap.ViewMapActivity"
+            android:name=".ui.ViewMapActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,7 +40,7 @@
 
         </activity>
         <activity
-            android:name=".suggestion.SelectRouteActivity"
+            android:name=".ui.SelectRouteActivity"
             android:label="CarParkSuggestions">
         </activity>
 
@@ -51,7 +51,7 @@
         <service android:name="com.example.chiilek.parkme.test.TestLocationManager"/>-->
 
         <activity
-            android:name=".navigation.RouteOverviewActivity"
+            android:name=".ui.RouteOverviewActivity"
             android:label="@string/title_activity_route_overview">
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN" />-->
@@ -60,23 +60,23 @@
 
         </activity>
         <activity
-            android:name=".CarParkPopUp.CarParkPopUpActivity"
+            android:name=".ui.CarParkPopUpActivity"
             android:label="CarParkPopUp"
             android:theme="@style/AppTheme.PopUpTheme">
         </activity>
         <activity
-            android:name=".ReroutePopUp.ReroutePopUpActivity"
+            android:name=".ui.ReroutePopUpActivity"
             android:label="ReroutePopUp"
             android:theme="@style/AppTheme.PopUpTheme">
         </activity>
         <activity
-            android:name=".navigation.NavigationActivity"
+            android:name=".ui.NavigationActivity"
             android:label="@string/title_activity_navigation">
 
         </activity>
 
         <activity
-            android:name=".navigation.ReachMessageActivity"
+            android:name=".ui.ReachMessageActivity"
             android:label="ReachMessage"
             android:theme="@style/AppTheme.PopUpTheme2">
 

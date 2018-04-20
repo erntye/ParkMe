@@ -9,13 +9,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.chiilek.parkme.viewmodel.ViewMapViewModel;
+
 
 public class ViewMapActivity extends AppCompatActivity {
 
     private static Button button;
     private static EditText textInput;
     private static LiveData destination;
-    com.example.chiilek.parkme.ViewMap.ViewMapViewModel model = ViewModelProviders.of(this).get(com.example.chiilek.parkme.ViewMap.ViewMapViewModel.class);
+    ViewMapViewModel model = ViewModelProviders.of(this).get(ViewMapViewModel.class);
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

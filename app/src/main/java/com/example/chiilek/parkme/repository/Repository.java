@@ -1,24 +1,22 @@
 package com.example.chiilek.parkme.repository;
 
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityAPIController;
-import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityCallback;
-import com.example.chiilek.parkme.api_controllers.directions_api.DirectionsAPIController;
-import com.example.chiilek.parkme.api_controllers.directions_api.DirectionsCallback;
-import com.example.chiilek.parkme.api_controllers.directions_api.GMapsDirectionsAPI;
-import com.example.chiilek.parkme.api_controllers.roads_api.RoadsAPIController;
-import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
-import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
-import com.example.chiilek.parkme.data_classes.availability_classes.CarParkDatum;
-import com.example.chiilek.parkme.data_classes.availability_classes.Item;
-import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDirections;
-import com.example.chiilek.parkme.data_classes.roads_classes.GMapsRoads;
-import com.example.chiilek.parkme.data_classes.source.AppDatabase;
+import com.example.chiilek.parkme.api.availability_api.AvailabilityAPIController;
+import com.example.chiilek.parkme.api.availability_api.AvailabilityCallback;
+import com.example.chiilek.parkme.api.directions_api.DirectionsAPIController;
+import com.example.chiilek.parkme.api.directions_api.DirectionsCallback;
+import com.example.chiilek.parkme.entity.CarParkInfo;
+import com.example.chiilek.parkme.entity.DirectionsAndCPInfo;
+import com.example.chiilek.parkme.entity.availabilityapi.CarParkDatum;
+import com.example.chiilek.parkme.entity.availabilityapi.Item;
+import com.example.chiilek.parkme.entity.directionsapi.GoogleMapsDirections;
+import com.example.chiilek.parkme.database.AppDatabase;
+import com.example.chiilek.parkme.repository.callbacks.GetRoutesCallback;
+import com.example.chiilek.parkme.repository.callbacks.SearchNearbyCallback;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -29,7 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Repository {
 
     private AppDatabase appDatabase;
-    private MutableLiveData<List<CarParkStaticInfo>> viewMapCPList = new MutableLiveData<List<CarParkStaticInfo>>();
+    private MutableLiveData<List<CarParkInfo>> viewMapCPList = new MutableLiveData<List<CarParkInfo>>();
     //singleton pattern
     private static Repository INSTANCE;
 
@@ -57,7 +55,7 @@ public class Repository {
         Log.d("Repository", "Called getDirectionsAndCPs(startPoint: " + startPoint.toString() + ", destination: " + destination.toString() + ")");
 
         //gets list of all nearby car parks (within a certain range)
-        List<CarParkStaticInfo> closestCarParks = appDatabase.CPInfoDao()
+        List<CarParkInfo> closestCarParks = appDatabase.CPInfoDao()
                 .getNearestCarParks(destination.latitude, destination.longitude);
         //TODO handle function if size 0
         if (closestCarParks == null) {
@@ -73,7 +71,7 @@ public class Repository {
         List<DirectionsAndCPInfo> directionsAndCPList = new ArrayList<DirectionsAndCPInfo>();
         AvailabilityAPIController availAPIControl = new AvailabilityAPIController();
         AtomicInteger counter = new AtomicInteger(closestCarParks.size());
-        for (CarParkStaticInfo carPark : closestCarParks) {
+        for (CarParkInfo carPark : closestCarParks) {
             DirectionsAPIController.getInstance().callDirectionsAPI(startPoint,
                     new LatLng(Double.parseDouble(carPark.getLatitude()), Double.parseDouble(carPark.getLongitude())),
                     new DirectionsCallback() {
@@ -101,7 +99,7 @@ public class Repository {
                                 }else {
                                     for (DirectionsAndCPInfo dirAndCP : directionsAndCPList) {
                                         //stores CarParkDatum object into each DirectionsAndCP object
-                                        dirAndCP.setCarParkDatum(cpAPIItem.getCarParkDatum(dirAndCP.getCarParkStaticInfo().getCPNumber()));
+                                        dirAndCP.setCarParkDatum(cpAPIItem.getCarParkDatum(dirAndCP.getCarParkInfo().getCPNumber()));
                                     }
                                     Log.d("Repository", "In availability callback success: CarParkDatum has been saved for all car parks in list.");
                                     Log.d("Repository", "Calling onSuccess from ViewModel's GetRoutesCallback");
@@ -176,10 +174,10 @@ public class Repository {
     }
 
     //function to manage async calls to the Directions API for generation directions to each car park
-//    private List<DirectionsAndCPInfo> callAPIForDirAndCP(List<CarParkStaticInfo> closestCarParks, LatLng startPoint){
+//    private List<DirectionsAndCPInfo> callAPIForDirAndCP(List<CarParkInfo> closestCarParks, LatLng startPoint){
 //        List<DirectionsAndCPInfo> directionsAndCPList = new ArrayList<DirectionsAndCPInfo>();
 //        AtomicInteger counter = new AtomicInteger(closestCarParks.size());
-//        for(CarParkStaticInfo carPark : closestCarParks){
+//        for(CarParkInfo carPark : closestCarParks){
 //            DirectionsAPIController.getInstance().callDirectionsAPI(startPoint,
 //                    new LatLng(Double.parseDouble(carPark.getLatitude()),Double.parseDouble(carPark.getLongitude())),
 //                    new DirectionsCallback(){
@@ -214,12 +212,12 @@ public class Repository {
      * @param searchTerm
      * @return
      */
-    public MutableLiveData<List<CarParkStaticInfo>> searchNearbyCarParks(LatLng searchTerm, SearchNearbyCallback searchNearbyCallback){
+    public MutableLiveData<List<CarParkInfo>> searchNearbyCarParks(LatLng searchTerm, SearchNearbyCallback searchNearbyCallback){
         Log.d("Repository", "Called setSearchTerm(" + searchTerm + ")");
         //call database getClosest10()
-        List<CarParkStaticInfo> closestCarParks = appDatabase.CPInfoDao()
+        List<CarParkInfo> closestCarParks = appDatabase.CPInfoDao()
                 .getNearestCarParks(searchTerm.latitude, searchTerm.longitude);
-        MutableLiveData<List<CarParkStaticInfo>> liveData = new MutableLiveData<>();
+        MutableLiveData<List<CarParkInfo>> liveData = new MutableLiveData<>();
 
         AvailabilityAPIController availAPIControl = new AvailabilityAPIController();
         availAPIControl.makeCall(new AvailabilityCallback() {
@@ -229,7 +227,7 @@ public class Repository {
                     Log.d("Repository", "searchNearbyCarParks() - In availability callback success: Size of cpData list in Item object is 0.");
                     Log.d("Repository", "searchNearbyCarParks() - Availability information will be null.");
                 }else {
-                    for(CarParkStaticInfo carPark : closestCarParks){
+                    for(CarParkInfo carPark : closestCarParks){
                         carPark.setAvailInfo(cpAPIItem.getCarParkDatum(carPark.getCPNumber()));
                     }
                     Log.d("Repository", "searchNearbyCarParks() - In availability callback success: CarParkDatum has been saved for all car parks in static info list.");
@@ -269,7 +267,7 @@ public class Repository {
     }
 
     //expose for view map view model
-    public MutableLiveData<List<CarParkStaticInfo>> getViewMapCPList(){
+    public MutableLiveData<List<CarParkInfo>> getViewMapCPList(){
         return viewMapCPList;
     }
 }

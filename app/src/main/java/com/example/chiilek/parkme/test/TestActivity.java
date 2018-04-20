@@ -20,19 +20,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.chiilek.parkme.CarParkPopUp.CarParkPopUpActivity;
-import com.example.chiilek.parkme.ReroutePopUp.ReroutePopUpActivity ;
 import com.example.chiilek.parkme.R;
-import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityAPIController;
-import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityCallback;
-import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
-import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
-import com.example.chiilek.parkme.data_classes.availability_classes.CarParkDatum;
-import com.example.chiilek.parkme.data_classes.availability_classes.Item;
-import com.example.chiilek.parkme.data_classes.source.AppDatabase;
+import com.example.chiilek.parkme.api.availability_api.AvailabilityAPIController;
+import com.example.chiilek.parkme.entity.CarParkInfo;
+import com.example.chiilek.parkme.database.AppDatabase;
 import com.example.chiilek.parkme.repository.LocationRepository;
-import com.google.android.gms.maps.model.LatLng;
-import com.example.chiilek.parkme.repository.Repository;
 
 import java.util.List;
 
@@ -134,7 +126,7 @@ public class TestActivity extends AppCompatActivity {
 
         AppDatabase mappDatabase = AppDatabase.getInstance(this);
         AvailabilityAPIController mAvailAPI = new AvailabilityAPIController();
-        List<CarParkStaticInfo> cpInfo = mappDatabase.CPInfoDao().getAll();
+        List<CarParkInfo> cpInfo = mappDatabase.CPInfoDao().getAll();
         Log.d("TEST ACTIVITY TESTING ROOM DB GOD", "CP Number:      " + cpInfo.get(2).getCPNumber());
         Log.d("TEST ACTIVITY TESTING ROOM DB GOD", "Avail Car Lots: " + cpInfo.get(2).getAvailableCarLots());
 
@@ -144,7 +136,7 @@ public class TestActivity extends AppCompatActivity {
 //                                   if (cpAPIItem.getCarParkData().size() == 0) {
 //                                   } else {
 //                                       Log.d("test activity", "setting the carpark avail info now");
-//                                       for(CarParkStaticInfo item : cpInfo){
+//                                       for(CarParkInfo item : cpInfo){
 //                                           item.setTotalCarLots(Integer.toString(cpAPIItem.getCarParkDatum(item.getCPNumber()).getCarParkInfo().get(0).getTotalLots()));
 //                                           item.setAvailableCarLots(Integer.toString(cpAPIItem.getCarParkDatum(item.getCPNumber()).getCarParkInfo().get(0).getLotsAvailable()));
 //                                           item.setLastUpdateDatetime(cpAPIItem.getCarParkDatum(item.getCPNumber()).getUpdateDatetime());
