@@ -16,6 +16,7 @@ import com.example.chiilek.parkme.repository.LocationRepository;
 import com.example.chiilek.parkme.repository.Repository;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SelectRouteViewModel extends AndroidViewModel {
@@ -26,7 +27,10 @@ public class SelectRouteViewModel extends AndroidViewModel {
     private Repository mRepository;
     private LocationRepository mLocationRepo;
     private MutableLiveData<LatLng> currentLocation;
-    private int status = 1;
+    private DirectionsAndCPInfo chosenRoute;
+    private MutableLiveData<GoogleMapsDirections> updatingRouteDirections;
+    private boolean navigationStarted = false;
+    private int status = 0;
 
 
     //to be set up by SelectRouteActivity
@@ -51,11 +55,11 @@ public class SelectRouteViewModel extends AndroidViewModel {
                         @Override
                         public void onSuccess(List<DirectionsAndCPInfo> directionsAndCPInfoList) {
                             directionsAndCarParksList.postValue(directionsAndCPInfoList);
-
                         }
                         @Override
-                        public void onFailure() {
+                        public void onFailure(int errorCode) {
                             Log.d("SelectRouteViewModel", "onFailure add source endPoint get routes callback");
+                            directionsAndCarParksList.postValue(new ArrayList<DirectionsAndCPInfo>());
                         }
                     });
         });
@@ -86,8 +90,10 @@ public class SelectRouteViewModel extends AndroidViewModel {
                     directionsAndCarParksList.setValue(directionsAndCPInfoList);
                 }
                 @Override
-                public void onFailure() {
+                public void onFailure(int errorCode) {
                     Log.d("SelectRouteViewModel", "observation exposure onFailure add source endPoint get routes callback");
+                    setStatus(errorCode);
+                    directionsAndCarParksList.setValue(new ArrayList<DirectionsAndCPInfo>());
                 }});
         }
         return directionsAndCarParksList;
@@ -99,5 +105,18 @@ public class SelectRouteViewModel extends AndroidViewModel {
     }
 
     public int getStatus(){return status;}
+    /*    @Override
+        protected void onCleared() {
+            super.onCleared();
+            mLocationRepo.stopLocationUpdates();
+        }*/
+    public LiveData<GoogleMapsDirections> getGoogleMapsDirections(){ return updatingRouteDirections; }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 }
