@@ -55,19 +55,19 @@ public class NavigationViewModel extends AndroidViewModel {
         this(application);
         Log.d("NavigationViewModel", "constructor with static info");
         mRepository.updateRoutes(currentLocation.getValue(), carParkInfo.getLatLng(),
-            new DirectionsCallback(){
-                @Override
-                public void onSuccess(GoogleMapsDirections gMapsDirections) {
-                    Log.d("NavigationViewModel","succeeded in creating route from static info in constructor");
-                    chosenRoute = new DirectionsAndCPInfo(carParkInfo,gMapsDirections,currentLocation.getValue());
-                    createMediator();
-                }
+                new DirectionsCallback(){
+                    @Override
+                    public void onSuccess(GoogleMapsDirections gMapsDirections) {
+                        Log.d("NavigationViewModel","succeeded in creating route from static info in constructor");
+                        chosenRoute = new DirectionsAndCPInfo(carParkInfo,gMapsDirections,currentLocation.getValue());
+                        createMediator();
+                    }
 
-                @Override
-                public void onFailure() {
-                    Log.d("NavigationViewModel","failed to create route from static info in constructor");
-                }
-            });
+                    @Override
+                    public void onFailure() {
+                        Log.d("NavigationViewModel","failed to create route from static info in constructor");
+                    }
+                });
     }
 
     public NavigationViewModel(@NonNull Application application, DirectionsAndCPInfo initialChosenRoute) {
@@ -146,9 +146,10 @@ public class NavigationViewModel extends AndroidViewModel {
                 }
                 alternativeRoute = directionsAndCPInfoList.get(0);
                 isAvailZero.setValue(true);
+
             }
             @Override
-            public void onFailure() {
+            public void onFailure(int errorCode) {
                 Log.d("NavigationViewModel", "on avail zero onFailure: Directions and CP API call failed.");
             }
         });
@@ -166,4 +167,5 @@ public class NavigationViewModel extends AndroidViewModel {
     public MutableLiveData<Boolean> getIsAvailZero() { return isAvailZero; }
 
     public DirectionsAndCPInfo getAlternativeRoute() { return alternativeRoute; }
+
 }

@@ -16,6 +16,7 @@ import com.example.chiilek.parkme.repository.LocationRepository;
 import com.example.chiilek.parkme.repository.Repository;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SelectRouteViewModel extends AndroidViewModel {
@@ -32,6 +33,7 @@ public class SelectRouteViewModel extends AndroidViewModel {
     private DirectionsAndCPInfo chosenRoute;
     private MutableLiveData<GoogleMapsDirections> updatingRouteDirections;
     private boolean navigationStarted = false;
+    private int status = 0;
 
 
     //to be set up by SelectRouteActivity
@@ -55,16 +57,17 @@ public class SelectRouteViewModel extends AndroidViewModel {
         mediatorDirAndCPList.addSource(endPoint, newDestination -> {
             Log.d("SelectRouteViewModel","mediator activated new endPoint: " + newDestination.toString() +" get directions and CP called");
             mRepository.getDirectionsAndCPs(startPoint.getValue(), (LatLng)newDestination,
-            new GetRoutesCallback() {
-                @Override
-                public void onSuccess(List<DirectionsAndCPInfo> directionsAndCPInfoList) {
-                    directionsAndCarParksList.postValue(directionsAndCPInfoList);
-                }
-                @Override
-                public void onFailure() {
-                    Log.d("SelectRouteViewModel", "onFailure add source endPoint get routes callback");
-                }
-            });
+                    new GetRoutesCallback() {
+                        @Override
+                        public void onSuccess(List<DirectionsAndCPInfo> directionsAndCPInfoList) {
+                            directionsAndCarParksList.postValue(directionsAndCPInfoList);
+                        }
+                        @Override
+                        public void onFailure(int errorCode) {
+                            Log.d("SelectRouteViewModel", "onFailure add source endPoint get routes callback");
+                            directionsAndCarParksList.postValue(new ArrayList<DirectionsAndCPInfo>());
+                        }
+                    });
         });
 
         mediatorDirAndCPList.addSource(startPoint,newStartPoint ->{
@@ -74,11 +77,11 @@ public class SelectRouteViewModel extends AndroidViewModel {
                         @Override
                         public void onSuccess(List<DirectionsAndCPInfo> directionsAndCPInfoList) {
                             directionsAndCarParksList.postValue(directionsAndCPInfoList);
-
                         }
                         @Override
-                        public void onFailure() {
+                        public void onFailure(int errorCode) {
                             Log.d("SelectRouteViewModel", "onFailure add source endPoint get routes callback");
+                            directionsAndCarParksList.postValue(new ArrayList<DirectionsAndCPInfo>());
                         }
                     });
         });
@@ -108,7 +111,8 @@ public class SelectRouteViewModel extends AndroidViewModel {
                 }else Log.d("SelectRouteViewModel", "location not changed, do not need to update route");
             }
         });
-        /*TODO: set navigationStarted when changing to navi activity, onExit set it back to false.
+        /*
+        //TODO: set navigationStarted when changing to navi activity, onExit set it back to false.
         * Perhaps make a function which resets all nav information upon exit.*/
 
 //        //calls repository to search again wTransformations.switchMap(endPoint, (LatLng newDestination)->
@@ -130,7 +134,6 @@ public class SelectRouteViewModel extends AndroidViewModel {
 //                mRepository.getDirectionsAndCPs(newStartPoint, destination.getValue()));
        /*routeToPlot = Transformations.switchMap(chosenCarPark, (CarParkDatum carpark)->
                 mRepository.getRoutePolyline(carpark));*/
-        //TODO initialize carParkList and route(?)
 
     }
 /*
@@ -139,7 +142,6 @@ public class SelectRouteViewModel extends AndroidViewModel {
         super(application);
         this.mRepository = Repository.getInstance(this.getApplication());
         mLocationRepo = LocationRepository.getLocationRepository(this.getApplication());
-        //TODO get endPoint from user from activity
         endPoint = new MutableLiveData<>();
         endPoint.setValue(new LatLng(1.378455, 103.755149));
         //endPoint.setValue(chosenCarPark.getLatLng());
@@ -220,7 +222,7 @@ public class SelectRouteViewModel extends AndroidViewModel {
     public void setStartPoint(LatLng searchTerm){
         if (searchTerm!= null)
             Log.d("SelectRouteViewModel", "setStartPoint: " + searchTerm.toString());
-            startPoint.setValue(searchTerm);
+        startPoint.setValue(searchTerm);
     }
 
     //called by SelectRouteActivity when user presses his route
@@ -244,8 +246,10 @@ public class SelectRouteViewModel extends AndroidViewModel {
                     directionsAndCarParksList.setValue(directionsAndCPInfoList);
                 }
                 @Override
-                public void onFailure() {
+                public void onFailure(int errorCode) {
                     Log.d("SelectRouteViewModel", "observation exposure onFailure add source endPoint get routes callback");
+                    setStatus(errorCode);
+                    directionsAndCarParksList.setValue(new ArrayList<DirectionsAndCPInfo>());
                 }});
         }
         return directionsAndCarParksList;
@@ -264,11 +268,18 @@ public class SelectRouteViewModel extends AndroidViewModel {
         return navigationStarted;
     }
 
-/*    @Override
-    protected void onCleared() {
-        super.onCleared();
-        mLocationRepo.stopLocationUpdates();
-    }*/
+    /*    @Override
+        protected void onCleared() {
+            super.onCleared();
+            mLocationRepo.stopLocationUpdates();
+        }*/
     public LiveData<GoogleMapsDirections> getGoogleMapsDirections(){ return updatingRouteDirections; }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 }
