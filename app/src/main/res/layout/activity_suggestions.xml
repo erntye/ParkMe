@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:showIn="@layout/activity_suggestions"
-    tools:context=".Suggestion.SuggestionsActivity"
+    tools:context=".suggestion.SelectRouteActivity"
     android:background="@color/colorMain">
 
     <ImageView

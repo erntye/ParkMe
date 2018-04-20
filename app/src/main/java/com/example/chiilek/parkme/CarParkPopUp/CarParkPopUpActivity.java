@@ -4,18 +4,13 @@ import android.app.ActionBar;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.chiilek.parkme.Suggestion.SuggestionsActivity;
 import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.navigation.RouteOverviewActivity;
-
-import org.w3c.dom.Text;
 
 /**
  * Created by DanSeb on 06/04/18.

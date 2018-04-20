@@ -1,4 +1,4 @@
-package com.example.chiilek.parkme;
+package com.example.chiilek.parkme.suggestion;
 
 
 import android.app.Application;
@@ -9,7 +9,6 @@ import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
 
 import com.example.chiilek.parkme.api_controllers.directions_api.DirectionsCallback;
-import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.data_classes.directions_classes.GoogleMapsDirections;
 import com.example.chiilek.parkme.repository.GetRoutesCallback;

@@ -2,9 +2,6 @@ package com.example.chiilek.parkme.ViewMap;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.arch.lifecycle.MutableLiveData;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -14,7 +11,6 @@ import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -31,10 +27,9 @@ import android.widget.Toast;
 
 import com.example.chiilek.parkme.CarParkPopUp.CarParkPopUpActivity;
 import com.example.chiilek.parkme.R;
-import com.example.chiilek.parkme.Suggestion.SuggestionsActivity;
+import com.example.chiilek.parkme.suggestion.SelectRouteActivity;
 import com.example.chiilek.parkme.api_controllers.availability_api.AvailabilityAPIController;
 import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
-import com.example.chiilek.parkme.repository.Repository;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -51,7 +46,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -399,7 +393,7 @@ public class ViewMapActivity extends FragmentActivity
     public void suggestCarParks(View view) {
 
         if(destination != null && name != null) {
-            Intent intent = new Intent(ViewMapActivity.this, SuggestionsActivity.class);
+            Intent intent = new Intent(ViewMapActivity.this, SelectRouteActivity.class);
             intent.putExtra("Destination", destination);
             intent.putExtra("Name", name);
             startActivity(intent);

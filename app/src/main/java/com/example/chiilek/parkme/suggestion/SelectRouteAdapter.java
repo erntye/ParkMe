@@ -1,8 +1,7 @@
-package com.example.chiilek.parkme.Suggestion;
+package com.example.chiilek.parkme.suggestion;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Path;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,19 +18,18 @@ import android.widget.Toast;
 
 
 import com.example.chiilek.parkme.R;
-import com.example.chiilek.parkme.data_classes.CarParkStaticInfo;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.navigation.RouteOverviewActivity;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.MyViewHolder> {
+public class SelectRouteAdapter extends RecyclerView.Adapter<SelectRouteAdapter.MyViewHolder> {
 
     private List<DirectionsAndCPInfo> carparkList;
     private Context mContext;
 
-    public SuggestionAdapter(List<DirectionsAndCPInfo> carparkList, Context context) {
+    public SelectRouteAdapter(List<DirectionsAndCPInfo> carparkList, Context context) {
         this.carparkList= carparkList;
         this.mContext = context;
 
@@ -70,7 +68,7 @@ public class SuggestionAdapter extends RecyclerView.Adapter<SuggestionAdapter.My
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                Log.d("SuggestionAdapter", "onClick: clicked on: " + CP.getCarParkStaticInfo().getCPNumber());
+                Log.d("SelectRouteAdapter", "onClick: clicked on: " + CP.getCarParkStaticInfo().getCPNumber());
                 Toast.makeText(mContext, CP.getCarParkStaticInfo().getCPNumber(), Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(mContext, RouteOverviewActivity.class);

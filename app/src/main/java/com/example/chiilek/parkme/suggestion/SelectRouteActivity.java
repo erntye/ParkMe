@@ -1,4 +1,4 @@
-package com.example.chiilek.parkme.Suggestion;
+package com.example.chiilek.parkme.suggestion;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -13,8 +13,6 @@ import android.util.Log;
 import android.widget.EditText;
 
 import com.example.chiilek.parkme.R;
-import com.example.chiilek.parkme.SelectRouteViewModel;
-import com.example.chiilek.parkme.SelectRouteViewModelFactory;
 import com.example.chiilek.parkme.ViewMap.ViewMapActivity;
 import com.example.chiilek.parkme.data_classes.DirectionsAndCPInfo;
 import com.google.android.gms.common.api.Status;
@@ -27,10 +25,10 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SuggestionsActivity extends AppCompatActivity{
+public class SelectRouteActivity extends AppCompatActivity{
 
     private RecyclerView mRecyclerView;
-    private SuggestionAdapter mAdapter;
+    private SelectRouteAdapter mAdapter;
     private List<DirectionsAndCPInfo> mCarparkList = new ArrayList<DirectionsAndCPInfo>();
     private SelectRouteViewModel model;
     //TODO refer to the multisearch fragment to get the startpoint and destination search terms
@@ -66,7 +64,7 @@ public class SuggestionsActivity extends AppCompatActivity{
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
         // specify an adapter
-        mAdapter = new SuggestionAdapter(mCarparkList, this);
+        mAdapter = new SelectRouteAdapter(mCarparkList, this);
         mRecyclerView.setAdapter(mAdapter);
 
         //code to observe viewmodel
@@ -82,14 +80,14 @@ public class SuggestionsActivity extends AppCompatActivity{
 //        searchFragment.setTexts(destinationName);
 
         model.getMediatorCurrentLoc().observe(this, newData->
-                Log.d("SuggestionsActivity", "observing mediator current location")
+                Log.d("SelectRouteActivity", "observing mediator current location")
         );
         model.getMediatorDirAndCPList().observe(this,newData->
-                Log.d("SuggestionsActivity", "observing mediator dir and CP list")
+                Log.d("SelectRouteActivity", "observing mediator dir and CP list")
         );
         model.getDirectionsAndCarParks().observe(this, newRoutes ->
                 {
-                    Log.d("SuggestionsActivity", "observer activated directionsandcarparklist changed");
+                    Log.d("SelectRouteActivity", "observer activated directionsandcarparklist changed");
                     mAdapter.addItems(newRoutes);
                 }
         );
@@ -111,7 +109,7 @@ public class SuggestionsActivity extends AppCompatActivity{
         autocompleteFragmentDestination.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                Intent intent = new Intent(SuggestionsActivity.this, ViewMapActivity.class);
+                Intent intent = new Intent(SelectRouteActivity.this, ViewMapActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("Place", (Parcelable) place);
                 intent.putExtras(bundle);
