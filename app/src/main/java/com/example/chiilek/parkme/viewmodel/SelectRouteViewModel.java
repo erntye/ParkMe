@@ -74,6 +74,7 @@ public class SelectRouteViewModel extends AndroidViewModel {
                         @Override
                         public void onSuccess(List<DirectionsAndCPInfo> directionsAndCPInfoList) {
                             directionsAndCarParksList.postValue(directionsAndCPInfoList);
+
                         }
                         @Override
                         public void onFailure() {

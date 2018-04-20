@@ -170,7 +170,7 @@ public class RouteOverviewActivity extends FragmentActivity
         //plotPolyline(sampleWayPoints);
 
         // MAP CAMERA TO GOOGLEPLEX
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+/*        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
@@ -181,7 +181,10 @@ public class RouteOverviewActivity extends FragmentActivity
                             // mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
                         }
                     }
-                });
+                });*/
+/*        model.getCurrentLoc().observe(this,newLocation ->{
+
+        });*/
 
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cap_park_marker);
 

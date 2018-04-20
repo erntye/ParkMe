@@ -57,7 +57,7 @@ public class ViewMapActivity extends FragmentActivity
         GoogleMap.OnMarkerClickListener {
 
     private GoogleMap mMap;
-    private FusedLocationProviderClient mFusedLocationClient;
+    private int locationCounter = 0;
 
     // To create the bitmap for parking lots
     Bitmap parking_lots_bitmap;
@@ -89,7 +89,6 @@ public class ViewMapActivity extends FragmentActivity
         mapFragment.getMapAsync(this);
 
         checkLocationPermission();
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
@@ -97,16 +96,7 @@ public class ViewMapActivity extends FragmentActivity
 
         model = ViewModelProviders.of(this).get(ViewMapViewModel.class);
         //TODO pass current location to Viewmodel
-        model.getCarParkInfo().observe(this, new Observer<List<CarParkInfo>>() {
-            @Override
-            public void onChanged(@Nullable List<CarParkInfo> newCarParkList) {
-            }
-        });
-        model.getCurrentLocation().observe(this, newLocation ->
-            {
 
-
-            });
 
         AvailabilityAPIController controller = new AvailabilityAPIController();
 
@@ -180,12 +170,19 @@ public class ViewMapActivity extends FragmentActivity
         model.getCurrentLocation().observe(this, newLatLng ->{
             if (newLatLng != null) {
                 CameraPosition cp = new CameraPosition.Builder().target(newLatLng).zoom(16).build();
-                if(b==null) mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cp));
-                model.getMcpListMediator().observe(ViewMapActivity.this, newData ->{
+
+                if (b == null) {
+                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
+                    Log.d("ViewMapActivity", "centering map on current location");
+                } else {
+                    Log.d("ViewMapActivity", "bundle is not null");
+                }
+                model.getMcpListMediator().observe(ViewMapActivity.this, newData -> {
                     Log.d("ViewMapActivity", "On map ready, in mediator observe");
                 });
                 model.getCarParkInfo().observe(ViewMapActivity.this, carParkStaticInfos -> {
                     if (carParkStaticInfos.size() > 0) {
+                        Log.d("ViewMapActivity", "Updating CarParkList");
                         carparkList = carParkStaticInfos;
                     }
                 });
@@ -196,7 +193,7 @@ public class ViewMapActivity extends FragmentActivity
 
                 carparkList = model.getCarParkInfo(newLatLng).getValue();
                 Log.d("ViewMapActivity", "onMapReady, Marker count: " + Integer.toString(carparkList.size()));
-                for (CarParkInfo cpsi : carparkList){
+                for (CarParkInfo cpsi : carparkList) {
                     mMap.addMarker(new MarkerOptions()
                             .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
                             .icon(BitmapDescriptorFactory.fromBitmap(parking_lots_smallMarker)))
@@ -204,46 +201,11 @@ public class ViewMapActivity extends FragmentActivity
                 }
 
             }
-            model.getCurrentLocation().removeObservers(this);
+            locationCounter++;
+            if (locationCounter == 2)
+                model.getCurrentLocation().removeObservers(this);
         });
 
-        /*mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            CameraPosition cp = new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(16).build();
-                            if(b==null) mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cp));
-                            model.getMcpListMediator().observe(ViewMapActivity.this, newData ->{
-                                Log.d("ViewMapActivity", "On map ready, in mediator observe");
-                            });
-                            model.getCarParkInfo().observe(ViewMapActivity.this, new Observer<List<CarParkInfo>>(){
-                                @Override
-                                public void onChanged(@Nullable List<CarParkInfo> carParkStaticInfos) {
-                                    if (carParkStaticInfos.size() > 0) {
-                                        Log.d("ViewMapActivity", "getCarParkInfo onChanged, availability info: " + carParkStaticInfos.get(0).getAvailableCarLots());
-                                        cpList.setValue(carParkStaticInfos);
-                                    }
-                                }
-                            });
-
-                            // To ensure that the button is only enabled when model is ready.
-                            Button button = findViewById(R.id.parking_button);
-                            button.setEnabled(true);
-
-                            cpList.setValue(model.getCarParkInfo(new LatLng(location.getLatitude(), location.getLongitude())).getValue());
-                            Log.d("ViewMapActivity", "onMapReady, Marker count: " + Integer.toString(cpList.getValue().size()));
-                            for (CarParkInfo cpsi : cpList.getValue()){
-                                mMap.addMarker(new MarkerOptions()
-                                        .position(new LatLng(Double.parseDouble(cpsi.getLatitude()), Double.parseDouble(cpsi.getLongitude())))
-                                        .icon(BitmapDescriptorFactory.fromBitmap(parking_lots_smallMarker)))
-                                        .setTag(cpsi);
-                            }
-
-                        }
-                    }
-                });*/
 
         mMap.setOnMarkerClickListener(this);
         mMap.setMyLocationEnabled(true);
@@ -413,6 +375,9 @@ public class ViewMapActivity extends FragmentActivity
         //cpList.setValue(model.getCarParkInfo(latLng).getValue());
         carparkList = model.getCarParkInfo(latLng).getValue();
 
+        if (carparkList.size() == 0 ){
+            Toast.makeText(this, "No Nearby Car Parks", Toast.LENGTH_LONG).show();
+        }
         for (CarParkInfo cpsi : carparkList){
             Log.d("Marker", cpsi.getAddress());
             mMap.addMarker(new MarkerOptions()

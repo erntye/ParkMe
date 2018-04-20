@@ -47,7 +47,6 @@ import java.util.List;
 public class NavigationActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private FusedLocationProviderClient mFusedLocationClient;
     private PolylineOptions sampleWayPoints;
     private float v;
     int index, next;
@@ -117,26 +116,6 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         mMap.setPadding(0, 90, 0, 0);
         MapStyleOptions nightStyle = MapStyleOptions.loadRawResourceStyle(this, R.raw.styles_night);
         googleMap.setMapStyle(nightStyle);
-
-        // ---------------------------------------
-        //             CHECK PERMISSIONS
-        // ---------------------------------------
-
-        // MAP CAMERA TO GOOGLEPLEX
-        // REPLACE WITH WHEREVER YOU ARE
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        checkLocationPermission();
-        mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            CameraPosition cp = new CameraPosition.Builder().target(currentLoc).zoom(18).build();
-                            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
-                        }
-                    }
-                });
 
         marker = mMap.addMarker(new MarkerOptions().position(currentLoc)
                 .flat(true)

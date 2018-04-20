@@ -213,7 +213,7 @@ public class Repository {
      * @return
      */
     public MutableLiveData<List<CarParkInfo>> searchNearbyCarParks(LatLng searchTerm, SearchNearbyCallback searchNearbyCallback){
-        Log.d("Repository", "Called setSearchTerm(" + searchTerm + ")");
+        Log.d("Repository", "Called searchNearbyCarParks with start point " + searchTerm );
         //call database getClosest10()
         List<CarParkInfo> closestCarParks = appDatabase.CPInfoDao()
                 .getNearestCarParks(searchTerm.latitude, searchTerm.longitude);

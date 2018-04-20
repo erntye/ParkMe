@@ -51,10 +51,7 @@ public class ViewMapViewModel extends AndroidViewModel{
                 Log.d("ViewMapViewModel", "In constructor onFailure, Availability call in repository failed.");
             }
         });
-
-
-
-
+        Log.d("ViewMapViewModel", "calling repo searchNearbyCarparks");
 
         //searches nearby everytime msearchterm changes, when called by VMMP.setSearchTerm()
 //        mcpListFromRepo = Transformations.switchMap(msearchTerm, (LatLng newDestination)->

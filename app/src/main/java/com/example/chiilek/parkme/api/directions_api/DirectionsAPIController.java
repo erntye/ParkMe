@@ -21,7 +21,6 @@ public class DirectionsAPIController {
     static final private String GMAPS_DIRECTION_API_BASE_URL = "https://maps.googleapis.com/maps/api/directions/";
     //TODO NOT HARDCODE THE STRING
     static final private String GMAPS_API_KEY = "AIzaSyCMcA56knRPYgayHU95ceIL2nNyLkpIeUo";
-    String string = Resources.getSystem().getString(R.string.google_api_key);
     private static DirectionsAPIController INSTANCE;
 
     public static DirectionsAPIController getInstance(){
