@@ -10,7 +10,9 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.viewmodel.SelectRouteViewModel;
@@ -23,6 +25,8 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +34,7 @@ public class SelectRouteActivity extends AppCompatActivity{
 
     private RecyclerView mRecyclerView;
     private SelectRouteAdapter mAdapter;
+    private TextView errorText;
     private List<DirectionsAndCPInfo> mCarparkList = new ArrayList<DirectionsAndCPInfo>();
     private SelectRouteViewModel model;
     //TODO refer to the multisearch fragment to get the startpoint and destination search terms
@@ -46,7 +51,9 @@ public class SelectRouteActivity extends AppCompatActivity{
 
         autocompleteFragmentSource.setBoundsBias(new LatLngBounds(new LatLng(1.227925, 103.604971), new LatLng(1.456672, 104.003780)));
         autocompleteFragmentDestination.setBoundsBias(new LatLngBounds(new LatLng(1.227925, 103.604971), new LatLng(1.456672, 104.003780)));
-
+        //initialize error  text
+        errorText = findViewById(R.id.errorText);
+        errorText.setVisibility(View.GONE);
 
         mRecyclerView = findViewById(R.id.recycler_view);
 
@@ -65,7 +72,7 @@ public class SelectRouteActivity extends AppCompatActivity{
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
         // specify an adapter
-        mAdapter = new SelectRouteAdapter(mCarparkList, this);
+        mAdapter = new SelectRouteAdapter(mCarparkList, this,0);
         mRecyclerView.setAdapter(mAdapter);
 
         //code to observe viewmodel
@@ -80,16 +87,23 @@ public class SelectRouteActivity extends AppCompatActivity{
 
 //        searchFragment.setTexts(destinationName);
 
-        model.getMediatorCurrentLoc().observe(this, newData->
-                Log.d("SelectRouteActivity", "observing mediator current location")
-        );
         model.getMediatorDirAndCPList().observe(this,newData->
                 Log.d("SelectRouteActivity", "observing mediator dir and CP list")
         );
         model.getDirectionsAndCarParks().observe(this, newRoutes ->
                 {
                     Log.d("SelectRouteActivity", "observer activated directionsandcarparklist changed");
-                    mAdapter.addItems(newRoutes);
+                    if (newRoutes.size() == 0 && model.getStatus() == 1){
+                        errorText.setText("Could not find Car Park in the vicinity");
+                        errorText.setVisibility(View.VISIBLE);
+                    }else if (newRoutes.size() == 0 && model.getStatus() == 2){
+                        errorText.setText("Could not find directions to Car Parks");
+                        errorText.setVisibility(View.VISIBLE);
+                    }else{
+                        mAdapter.addItems(newRoutes, model.getStatus());
+                        errorText.setVisibility(View.GONE);
+                        Log.d("SelectRouteActivity", "adding items to list");
+                    }
                 }
         );
 
