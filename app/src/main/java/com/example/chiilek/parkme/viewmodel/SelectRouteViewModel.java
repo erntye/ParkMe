@@ -92,7 +92,7 @@ public class SelectRouteViewModel extends AndroidViewModel {
                 @Override
                 public void onFailure(int errorCode) {
                     Log.d("SelectRouteViewModel", "observation exposure onFailure add source endPoint get routes callback");
-                    setStatus(errorCode);
+                    status = errorCode;
                     directionsAndCarParksList.setValue(new ArrayList<DirectionsAndCPInfo>());
                 }});
         }
@@ -105,18 +105,7 @@ public class SelectRouteViewModel extends AndroidViewModel {
     }
 
     public int getStatus(){return status;}
-    /*    @Override
-        protected void onCleared() {
-            super.onCleared();
-            mLocationRepo.stopLocationUpdates();
-        }*/
+
     public LiveData<GoogleMapsDirections> getGoogleMapsDirections(){ return updatingRouteDirections; }
 
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
 }
