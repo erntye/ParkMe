@@ -59,6 +59,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     private DirectionsAndCPInfo initialChosenRoute;
     private CarParkInfo initialCarPark;
     private NavigationViewModel model;
+    private Polyline plottedPL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +126,8 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
             currentLoc = newCurrentLoc;
             Log.d("NavigationActivity", "previoud loc: " + prevLoc.toString());
             Log.d("NavigationActivity", "current loc" + newCurrentLoc.toString());
-            PolylineOptions updatedRoute = model.getUpdatingRoute().getValue().getPolylineOptions();
+            //PolylineOptions updatedRoute = model.getUpdatingRoute().getValue().getPolylineOptions();
+            List<LatLng> updatedPoints = model.getUpdatingRoute().getValue().getPolyLinePoints();
             float bearing = getBearing(prevLoc, newCurrentLoc);
             marker.setPosition(newCurrentLoc);
             marker.setAnchor(0.5f, 0.5f);
@@ -136,7 +138,12 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
                     .bearing(bearing)
                     .build(
                     )));
-            plotPolyline(updatedRoute);
+            //plotPolyline(updatedRoute);
+            if(plottedPL == null){
+                setupPolyLine(updatedPoints);
+            }else{
+                plottedPL.setPoints(updatedPoints);
+            }
             if(checkReached(currentLoc, destLoc)){
                 model.getCurrentLoc().removeObservers(this);
                 reached();
@@ -171,6 +178,14 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
             return (float) ((90-Math.toDegrees(Math.atan(lng/lat)))+270);
         }
         else return -1;
+    }
+
+    public void setupPolyLine(List<LatLng> points){
+        PolylineOptions plo = new PolylineOptions();
+        plo.addAll(points);
+        plo.color(Color.LTGRAY);
+        plo.width(30);
+        plottedPL = mMap.addPolyline(plo);
     }
 
     public void plotPolyline(List<LatLng> waypoints){
