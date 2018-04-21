@@ -94,6 +94,19 @@ public class ViewMapActivity extends FragmentActivity
     //private MutableLiveData<List<CarParkInfo>> cpList = new MutableLiveData<>();
     private List<CarParkInfo> carparkList = new ArrayList<>();
 
+    //ask permission to turn on GPS
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
+    /**
+     * This method initialises the map view screen. It automatically centers on the user location if the
+     * app was just launched, or centers on the new chosen destination if this screen was launched from either
+     * <code>RouteOverviewActivity</code> or <code>SelectRouteActivity</code>.
+     * @param savedInstanceState A <code>Bundle</code> object containing the saved instance state of
+     *                           the previous activity. Expected to include a <code>Place</code>
+     *                           object containing important information such as the <code>LatLng</code>
+     *                           of the changed destination, if this screen was launched from either
+     *                           <code>RouteOverviewActivity</code> or <code>SelectRouteActivity</code>.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -272,10 +285,6 @@ public class ViewMapActivity extends FragmentActivity
         }
     }
 
-
-    //ask permission to turn on GPS
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-
     private void checkLocationPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -346,6 +355,14 @@ public class ViewMapActivity extends FragmentActivity
         Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * Launches the <code>CarParkPopUpActivity</code> screen to display the car park information related to the
+     * selected marker.
+     * @param marker A <code>Marker</code> object containing important information such as its corresponding
+     *               <code>CarParkInfo</code> object, which is sends as intent to <code>CarParkPopUpActivity</code>
+     *               to be displayed.
+     * @return True upon execution
+     */
     @Override
     public boolean onMarkerClick(Marker marker) {
         CarParkInfo cpsi = (CarParkInfo) marker.getTag();
@@ -379,6 +396,12 @@ public class ViewMapActivity extends FragmentActivity
 
     }
 
+    /**
+     * This method displays the available car parks contained within the map boundaries after the user
+     * pans, zooms and rotates.
+     * @param view A <code>View</code> object indicating the button view whose <code>onClick</code>
+     *            triggers this method.
+     */
     public void showCarParks(View view) {
         mMap.clear();
 
