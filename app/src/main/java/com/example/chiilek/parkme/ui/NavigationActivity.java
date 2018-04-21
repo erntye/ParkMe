@@ -38,11 +38,18 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.List;
 
 /**
- * Expects following data passed in as extras in Intent:
- *  double startPointLat
- *  double startPointLong
- *  double endPointLat
- *  double endPointLong
+ * This <code>Activity</code> is responsible for getting the user to their intended car park
+ * through live turn-by-turn navigation based on their live locations. Does this observing the user's
+ * current location, which is a <code>MutableLiveData</code> under <code>NavigationViewModel</code>.
+ * If current location changes, it updates the marker position on the map, as well as plots the new
+ * route through the new <code>PolylineOptions</code> object, also a <code>MutableLiveData</code>
+ * under <code>NavigationViewModel</code>.
+ * <p>
+ * The current navigation route persists as long as the chosen car park still has lots left. It does this by
+ * observing the car park availability, also a <code>MutableLiveData</code> under <code>NavigationViewModel</code>.
+ *  @see NavigationViewModel
+ *  @see NavigationViewModelFactory
+ *  @see DirectionsAndCPInfo
  */
 public class NavigationActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -63,6 +70,15 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     private CarParkInfo initialCarPark;
     private NavigationViewModel model;
 
+    //ask permission to turn on GPS
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
+    /**
+     * This method is responsible for initialising the <code>NavigationViewModel</code> upon creation.
+     * @param savedInstanceState a <code>Bundle</code> object containing the saved instance state of
+     *                           the previous activity. Expected to include a <code>DirectionsAndCPInfo</code>
+     *                           object containing important information such as the route to the destination.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,12 +87,6 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-//        sampleWayPoints= new ArrayList<>();
-//        sampleWayPoints.add(new LatLng(37.4220, -122.0940));
-//        sampleWayPoints.add(new LatLng(37.4130, -122.0831));
-//        sampleWayPoints.add(new LatLng(37.4000, -122.0762));
-//        sampleWayPoints.add(new LatLng(37.3830, -122.0870));
 
         //Create a view model and allow re-created activities to get the same view model instance
         //model = ViewModelProviders.of(this).get(NavigationViewModel.class);
@@ -93,22 +103,13 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         // Random starting location
         currentLoc = new LatLng(1.346267,103.707881);
     }
-//        Bundle extras = getIntent().getExtras();
-//        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
-//        LatLng endPoint = new LatLng(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
-
-//        //TODO place the code below to correct place
-//        //SHOW MESSAGE WHEN REACHED     /**********************************************************/
-//        startActivity(new Intent(NavigationActivity.this, ReachMessageActivity.class));
-
 
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
+     * Here, we continuously update the position and bearing of both the <code>Marker</code> as well as the
+     * <code>CameraPosition</code> to center on the user's location and heading.
+     * @param googleMap A <code>GoogleMap</code> object for displaying and manipulating the map view.
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -154,87 +155,13 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         });
     }
 
-//        model.getUpdatingRoute().observe(this, newDirections ->{
-//        polopt = newDirections.getPolylineOptions();
-//        plotPolyline(polopt);
-//        });
 
-        // Add a marker in Googleplex and move the camera
-//        LatLng googleplex = new LatLng(37.4220, -122.0940);
-//        mMap.addMarker(new MarkerOptions().position(cure).title("Marker in Googleplex"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(googleplex));
-
-//        blackPolyLineOptions = new PolylineOptions();
-//        blackPolyLineOptions.color(Color.LTGRAY);
-//        blackPolyLineOptions.width(30);
-//        blackPolyLineOptions.startCap(new SquareCap());
-//        blackPolyLineOptions.endCap(new SquareCap());
-//        blackPolyLineOptions.jointType(JointType.ROUND);
-//        blackPolyline = mMap.addPolyline(blackPolyLineOptions);
-
-//        ValueAnimator polylineAnimator = ValueAnimator.ofInt(0,100);
-//        polylineAnimator.setDuration(50000);
-//        polylineAnimator.setInterpolator(new LinearInterpolator());
-//        polylineAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator animation) {
-//                List<LatLng> points = blackPolyline.getPoints();
-//                int percentValue = (int)animation.getAnimatedValue();
-//                int size = points.size();
-//                int newPoints = (int) (size*(percentValue / 100.0f));
-//                List<LatLng> p = points.subList(0, newPoints);
-//                blackPolyline.setPoints(p);
-//            }
-//        });
-        // polylineAnimator.start();
-
-//        LatLng test = new LatLng(37.3830, -122.0870);
-//
-//        //car marker goes here
-//
-//        handler = new Handler();
-//        index = -1;
-//        next = 1;
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                if(index < sampleWayPoints.getPoints().size()-1) {
-//                    index++;
-//                    next = index + 1;
-//                }
-//                if(index < sampleWayPoints.getPoints().size()-1) {
-//                    startPosition = sampleWayPoints.getPoints().get(index);
-//                    endPosition = sampleWayPoints.getPoints().get(next);
-//
-//                }
-////                else if(index >= sampleWayPoints.size()-1){
-////                    Intent intent = new Intent(NavigationActivity.this, ViewMapActivity.class);
-////                    startActivity(intent);
-////                    finish();
-////                }
-//
-//                ValueAnimator valueAnimator = ValueAnimator.ofInt(0,1);
-//                valueAnimator.setDuration(50000);
-//                valueAnimator.setInterpolator(new LinearInterpolator());
-//
-//                valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//                    @Override
-//                    public void onAnimationUpdate(ValueAnimator animation) {
-//                        v = valueAnimator.getAnimatedFraction();
-//                        lng = v*endPosition.longitude+(1-v)*startPosition.longitude;
-//                        lat = v*endPosition.latitude+(1-v)*startPosition.latitude;
-//                        LatLng newPos = new LatLng(lat,lng);
-//
-//
-//
-//                    }
-//                });
-//                valueAnimator.start();
-//                handler.postDelayed(this,50000);
-//            }
-//        }, 0);
-//    }
-
+    /**
+     * This method is responsible for calculating the user's travel direction (i.e. bearing).
+     * @param startPosition The user's <code>LatLng</code> position in the previous timestep.
+     * @param newPos The user's <code>LatLng</code> position in the current timestep.
+     * @return A float value of the user's bearing.
+     */
     private float getBearing(LatLng startPosition, LatLng newPos) {
         double lat = Math.abs(startPosition.latitude - newPos.latitude);
         double lng = Math.abs(startPosition.longitude - newPos.longitude);
@@ -264,9 +191,6 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         plo.width(30);
         mMap.addPolyline(plo);
     }
-
-    //ask permission to turn on GPS
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     private void checkLocationPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -304,10 +228,16 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 
-    public boolean checkReached(LatLng prevLoc, LatLng currentLoc){
+    /**
+     * Checks if the user has arrived within a certain <code>threshold</code> radius of his intended destination.
+     * @param currentLoc The user's <code>LatLng</code> position in the previous timestep.
+     * @param destLoc The <code>LatLng</code> position of the intended destination.
+     * @return True if the user has arrived within <code>threshold</code> radius of his intended destination.
+     */
+    public boolean checkReached(LatLng currentLoc, LatLng destLoc){
         double threshold = 0.0001;
-        double longDist = prevLoc.longitude - currentLoc.longitude;
-        double latDist = prevLoc.latitude - currentLoc.latitude;
+        double longDist = currentLoc.longitude - destLoc.longitude;
+        double latDist = currentLoc.latitude - destLoc.latitude;
         if(longDist<0) longDist *= -1;
         if(latDist<0) latDist *= -1;
         if (longDist<threshold && latDist < threshold){
@@ -315,12 +245,20 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         } else return false;
     }
 
+    /**
+     * Ends the navigation with a popup message upon arrival.
+     */
     public void reached(){
         Intent intent = new Intent(NavigationActivity.this, ReachMessageActivity.class);
         Log.d("ReroutePopup","Displaying Reroute Popup Msg");
         startActivity(intent);
     }
 
+
+    /**
+     * Upon available parking lots reaching 0, this method is invoked to fetch the next best available car park,
+     * then launches the reroute warning popup message to display this information.
+     */
     private void reroute(){
         Intent intent = new Intent(NavigationActivity.this, ReroutePopUpActivity.class);
         Log.d("NavigationActivity", "reroute: initial chosen route: " + initialChosenRoute.getCarParkInfo().getAddress());

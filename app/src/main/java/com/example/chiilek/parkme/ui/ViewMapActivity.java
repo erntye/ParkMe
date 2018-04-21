@@ -50,6 +50,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * This <code>Activity</code> is responsible for displaying the map view of at the beginning of the application.
+ * It also allows users to interact with the map view by panning, zooming, and rotating, or center on his location
+ * by pressing the location button.
+ * <p>
+ * This <code>Activity</code> also displays the relevant car parks either within the boundaries of the map view, or
+ * those surrounding a destination, depending on user interaction.
+ * <p>
+ * When the user clicks on specific car park marker, this activity launches the <code>CarParkPopUpActivity</code> to
+ * display the relevant information.
+ * @see CarParkInfo
+ * @see CarParkPopUpActivity
+ * @see SelectRouteActivity
+ */
 public class ViewMapActivity extends FragmentActivity
         implements OnMapReadyCallback,
         GoogleMap.OnMyLocationButtonClickListener,
@@ -77,9 +91,9 @@ public class ViewMapActivity extends FragmentActivity
 
     private final int REQUEST_PERMISSION_LOCATION = 1;
 
-
     //private MutableLiveData<List<CarParkInfo>> cpList = new MutableLiveData<>();
     private List<CarParkInfo> carparkList = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
