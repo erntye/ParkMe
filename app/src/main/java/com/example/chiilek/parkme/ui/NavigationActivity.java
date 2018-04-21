@@ -13,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.entity.CarParkInfo;
@@ -93,7 +94,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         //TODO update the above with the below once completed
         Intent parentIntent = getIntent();
         initialChosenRoute = (DirectionsAndCPInfo) parentIntent.getSerializableExtra("chosenRoute");
-        Log.d("NavigationActivity", "onCreate: initialising initial chosen route: " + initialChosenRoute.getCarParkInfo().getAddress());
+        Log.d("NavigationActivity", "onCreate: initialising initial chosen route to: " + initialChosenRoute.getCarParkInfo().getAddress());
         destLoc = initialChosenRoute.getDestinationLatLng();
 
         model = ViewModelProviders
@@ -127,8 +128,8 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         model.getCurrentLoc().observe(this, newCurrentLoc -> {
             prevLoc = currentLoc;
             currentLoc = newCurrentLoc;
-            Log.d("currentLoc", prevLoc.toString());
-            Log.d("currentLoc", newCurrentLoc.toString());
+            Log.d("NavigationActivity", "previoud loc: " + prevLoc.toString());
+            Log.d("NavigationActivity", "current loc" + newCurrentLoc.toString());
             PolylineOptions updatedRoute = model.getUpdatingRoute().getValue().getPolylineOptions();
             float bearing = getBearing(prevLoc, newCurrentLoc);
             marker.setPosition(newCurrentLoc);
@@ -147,11 +148,17 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
             }
         });
 
-        model.getIsAvailZero().observe(this, newBoolean -> {
-            if(newBoolean){
-                Log.d("NavigationActivity", "is avail zero observe calling reroute()");
+        model.getAvailabilityStatus().observe(this, newStatus -> {
+            if(newStatus == 0){
+                Log.d("NavigationActivity", "availabilityStatus observe, 0 lots left. calling reroute()");
                 reroute();
+            }else if(newStatus == 1){
+                Toast.makeText(this.getApplicationContext(), "Could not find another CarPark to reroute to. Staying on current route.",Toast.LENGTH_LONG).show();
             }
+        });
+
+        model.getMediatorCurrentLoc().observe(NavigationActivity.this, newData -> {
+            Log.d("NavigationActivity", "mediator current loc observed change.");
         });
     }
 

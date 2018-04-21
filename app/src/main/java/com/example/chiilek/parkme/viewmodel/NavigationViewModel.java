@@ -12,6 +12,7 @@ import com.example.chiilek.parkme.api.directions_api.DirectionsCallback;
 import com.example.chiilek.parkme.entity.CarParkInfo;
 import com.example.chiilek.parkme.entity.DirectionsAndCPInfo;
 import com.example.chiilek.parkme.entity.directionsapi.GoogleMapsDirections;
+import com.example.chiilek.parkme.repository.callbacks.AvailabilityCountCallback;
 import com.example.chiilek.parkme.repository.callbacks.GetRoutesCallback;
 import com.example.chiilek.parkme.repository.LocationRepository;
 import com.example.chiilek.parkme.repository.Repository;
@@ -38,7 +39,8 @@ public class NavigationViewModel extends AndroidViewModel {
     private MutableLiveData<GoogleMapsDirections> updatingRouteDirections;
     private boolean navigationStarted = true;
     private DirectionsAndCPInfo alternativeRoute;
-    private MutableLiveData<Boolean> isAvailZero;
+    private MutableLiveData<Integer> availabilityStatus;
+    private int carParkAvailabilityThreshold = 5;
 
     public NavigationViewModel(Application application){
         super(application);
@@ -47,8 +49,8 @@ public class NavigationViewModel extends AndroidViewModel {
         currentLocation = mLocationRepo.getLocation();
         previousLocation = currentLocation.getValue();
         mRepository = Repository.getInstance(application);
-        isAvailZero = new MutableLiveData<Boolean>();
-        isAvailZero.setValue(false);
+        availabilityStatus = new MutableLiveData<Integer>();
+        availabilityStatus.setValue(-1);
     }
 
     public NavigationViewModel(Application application, CarParkInfo carParkInfo){
@@ -110,7 +112,7 @@ public class NavigationViewModel extends AndroidViewModel {
                             new DirectionsCallback() {
                                 @Override
                                 public void onSuccess(GoogleMapsDirections gMapsDirections) {
-                                    updatingRouteDirections.postValue(gMapsDirections);
+                                    updatingRouteDirections.setValue(gMapsDirections);
                                     Log.d("NavigationViewModel", "navigation: updated route directions with new current loc.");
                                 }
 
@@ -125,14 +127,30 @@ public class NavigationViewModel extends AndroidViewModel {
             }
         });
 
-        //timer to simulate availability = 0
+        //timer to check availability every 5 minutes
         Timer mTimer = new Timer();
         mTimer.schedule(new TimerTask(){
             @Override
             public void run(){
-                onAvailZero();
+                String cpNumber = chosenRoute.getCarParkInfo().getCPNumber();
+                mRepository.checkAvailability(cpNumber, new AvailabilityCountCallback() {
+                    @Override
+                    public void onSuccess(int availabilityCount) {
+                        Log.d("NavigationViewModel", "in 5 min update, avail onSuccess");
+                        if (availabilityCount < carParkAvailabilityThreshold) {
+                            onAvailZero();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure() {
+                        Log.d("NavigationViewModel", "in 5 min update, avail onFailure");
+                        // do nothing
+                    }
+                });
             };
-        },5000,100000000);
+            //check every 5 min (18,000 seconds)
+        },5000,18000000);
     }
 
     private void onAvailZero(){
@@ -141,11 +159,13 @@ public class NavigationViewModel extends AndroidViewModel {
             @Override
             public void onSuccess(List<DirectionsAndCPInfo> directionsAndCPInfoList) {
                 String oldCarParkNumber = chosenRoute.getCarParkInfo().getCPNumber();
-                if(directionsAndCPInfoList.get(0).getCarParkInfo().getCPNumber().equals(oldCarParkNumber)){
+                if(directionsAndCPInfoList.size() == 1){
+                    availabilityStatus.setValue(1);
+                } else if(directionsAndCPInfoList.get(0).getCarParkInfo().getCPNumber().equals(oldCarParkNumber)){
                     directionsAndCPInfoList.remove(0);
                 }
                 alternativeRoute = directionsAndCPInfoList.get(0);
-                isAvailZero.setValue(true);
+                availabilityStatus.setValue(0);
 
             }
             @Override
@@ -155,16 +175,17 @@ public class NavigationViewModel extends AndroidViewModel {
         });
     }
 
-    public MutableLiveData<LatLng> getCurrentLoc(){
-        return currentLocation;
-    }
+    public MutableLiveData<LatLng> getCurrentLoc(){ return currentLocation; }
 
-    private void rerouteToNewCarPark(){
-        chosenRoute = alternativeRoute;
-        updatingRouteDirections.postValue(alternativeRoute.getGoogleMapsDirections());
-    }
+    public MediatorLiveData getMediatorCurrentLoc() { return mediatorCurrentLoc; }
 
-    public MutableLiveData<Boolean> getIsAvailZero() { return isAvailZero; }
+    //TODO: remove this method, dont think its being used for the rerouting.
+//    private void rerouteToNewCarPark(){
+//        chosenRoute = alternativeRoute;
+//        updatingRouteDirections.postValue(alternativeRoute.getGoogleMapsDirections());
+//    }
+
+    public MutableLiveData<Integer> getAvailabilityStatus() { return availabilityStatus; }
 
     public DirectionsAndCPInfo getAlternativeRoute() { return alternativeRoute; }
 
