@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -20,8 +19,6 @@ import com.example.chiilek.parkme.entity.CarParkInfo;
 import com.example.chiilek.parkme.viewmodel.NavigationViewModel;
 import com.example.chiilek.parkme.viewmodel.NavigationViewModelFactory;
 import com.example.chiilek.parkme.entity.DirectionsAndCPInfo;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -34,7 +31,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.List;
 
