@@ -6,7 +6,6 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.chiilek.parkme.api.availability_api.AvailabilityAPIController;
-import com.example.chiilek.parkme.api.availability_api.AvailabilityCallback;
 import com.example.chiilek.parkme.api.directions_api.DirectionsAPIController;
 import com.example.chiilek.parkme.api.directions_api.DirectionsCallback;
 import com.example.chiilek.parkme.entity.CarParkInfo;
@@ -17,6 +16,7 @@ import com.example.chiilek.parkme.entity.directionsapi.GoogleMapsDirections;
 import com.example.chiilek.parkme.database.AppDatabase;
 import com.example.chiilek.parkme.repository.callbacks.GetRoutesCallback;
 import com.example.chiilek.parkme.repository.callbacks.SearchNearbyCallback;
+import com.example.chiilek.parkme.repository.callbacks.AvailabilityCountCallback;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -91,7 +91,7 @@ public class Repository {
                             if(i==0){
                                 Log.d("Repository", "In getDirectionsAndCPs: atomic counter is 0; GMaps API calls are done");
                                 //calling Availability API with callback function.
-                                availAPIControl.makeCall(new AvailabilityCallback() {
+                                availAPIControl.makeCall(new com.example.chiilek.parkme.api.availability_api.AvailabilityCallback() {
                                     @Override
                                     public void onSuccess(Item cpAPIItem) {
                                         if(cpAPIItem.getCarParkData().size() == 0){
@@ -231,7 +231,7 @@ public class Repository {
         MutableLiveData<List<CarParkInfo>> liveData = new MutableLiveData<>();
 
         AvailabilityAPIController availAPIControl = new AvailabilityAPIController();
-        availAPIControl.makeCall(new AvailabilityCallback() {
+        availAPIControl.makeCall(new com.example.chiilek.parkme.api.availability_api.AvailabilityCallback() {
             @Override
             public void onSuccess(Item cpAPIItem) {
                 if(cpAPIItem.getCarParkData().size() == 0){
@@ -284,8 +284,32 @@ public class Repository {
         });
     }
 
+    public void checkAvailability(String cpNumber, AvailabilityCountCallback availCallback){
+        AvailabilityAPIController availAPIControl = new AvailabilityAPIController();
+
+        availAPIControl.makeCall(new com.example.chiilek.parkme.api.availability_api.AvailabilityCallback() {
+            @Override
+            public void onSuccess(Item cpAPIItem) {
+                if(cpAPIItem.getCarParkData().size() == 0){
+                    Log.d("Repository", "checkAvailability onSuccess: size of avail api return is 0");
+                    availCallback.onFailure();
+                }else {
+                    Log.d("Repository", "checkAvailability onSuccess");
+                    availCallback.onSuccess(cpAPIItem.getCarParkDatum(cpNumber).getCarParkInfo().get(0).getLotsAvailable());
+                }
+            }
+
+            @Override
+            public void onFailure() {
+                Log.d("Repository", "checkAvailability onFailure: Availability API call failed");
+                availCallback.onFailure();
+            }
+        });
+    }
+
     //expose for view map view model
     public MutableLiveData<List<CarParkInfo>> getViewMapCPList(){
         return viewMapCPList;
     }
+
 }

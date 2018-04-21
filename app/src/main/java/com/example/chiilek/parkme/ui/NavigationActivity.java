@@ -7,20 +7,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.entity.CarParkInfo;
 import com.example.chiilek.parkme.viewmodel.NavigationViewModel;
 import com.example.chiilek.parkme.viewmodel.NavigationViewModelFactory;
 import com.example.chiilek.parkme.entity.DirectionsAndCPInfo;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -33,7 +31,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.List;
 
@@ -146,94 +143,15 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
             }
         });
 
-        model.getIsAvailZero().observe(this, newBoolean -> {
-            if(newBoolean){
-                Log.d("NavigationActivity", "is avail zero observe calling reroute()");
+        model.getAvailabilityStatus().observe(this, newStatus -> {
+            if(newStatus == 0){
+                Log.d("NavigationActivity", "availabilityStatus observe, 0 lots left. calling reroute()");
                 reroute();
+            }else if(newStatus == 1){
+                Toast.makeText(this.getApplicationContext(), "Could not find another CarPark to reroute to. Staying on current route.",Toast.LENGTH_LONG).show();
             }
         });
     }
-
-//        model.getUpdatingRoute().observe(this, newDirections ->{
-//        polopt = newDirections.getPolylineOptions();
-//        plotPolyline(polopt);
-//        });
-
-        // Add a marker in Googleplex and move the camera
-//        LatLng googleplex = new LatLng(37.4220, -122.0940);
-//        mMap.addMarker(new MarkerOptions().position(cure).title("Marker in Googleplex"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(googleplex));
-
-//        blackPolyLineOptions = new PolylineOptions();
-//        blackPolyLineOptions.color(Color.LTGRAY);
-//        blackPolyLineOptions.width(30);
-//        blackPolyLineOptions.startCap(new SquareCap());
-//        blackPolyLineOptions.endCap(new SquareCap());
-//        blackPolyLineOptions.jointType(JointType.ROUND);
-//        blackPolyline = mMap.addPolyline(blackPolyLineOptions);
-
-//        ValueAnimator polylineAnimator = ValueAnimator.ofInt(0,100);
-//        polylineAnimator.setDuration(50000);
-//        polylineAnimator.setInterpolator(new LinearInterpolator());
-//        polylineAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator animation) {
-//                List<LatLng> points = blackPolyline.getPoints();
-//                int percentValue = (int)animation.getAnimatedValue();
-//                int size = points.size();
-//                int newPoints = (int) (size*(percentValue / 100.0f));
-//                List<LatLng> p = points.subList(0, newPoints);
-//                blackPolyline.setPoints(p);
-//            }
-//        });
-        // polylineAnimator.start();
-
-//        LatLng test = new LatLng(37.3830, -122.0870);
-//
-//        //car marker goes here
-//
-//        handler = new Handler();
-//        index = -1;
-//        next = 1;
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                if(index < sampleWayPoints.getPoints().size()-1) {
-//                    index++;
-//                    next = index + 1;
-//                }
-//                if(index < sampleWayPoints.getPoints().size()-1) {
-//                    startPosition = sampleWayPoints.getPoints().get(index);
-//                    endPosition = sampleWayPoints.getPoints().get(next);
-//
-//                }
-////                else if(index >= sampleWayPoints.size()-1){
-////                    Intent intent = new Intent(NavigationActivity.this, ViewMapActivity.class);
-////                    startActivity(intent);
-////                    finish();
-////                }
-//
-//                ValueAnimator valueAnimator = ValueAnimator.ofInt(0,1);
-//                valueAnimator.setDuration(50000);
-//                valueAnimator.setInterpolator(new LinearInterpolator());
-//
-//                valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//                    @Override
-//                    public void onAnimationUpdate(ValueAnimator animation) {
-//                        v = valueAnimator.getAnimatedFraction();
-//                        lng = v*endPosition.longitude+(1-v)*startPosition.longitude;
-//                        lat = v*endPosition.latitude+(1-v)*startPosition.latitude;
-//                        LatLng newPos = new LatLng(lat,lng);
-//
-//
-//
-//                    }
-//                });
-//                valueAnimator.start();
-//                handler.postDelayed(this,50000);
-//            }
-//        }, 0);
-//    }
 
     private float getBearing(LatLng startPosition, LatLng newPos) {
         double lat = Math.abs(startPosition.latitude - newPos.latitude);
