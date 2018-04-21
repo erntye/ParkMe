@@ -59,6 +59,7 @@ public class SelectRouteViewModel extends AndroidViewModel {
                         @Override
                         public void onFailure(int errorCode) {
                             Log.d("SelectRouteViewModel", "onFailure add source endPoint get routes callback");
+                            status = errorCode;
                             directionsAndCarParksList.postValue(new ArrayList<DirectionsAndCPInfo>());
                         }
                     });
