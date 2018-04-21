@@ -150,7 +150,7 @@ public class NavigationViewModel extends AndroidViewModel {
                 });
             };
             //check every 5 min (18,000 seconds)
-        },5000,10000);
+        },5000,18000000);
     }
 
     private void onAvailZero(){
