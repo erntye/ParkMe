@@ -112,7 +112,7 @@ public class NavigationViewModel extends AndroidViewModel {
                             new DirectionsCallback() {
                                 @Override
                                 public void onSuccess(GoogleMapsDirections gMapsDirections) {
-                                    updatingRouteDirections.postValue(gMapsDirections);
+                                    updatingRouteDirections.setValue(gMapsDirections);
                                     Log.d("NavigationViewModel", "navigation: updated route directions with new current loc.");
                                 }
 
@@ -132,23 +132,25 @@ public class NavigationViewModel extends AndroidViewModel {
         mTimer.schedule(new TimerTask(){
             @Override
             public void run(){
-                String cpNumber = chosenRoute.getCarParkDatum().getCarParkNumber();
+                String cpNumber = chosenRoute.getCarParkInfo().getCPNumber();
                 mRepository.checkAvailability(cpNumber, new AvailabilityCountCallback() {
                     @Override
                     public void onSuccess(int availabilityCount) {
-                        if(availabilityCount < carParkAvailabilityThreshold) {
+                        Log.d("NavigationViewModel", "in 5 min update, avail onSuccess");
+                        if (availabilityCount < carParkAvailabilityThreshold) {
                             onAvailZero();
                         }
                     }
 
                     @Override
                     public void onFailure() {
+                        Log.d("NavigationViewModel", "in 5 min update, avail onFailure");
                         // do nothing
                     }
                 });
             };
             //check every 5 min (18,000 seconds)
-        },5000,18000000);
+        },5000,10000);
     }
 
     private void onAvailZero(){
@@ -173,9 +175,9 @@ public class NavigationViewModel extends AndroidViewModel {
         });
     }
 
-    public MutableLiveData<LatLng> getCurrentLoc(){
-        return currentLocation;
-    }
+    public MutableLiveData<LatLng> getCurrentLoc(){ return currentLocation; }
+
+    public MediatorLiveData getMediatorCurrentLoc() { return mediatorCurrentLoc; }
 
     //TODO: remove this method, dont think its being used for the rerouting.
 //    private void rerouteToNewCarPark(){
