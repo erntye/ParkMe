@@ -12,7 +12,13 @@ import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.entity.CarParkInfo;
 
 /**
- * Created by DanSeb on 06/04/18.
+ * This <code>Activity</code> is responsible for displaying the relevant car park information as a popup
+ * when the user clicks on a particular car park.
+ * <p>
+ * Users have the option to press the <code>Select</code> button to
+ * bypass the <code>SelectRouteActivity</code> and directly begin navigation.
+ * @see CarParkInfo
+ * @see SelectRouteActivity
  */
 
 public class CarParkPopUpActivity extends AppCompatActivity {
@@ -34,6 +40,16 @@ public class CarParkPopUpActivity extends AppCompatActivity {
 
     CarParkInfo carParkInfo;
 
+    /**
+     * This method is responsible displaying the relevant information under the correct views.
+     * <p>
+     * The relevant information are obtained from the getter methods of the
+     * <code>CarParkInfo</code> object which was passed in as part of the
+     * <code>savedInstanceState</code> bundle from the <code>ViewMapActivity</code>.
+     * @param savedInstanceState a <code>Bundle</code> object containing the saved instance state of
+     *                           the previous activity. Expects to include a <code>CarParkInfo</code>
+     *                           object containing car park information.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +102,10 @@ public class CarParkPopUpActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     *  This method is where the class attributes are assigned the corresponding views from the
+     *  activity's layout file. It finds them by their <code>id</code>s.
+     */
     private void assignFields(){
         titleText = findViewById(R.id.pop_up_title_location);
 

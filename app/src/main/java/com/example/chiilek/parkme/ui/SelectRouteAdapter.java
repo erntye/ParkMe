@@ -12,25 +12,29 @@ import android.widget.TextView;
 import android.view.View;
 import android.widget.Toast;
 
-/**
- * Created by Steven T on 05/04/2018.
- */
-
-
 import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.entity.DirectionsAndCPInfo;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
+
+/**
+ * This <code>Adapter</code> is responsible for managing the <code>View Holder</code>s objects, each of which
+ *  will display navigation information about each recommended car park in the <code>SelectRouteActivity</code>.
+ *  @see SelectRouteActivity
+ *  @see RecyclerView.Adapter
+ *  @see RecyclerView
+ *  @see MyViewHolder
+ */
 public class SelectRouteAdapter extends RecyclerView.Adapter<SelectRouteAdapter.MyViewHolder> {
 
-    private List<DirectionsAndCPInfo> carparkList;
+    private List<DirectionsAndCPInfo> carParkList;
     private Context mContext;
     private int status;
 
     public SelectRouteAdapter(List<DirectionsAndCPInfo> carparkList, Context context, int status) {
-        this.carparkList= carparkList;
+        this.carParkList= carparkList;
         this.mContext = context;
         this.status = status;
     }
@@ -43,10 +47,14 @@ public class SelectRouteAdapter extends RecyclerView.Adapter<SelectRouteAdapter.
         return new MyViewHolder(itemView);
     }
 
-    //binds each seperate carpark to it view
+    /**
+     * Binds each separate <code>DirectionsAndCPInfo</code> object to its <code>View</code>.
+     * @param holder A <code>MyViewHolder</code> object to contain the corresponding car park information.
+     * @param position An <code>integer</code> indicating its position within the <code>carParkList</code> object.
+     */
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        DirectionsAndCPInfo CP = carparkList.get(position);
+        DirectionsAndCPInfo CP = carParkList.get(position);
         //needed to get the image ID
         Class res = R.drawable.class;
         Field field = null;
@@ -71,8 +79,8 @@ public class SelectRouteAdapter extends RecyclerView.Adapter<SelectRouteAdapter.
                 Toast.makeText(mContext, CP.getCarParkInfo().getCPNumber(), Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(mContext, RouteOverviewActivity.class);
-                intent.putExtra("chosenRoute", carparkList.get(position));
-                intent.putExtra("destinationAddress", carparkList.get(position).getCarParkInfo().getAddress());
+                intent.putExtra("chosenRoute", carParkList.get(position));
+                intent.putExtra("destinationAddress", carParkList.get(position).getCarParkInfo().getAddress());
                 Log.d("SuggestionsAdapter", "starting new context with DirectionsAndCPInfo");
                 mContext.startActivity(intent);
             }
@@ -83,21 +91,28 @@ public class SelectRouteAdapter extends RecyclerView.Adapter<SelectRouteAdapter.
     //function to allow activity to add entire list at one time
     public void addItems(List<DirectionsAndCPInfo> carparkList, int status){
         this.status = status;
-        this.carparkList = carparkList;
+        this.carParkList = carparkList;
         notifyDataSetChanged();
     }
 
     //function to get a certain DirectionsAndCPInfo
     public DirectionsAndCPInfo getCarParkInfo(int position){
-        return carparkList.get(position);
+        return carParkList.get(position);
     }
     @Override
     public int getItemCount() {
-        return carparkList.size();
+        return carParkList.size();
     }
 
 
-    //This class holds all the Views inside one rectangle in the recycler view
+    /**
+     * This <code>Class</code> hods all the <code>View</code>s inside one <code>View Group</code> in the
+     * <code>Recycler View</code>.
+     * @see RecyclerView
+     * @see android.support.v7.widget.RecyclerView.ViewHolder
+     * @see SelectRouteAdapter
+     * @see SelectRouteActivity
+     */
     public class MyViewHolder extends RecyclerView.ViewHolder{
         private TextView address;
         private TextView timeToReach;

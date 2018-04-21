@@ -25,11 +25,21 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This <code>Activity</code> is responsible for displaying the list of recommended car parks, sorted in order by
+ * our ranking algorithm, which users can select to navigate to.
+ * <p>
+ * At this screen, users can still have the option to change their intended destination, which will take them back
+ * to the map screen again.
+ * @see DirectionsAndCPInfo
+ * @see SelectRouteAdapter
+ * @see SelectRouteActivity
+ * @see SelectRouteViewModel
+ * @see SelectRouteViewModelFactory
+ */
 public class SelectRouteActivity extends AppCompatActivity{
 
     private RecyclerView mRecyclerView;
@@ -38,6 +48,7 @@ public class SelectRouteActivity extends AppCompatActivity{
     private List<DirectionsAndCPInfo> mCarparkList = new ArrayList<DirectionsAndCPInfo>();
     private SelectRouteViewModel model;
     //TODO refer to the multisearch fragment to get the startpoint and destination search terms
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

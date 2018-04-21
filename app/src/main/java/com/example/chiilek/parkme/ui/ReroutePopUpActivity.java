@@ -14,7 +14,10 @@ import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.entity.DirectionsAndCPInfo;
 
 /**
- * Created by DanSeb on 06/04/18.
+ * This <code>Activity</code> is responsible for displaying the warning pop up message if the available lots of the
+ * original car park reaches 0. It displays the next best recommended car park, as well as presents users the option
+ * to reroute to begin navigation to the recommended car park.
+ * @see NavigationActivity
  */
 
 public class ReroutePopUpActivity extends AppCompatActivity {

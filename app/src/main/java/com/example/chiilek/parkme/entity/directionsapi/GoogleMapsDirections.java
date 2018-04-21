@@ -61,4 +61,9 @@ public class GoogleMapsDirections implements Serializable{
 //        }
         return polylineOptions;
     }
+
+    public List<LatLng> getPolyLinePoints(){
+        List<LatLng> decodedPath = PolyUtil.decode(getRoutes().get(0).getOverviewPolyline().getPoints());
+        return decodedPath;
+    }
 }
