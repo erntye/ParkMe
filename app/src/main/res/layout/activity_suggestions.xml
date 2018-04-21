@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:showIn="@layout/activity_suggestions"
+    android:background="@color/colorMain"
     tools:context=".ui.SelectRouteActivity"
-    android:background="@color/colorMain">
+    tools:showIn="@layout/activity_suggestions">
 
     <ImageView
         android:layout_width="match_parent"
@@ -15,23 +14,23 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="133dp"
         android:alpha="0.3"
-        android:src="@drawable/border_suggestion_2"/>
+        android:contentDescription="TODO"
+        android:src="@drawable/border_suggestion_2" />
 
     <RelativeLayout
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
+        android:id="@+id/sourceAuto"
         android:layout_width="312dp"
         android:layout_height="50dp"
-        android:id="@+id/sourceAuto"
-        >
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp">
 
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:alpha="0.9"
-            android:src="@drawable/places_background_2"
-            android:layout_centerInParent="true"/>
+            android:src="@drawable/places_background_2" />
 
         <fragment
             android:id="@+id/place_autocomplete_fragment_source"
@@ -42,22 +41,21 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_centerHorizontal="true"
         android:id="@+id/destinationAuto"
         android:layout_width="312dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="10dp"
         android:layout_below="@+id/sourceAuto"
-        >
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp">
 
 
         <ImageView
             android:id="@+id/imageView2"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
+            android:layout_centerInParent="true"
             android:alpha="0.9"
-            android:src="@drawable/places_background_2"
-            android:layout_centerInParent="true"/>
+            android:src="@drawable/places_background_2" />
 
 
         <fragment
@@ -65,27 +63,37 @@
             android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
             android:layout_width="320dp"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            />
+            android:layout_centerInParent="true" />
     </RelativeLayout>
 
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/color2"
         android:layout_below="@id/destinationAuto"
-        android:src="@drawable/rectangle"
         android:layout_centerInParent="true"
-        />
+        android:background="@color/color2"
+        android:contentDescription="TODO"
+        android:src="@drawable/rectangle" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="vertical"
         android:layout_below="@id/destinationAuto"
         android:background="@color/color5"
-        />
+        android:scrollbars="vertical" />
+
+    <TextView
+        android:id="@+id/errorText"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/destinationAuto"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:alpha="0.9"
+        android:text="test"
+        android:visibility="visible" />
 
 
 </RelativeLayout>

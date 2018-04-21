@@ -27,11 +27,12 @@ public class SelectRouteAdapter extends RecyclerView.Adapter<SelectRouteAdapter.
 
     private List<DirectionsAndCPInfo> carparkList;
     private Context mContext;
+    private int status;
 
-    public SelectRouteAdapter(List<DirectionsAndCPInfo> carparkList, Context context) {
+    public SelectRouteAdapter(List<DirectionsAndCPInfo> carparkList, Context context, int status) {
         this.carparkList= carparkList;
         this.mContext = context;
-
+        this.status = status;
     }
 
     @Override
@@ -46,7 +47,6 @@ public class SelectRouteAdapter extends RecyclerView.Adapter<SelectRouteAdapter.
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         DirectionsAndCPInfo CP = carparkList.get(position);
-
         //needed to get the image ID
         Class res = R.drawable.class;
         Field field = null;
@@ -54,7 +54,7 @@ public class SelectRouteAdapter extends RecyclerView.Adapter<SelectRouteAdapter.
         try {
             field = res.getField("parking_suggestion_box");
             drawableID = field.getInt(null);
-        } catch (Exception e){
+        } catch (Exception e) {
             Log.e("ERROR", "Failed to get drawable id", e);
         }
         //----------------------------------------------------------------
@@ -62,11 +62,11 @@ public class SelectRouteAdapter extends RecyclerView.Adapter<SelectRouteAdapter.
         holder.buttonImage.setImageResource(drawableID);
         holder.address.setText(CP.getCarParkInfo().getAddress());
         holder.distance.setText(Double.toString(CP.getDistance()) + "m away");
-        holder.availability.setText(CP.getAvailability()+ " Available Lots");
-        holder.timeToReach.setText(CP.getDuration()/60+ " minutes away");
-        holder.parentLayout.setOnClickListener(new View.OnClickListener(){
+        holder.availability.setText(CP.getAvailability() + " Available Lots");
+        holder.timeToReach.setText(CP.getDuration() / 60 + " minutes away");
+        holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 Log.d("SelectRouteAdapter", "onClick: clicked on: " + CP.getCarParkInfo().getCPNumber());
                 Toast.makeText(mContext, CP.getCarParkInfo().getCPNumber(), Toast.LENGTH_SHORT).show();
 
@@ -77,10 +77,12 @@ public class SelectRouteAdapter extends RecyclerView.Adapter<SelectRouteAdapter.
                 mContext.startActivity(intent);
             }
         });
+
     }
 
     //function to allow activity to add entire list at one time
-    public void addItems(List<DirectionsAndCPInfo> carparkList){
+    public void addItems(List<DirectionsAndCPInfo> carparkList, int status){
+        this.status = status;
         this.carparkList = carparkList;
         notifyDataSetChanged();
     }
