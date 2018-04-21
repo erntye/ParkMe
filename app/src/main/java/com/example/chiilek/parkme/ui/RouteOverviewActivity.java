@@ -51,11 +51,21 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.List;
 
 /**
- * Expects following data passed in as extras in Intent:
- *  double startPointLat
- *  double startPointLong
- *  double endPointLat
- *  double endPointLong
+ * This <code>Activity</code> is responsible for displaying an overview of the selected route before beginning
+ * navigation. This screen can be reached from the <code>SelectRouteActivity</code> or directly from
+ * <code>CarParkPopUpActivity</code>.
+ * <p>
+ * At this screen, users can still have the option to change their intended destination, which will take them back
+ * to the map screen again.
+ * @see CarParkInfo
+ * @see DirectionsAndCPInfo
+ * @see NavigationActivity
+ * @see SelectRouteActivity
+ * @see SelectRouteAdapter
+ * @see CarParkPopUpActivity
+ * @see RouteOverviewViewModel
+ * @see RouteOverviewViewModelCarParkFactory
+ * @see RouteOverviewViewModelRouteFactory
  */
 public class RouteOverviewActivity extends FragmentActivity
         implements OnMapReadyCallback,
@@ -71,10 +81,19 @@ public class RouteOverviewActivity extends FragmentActivity
     private DirectionsAndCPInfo mChosenRoute;
     private CarParkInfo mChosenCarPark;
 
-    // ---------------------------------------
-    //             CHECK PERMISSIONS
-    // ---------------------------------------
+    //ask permission to turn on GPS
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
+
+    /**
+     * This method is responsible for initialising the <code>RouteOverviewViewModel</code> upon creation. It also
+     * initialises the relevant <code>PlaceAutocompleteFragment</code> to show the start and end locations of the
+     * current chosen navigation.
+     * @param savedInstanceState a <code>Bundle</code> object containing the saved instance state of
+     *                           the previous activity. Expected to include either a <code>DirectionsAndCPInfo</code>
+     *                           object containing important information such as the route to the destination, or a
+     *                           <code>CarParkInfo</code> object.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -153,10 +172,8 @@ public class RouteOverviewActivity extends FragmentActivity
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
+     * This is where the <code>Marker</code>s images are added onto the map to indicate the start and end points
+     * visually.
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -165,26 +182,6 @@ public class RouteOverviewActivity extends FragmentActivity
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_PERMISSION_LOCATION);
             return;
         }
-
-        // Pass in either list of LatLng or PolylineOptions object
-        //plotPolyline(sampleWayPoints);
-
-        // MAP CAMERA TO GOOGLEPLEX
-/*        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            CameraPosition cp = new CameraPosition.Builder().target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(13).build();
-                            // mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cp));
-                        }
-                    }
-                });*/
-/*        model.getCurrentLoc().observe(this,newLocation ->{
-
-        });*/
 
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cap_park_marker);
 
@@ -202,36 +199,13 @@ public class RouteOverviewActivity extends FragmentActivity
         } else {
             initializeMap(model.getChosenRoute().getValue());
         }
-
-        //LatLng googleplex = new LatLng(37.4220, -122.0940);
-
-
     }
-/*        PolylineOptions chosenRoute = model.getChosenRoute().getGoogleMapsDirections().getPolylineOptions();
-        if(chosenRoute!=null){
-            chosenRoute.width(10).color(R.color.colorMain);
-            mMap.addPolyline(chosenRoute);
-        }*/
 
-//        mMap.addMarker(new MarkerOptions()
-//                .position(mChosenRoute.getDestinationLatLng())
-//                .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
-
-        //mMap.getMyLocation().getLatitude();
-
-        // Add a marker in Googleplex and move the camera
-     // mMap.moveCamera(CameraUpdateFactory.newLatLng(googleplex));
-
-        // SAMPLE HARDCODED ROUTE
-//        sampleWayPoints= new ArrayList<>();
-//        sampleWayPoints.add(new LatLng(37.4220, -122.0940));
-//        sampleWayPoints.add(new LatLng(37.4130, -122.0831));
-//        sampleWayPoints.add(new LatLng(37.4000, -122.0762));
-//        sampleWayPoints.add(new LatLng(37.3830, -122.0870));
-//        plotPolyline(sampleWayPoints);
-
-
-
+    /**
+     * This method is responsible to adjusting the map bounds such that it does not cut off any part of the
+     * drawn route.
+     * @param newRoute A <code>DirectionsAndCPInfo</code> containing the route information.
+     */
     private void initializeMap(DirectionsAndCPInfo newRoute) {
         if (newRoute != null){
             PolylineOptions polylineToAdd = newRoute.getGoogleMapsDirections().getPolylineOptions();
@@ -253,9 +227,6 @@ public class RouteOverviewActivity extends FragmentActivity
             mMap.addMarker(new MarkerOptions().position(newRoute.getDestinationLatLng()).title("Marker in Destination"));
         }
     }
-
-    //ask permission to turn on GPS
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     private void checkLocationPermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)

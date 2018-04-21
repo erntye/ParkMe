@@ -9,6 +9,12 @@ import android.widget.ImageView;
 
 import com.example.chiilek.parkme.R;
 
+/**
+ * This <code>Activity</code> displays the arrival message upon reaching the destination, and takes the user back
+ * to the main home screen.
+ * @see NavigationActivity
+ */
+
 public class ReachMessageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
