@@ -130,6 +130,18 @@ public class SelectRouteActivity extends AppCompatActivity{
 
 
         autocompleteFragmentSource.setText("Current Location");
+        autocompleteFragmentSource.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+              @Override
+              public void onPlaceSelected(Place place) {
+                  model.setStartPoint(place.getLatLng());
+              }
+
+              @Override
+              public void onError(Status status) {
+                  Log.d("Maps", "An error occurred: " + status);
+              }
+          });
+
         autocompleteFragmentDestination.setText(parentIntent.getExtras().getString("Name"));
 
         autocompleteFragmentDestination.setOnPlaceSelectedListener(new PlaceSelectionListener() {

@@ -73,16 +73,11 @@ public class RouteOverviewActivity extends FragmentActivity
         GoogleMap.OnMyLocationClickListener {
 
     private GoogleMap mMap;
-    private FusedLocationProviderClient mFusedLocationClient;
     private RouteOverviewViewModel model;
     //needed to bind to service to get location updates
     private final int REQUEST_PERMISSION_LOCATION = 1;
-    private List<LatLng> sampleWayPoints;
     private DirectionsAndCPInfo mChosenRoute;
     private CarParkInfo mChosenCarPark;
-
-    //ask permission to turn on GPS
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
 
     /**
@@ -232,61 +227,6 @@ public class RouteOverviewActivity extends FragmentActivity
         }
     }
 
-    private void checkLocationPermission() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                new AlertDialog.Builder(this)
-                        .setTitle("Location Permission Needed")
-                        .setMessage("This app needs the Location permission, please accept to use location functionality")
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //Prompt the user once explanation has been shown
-                                ActivityCompat.requestPermissions(RouteOverviewActivity.this,
-                                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION);
-                            }
-                        })
-                        .create()
-                        .show();
-
-
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION);
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "permission granted", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
-
-    }
-
     @Override
     public boolean onMyLocationButtonClick() {
         Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
@@ -298,8 +238,6 @@ public class RouteOverviewActivity extends FragmentActivity
     @Override
     public void onMyLocationClick(@NonNull Location location) {
         Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(googleplex));
-
 
     }
 
