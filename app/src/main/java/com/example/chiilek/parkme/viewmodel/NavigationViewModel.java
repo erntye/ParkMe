@@ -204,6 +204,10 @@ public class NavigationViewModel extends AndroidViewModel {
 
     /**
      * Exposes the availability status <code>LiveData</code> for observation by <code>NavigationActivity</code>
+     * 0 means below threshold
+     * 1 means no alternative car parks to reroute
+     * -1 means nothing
+     *
      * @return the <code>LiveData</code> object of the availability status of the car park lots
      */
     public MutableLiveData<Integer> getAvailabilityStatus() { return availabilityStatus; }

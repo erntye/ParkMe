@@ -65,7 +65,6 @@ public class Repository {
         else
             Log.d("Repository", "In getDirectionsAndCPs: closestCarParks size: " + closestCarParks.size()) ;
         //generates directions to each car park, stores in DirectionsAndCPInfo class
-        //Log.d("Repository", "origin: " + startPoint.toString());
         List<DirectionsAndCPInfo> directionsAndCPList = new ArrayList<DirectionsAndCPInfo>();
         AvailabilityAPIController availAPIControl = new AvailabilityAPIController();
         AtomicInteger counter = new AtomicInteger(closestCarParks.size());
