@@ -102,7 +102,7 @@ public class LocationRepository  {
 
     /**
      * Exposes the <code>MutableLiveData</code> current location object for observation
-     * @return <code>MutableLiveData</code> object 
+     * @return <code>MutableLiveData</code> object
      */
     public MutableLiveData<LatLng> getLocation(){
         Log.d("LocationRepo", "getLocation called, returning current location " + currentLocation.getValue().toString());

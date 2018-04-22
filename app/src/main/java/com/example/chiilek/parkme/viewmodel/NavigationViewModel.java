@@ -177,6 +177,7 @@ public class NavigationViewModel extends AndroidViewModel {
                 String oldCarParkNumber = chosenRoute.getCarParkInfo().getCPNumber();
                 if(directionsAndCPInfoList.size() == 1){
                     availabilityStatus.setValue(1);
+                    return;
                 } else if(directionsAndCPInfoList.get(0).getCarParkInfo().getCPNumber().equals(oldCarParkNumber)){
                     directionsAndCPInfoList.remove(0);
                 }

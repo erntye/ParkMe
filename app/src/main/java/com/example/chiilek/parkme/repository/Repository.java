@@ -243,7 +243,7 @@ public class Repository {
                 }else {
                     for(CarParkInfo carPark : closestCarParks){
                         CarParkDatum toSetDatum = cpAPIItem.getCarParkDatum(carPark.getCPNumber());
-                        if(toSetDatum == null){
+                            if(toSetDatum == null){
                             Log.d("Repository", "searchNearbyCarParks() - availability onSuccess: could not find cp number. creating default object.");
                             carPark.setAvailInfo(new CarParkDatum());
                         } else
@@ -260,6 +260,9 @@ public class Repository {
             public void onFailure() {
                 Log.e("Repository", "searchNearbyCarParks() - Availability Callback onFailure");
                 Log.d("Repository", "searchNearbyCarParks() - Availability information will be null.");
+                for(CarParkInfo carPark : closestCarParks){
+                    carPark.setAvailInfo(new CarParkDatum());
+                }
             }
         });
         viewMapCPList.setValue(closestCarParks);
