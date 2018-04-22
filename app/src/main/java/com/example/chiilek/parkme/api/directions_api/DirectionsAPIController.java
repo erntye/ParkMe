@@ -92,20 +92,5 @@ public class DirectionsAPIController {
         });
         Log.d("DirectionsAPIController", "enqueued");
 
-
-        //for testing the api call
-//        try {
-//            Response<GoogleMapsDirections> response = call.execute();
-//            System.out.println("in response");
-//            GoogleMapsDirections gMapsDirections = response.body();
-//            Log.d("test", "called .body method");
-//            Log.d("test", call.request().url().toString());
-//            Log.d("test", "response code: " + gMapsDirections.getStatus());
-//            Log.d("test", gMapsDirections.getRoutes().get(0).
-//                    getOverviewPolyline().getPoints());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
     }
 }
