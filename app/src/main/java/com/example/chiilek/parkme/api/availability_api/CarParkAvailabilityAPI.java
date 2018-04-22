@@ -9,6 +9,7 @@ import retrofit2.http.Query;
 
 /**
  * Created by chiilek on 23/3/2018.
+ * Interface to define GET call to the Availability API. Used by <code>Retrofit</code>.
  */
 
 public interface CarParkAvailabilityAPI {

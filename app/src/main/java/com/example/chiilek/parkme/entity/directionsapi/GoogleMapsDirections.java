@@ -10,6 +10,13 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.google.maps.android.PolyUtil;
 
+/**
+ * Main class created from response to GET request the Directions API call.
+ * Contains information about the way points as <code>LatLng</code> objects which defines the route to navigate between
+ * the start point and end point.
+ * Contains function to decode the <code>Polyline</code> provided by the API call into the <code>LatLng</code> objects, used to
+ * generate <code>Polyline</code> objects.
+ */
 public class GoogleMapsDirections implements Serializable{
 
     @SerializedName("geocoded_waypoints")
@@ -46,22 +53,22 @@ public class GoogleMapsDirections implements Serializable{
         this.status = status;
     }
 
+    /**
+     * Decodes the <code>Polyline</code> provided by the Directions API into <code>LatLng</code> objects.
+     * Generates and returns a <code>PolylineOptions</code> object with the <code>LatLng</code> objects.
+     * @return <code>PolylineOptions</code> object with the <code>LatLng</code> objects.
+     */
     public PolylineOptions getPolylineOptions(){
         List<LatLng> decodedPath = PolyUtil.decode(getRoutes().get(0).getOverviewPolyline().getPoints());
         PolylineOptions polylineOptions = new PolylineOptions().clickable(true);
         polylineOptions.addAll(decodedPath);
-//        if(gMapsRoads.getSnappedPoints().size() != 0){
-//            Log.d("GoogleMapDirections", "Polyline Options, snapped points size != 0");
-//            for(SnappedPoint point : gMapsRoads.getSnappedPoints()){
-//                polylineOptions.add(new LatLng(point.getLocation().getLatitude(), point.getLocation().getLongitude()));
-//                Log.d("GoogleMapDirections", "Polyline Options, adding one lat long pair now.");
-//            }
-//        }else{
-//            Log.d("GoogleMapDirections", "Polyline Options, snapped points size = 0");
-//        }
         return polylineOptions;
     }
 
+    /**
+     * Decodes the <code>Polyline</code> provided by the Directions API into <code>LatLng</code> objects.
+     * @return The decoded <code>LatLng</code> objects.
+     */
     public List<LatLng> getPolyLinePoints(){
         List<LatLng> decodedPath = PolyUtil.decode(getRoutes().get(0).getOverviewPolyline().getPoints());
         return decodedPath;

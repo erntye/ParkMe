@@ -22,7 +22,7 @@
     -->
     <!--<string name="google_api_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCMcA56knRPYgayHU95ceIL2nNyLkpIeUo</string>-->
     <!-- now using old google key 17/4 -->
-    <!-- new google account username: TeamKn0wledge2 password: Kn0wledge but now using quek AIzaSyABzCIW6HUOYdcEvkVJnuNa4HhIiZvOhmo 13/4/2018-->
+    <!-- new google account username: TeamKn0wledge2 password: Kn0wledge but now using quek  13/4/2018-->
     <!--old key: <string name="google_api_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCMcA56knRPYgayHU95ceIL2nNyLkpIeUo</string>-->
 
 </resources>

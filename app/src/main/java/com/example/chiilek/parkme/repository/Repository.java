@@ -35,6 +35,12 @@ public class Repository {
         this.appDatabase = AppDatabase.getInstance(context);
     }
 
+
+    /**
+     * Singleton pattern implementation to get the <code>Repository</code> object. Creates the instance if it has not been done before.
+     * @param context context of the class that calls for the <code>Repository</code> Instance.
+     * @return Singleton instance of the <code>Repository</code>
+     */
     public static Repository getInstance(Context context){
         if (INSTANCE == null)
             INSTANCE = new Repository(context);
@@ -44,12 +50,14 @@ public class Repository {
 
 
     /**
-     * Called by SelectRouteViewModel to return list of directions to nearby car parks, sorted.
-     * Car parks will be sorted based on a weighted score of flying distance and travel duration.
-     * On success, LiveData List of DirectionsAndCPInfo, containing the routes and static info of
-     * all nearby car parks, sorted by weighted score
-     * @param startPoint
-     * @param destination
+     *
+     * Called to generate directions to all nearby car parks given a destination.
+     * With the destination, the function checks the database for nearby car parks. With this list of nearby car parks,
+     * the function generates the directions to navigate each car park.
+     * Next, it makes calls to the Availability API, and wraps all these information in <code>DirectionAndCPInfo</code> objects.
+     * The asynchronous function uses the callback function to return the <code>List</code> of <code>DirectionsAndCPInfo</code> objects.
+     * @param startPoint <code>LatLng</code> object of the User's chosen start point
+     * @param destination <code>LatLng</code> object of the User's selected destination
      */
     public void getDirectionsAndCPs(LatLng startPoint, LatLng destination, GetRoutesCallback routesCallback) {
         Log.d("Repository", "Called getDirectionsAndCPs(startPoint: " + startPoint.toString() + ", destination: " + destination.toString() + ")");
@@ -64,8 +72,7 @@ public class Repository {
         }
         else
             Log.d("Repository", "In getDirectionsAndCPs: closestCarParks size: " + closestCarParks.size()) ;
-        //generates directions to each car park, stores in DirectionsAndCPInfo class
-        //Log.d("Repository", "origin: " + startPoint.toString());
+
         List<DirectionsAndCPInfo> directionsAndCPList = new ArrayList<DirectionsAndCPInfo>();
         AvailabilityAPIController availAPIControl = new AvailabilityAPIController();
         AtomicInteger counter = new AtomicInteger(closestCarParks.size());
@@ -151,6 +158,13 @@ public class Repository {
         }
     }
 
+    /**
+     * Sorts the <code>DirectionsAndCPInfo</code> list according to an overall score.
+     * Score is assigned to each entry on the list for their availability, trip duration, and distance.
+     * Overall score is then assigned based on weights on each attribute listed above
+     * @param directionsAndCPList <code>List</code> of <code>DirectionsAndCPInfo</code> to be scored and sorted
+     * @return  sorted <code>List</code> of <code>DirectionsAndCPInfo</code>.
+     */
     private List<DirectionsAndCPInfo> scoreAndSort(List<DirectionsAndCPInfo> directionsAndCPList){
         int size = directionsAndCPList.size();
         //sorts by distance and scores each element
@@ -183,44 +197,14 @@ public class Repository {
         return directionsAndCPList;
     }
 
-    //function to manage async calls to the Directions API for generation directions to each car park
-//    private List<DirectionsAndCPInfo> callAPIForDirAndCP(List<CarParkInfo> closestCarParks, LatLng startPoint){
-//        List<DirectionsAndCPInfo> directionsAndCPList = new ArrayList<DirectionsAndCPInfo>();
-//        AtomicInteger counter = new AtomicInteger(closestCarParks.size());
-//        for(CarParkInfo carPark : closestCarParks){
-//            DirectionsAPIController.getInstance().callDirectionsAPI(startPoint,
-//                    new LatLng(Double.parseDouble(carPark.getLatitude()),Double.parseDouble(carPark.getLongitude())),
-//                    new DirectionsCallback(){
-//                        public void onSuccess(GoogleMapsDirections googleMapsDirections){
-//                            DirectionsAndCPInfo element = new DirectionsAndCPInfo(carPark, googleMapsDirections);
-//                            directionsAndCPList.add(element);
-//                            int i = counter.decrementAndGet();
-//                            Log.d("Repository","counter is now " + Integer.toString(i));
-//                        }
-//                        public void onFailure(){
-//                            Log.e("Repository","Directions Callback onFailure.");
-//                            int i = counter.decrementAndGet();
-//                        }
-//
-//                    });
-//        }
-//        while(counter.get() != 0){
-//            Log.d("waiting",Integer.toString(counter.get()));
-////            try {
-////                wait(1000);
-////            } catch (InterruptedException e) {
-////                e.printStackTrace();
-////            }
-//        }
-//        Log.d("Repository", "done with calls, counter = 0");
-//        return directionsAndCPList;
-//    }
-
     /**
-     * Searches for the car parks near a selected location.
-     * One usage is for plotting the car parks near a searched location.
-     * @param searchTerm
-     * @return
+     * Returns a <code>MutableLiveData<List></code> of <code>CarParkInfo</code> of the nearby car parks around a given search term.
+     * Asynchronous call to Availability API will run in a background thread, and will update the <code>LiveData</code> when
+     * the API call returns, and will add the availability information to the <code>CarParkInfo</code> objects
+     * Before the return of the API call, the availability information will be unavailable.
+     * If the API call fails, the values of the availability information in the CarParkInfo objects will be defaulted to indicate unavailability.
+     * @param searchTerm User's defined search term, where User wants to find car parks in the vicinity.
+     * @return <code>MutableLiveData<List></code> of <code>CarParkInfo</code> objects, corresponding to the car park objects around the vicinity of the search term
      */
     public MutableLiveData<List<CarParkInfo>> searchNearbyCarParks(LatLng searchTerm, SearchNearbyCallback searchNearbyCallback){
         Log.d("Repository", "Called setSearchTerm(" + searchTerm + ")");
@@ -268,6 +252,14 @@ public class Repository {
         return liveData;
     }
 
+    /**
+     * Used to update the route taken by the User during navigation.
+     * Makes an asynchronous call to Directions API to generate routes according to the User's new current location.
+     * Method will update the return the <code>GoogleMapsDirections</code> object through the <code>DirectionsCallback</code> which it takes in as an argument.
+     * @param startPoint <code>LatLng</code> of new current location of the User, which is updated as the User drives along the roads.
+     * @param destination <code>LatLng</code> of Car Park that the User is currently navigating towards.
+     * @param directionCallback Callback function for the async API call to return the <code>GoogleMapsDirections</code> object through.
+     */
     public void updateRoutes(LatLng startPoint, LatLng destination, DirectionsCallback directionCallback){
         DirectionsAPIController.getInstance().callDirectionsAPI(startPoint, destination, new DirectionsCallback() {
             @Override
@@ -284,6 +276,13 @@ public class Repository {
         });
     }
 
+    /**
+     * Checks the car park availability in a chosen car park. Used during the Update Use Case.
+     * Makes an asynchronous call to the <code>AvailabilityAPI</code>, checks the availability in the chosen car park,
+     * and returns the number of available lots as an <code>int</code> through the <code>AvailabilityCountCallback</code>.
+     * @param cpNumber String representing the car park number to check availability for
+     * @param availCallback Callback to return the availability through.
+     */
     public void checkAvailability(String cpNumber, AvailabilityCountCallback availCallback){
         AvailabilityAPIController availAPIControl = new AvailabilityAPIController();
 
@@ -307,7 +306,10 @@ public class Repository {
         });
     }
 
-    //expose for view map view model
+    /**
+     * Exposes the <code>MutableLiveData<List<CarParkInfo>></code> for observation
+     * @return
+     */
     public MutableLiveData<List<CarParkInfo>> getViewMapCPList(){
         return viewMapCPList;
     }

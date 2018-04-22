@@ -44,6 +44,12 @@ public class AvailabilityAPIController implements Callback<Envelope> {
     static final private String BASE_URL = "https://api.data.gov.s/v1/transport/";
     AvailabilityCallback mavailabilityCallback;
 
+    /**
+     * Makes a call to the Availability API, with predefined parameters.
+     * Returns an <code>Envelope</code> object which encapsulates all the response objects from the GET request through the
+     * <code>AvailabilityCallback</code>
+     * @param availCallback Callback to return the <code>Envelope</code> through
+     */
     public void makeCall(AvailabilityCallback availCallback){
         mavailabilityCallback = availCallback;
         Gson gson = new GsonBuilder()
@@ -60,7 +66,10 @@ public class AvailabilityAPIController implements Callback<Envelope> {
         call.enqueue(this);
     }
 
-    // Gets current date and time and formats it for API calling.
+    /**
+     * Formats the current date and time into a suitable format for the GET request.
+     * @return Correctly formatted date and time in a <code>String</code> for the request.
+     */
     private String formatDateTime(){
         String year = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
 
@@ -85,6 +94,13 @@ public class AvailabilityAPIController implements Callback<Envelope> {
         return year + "-" + month + "-" + dayOfMonth + "T" + hour + ":" + minute + ":" + second;
     }
 
+    /**
+     * Implemented method from the <code>Callback<Envelope></code> object. Indicates received response from GET call.
+     * Receives the <code>Envelope</code> objects from the GET request, fitted in by the <code>Retrofit</code> library.
+     * Passes the <code>Envelope</code> back through the <code>AvailabilityCallback</code> taken in during <code>makeCall</code>
+     * @param call
+     * @param response contains the <code>Envelope</code> object
+     */
     @Override
     public void onResponse(@NonNull Call<Envelope> call, @NonNull Response<Envelope> response) {
         Log.d("AvailabilityAPIController","On Response from call, response code: " + Integer.toString(response.code()));
@@ -113,6 +129,14 @@ public class AvailabilityAPIController implements Callback<Envelope> {
         }
     }
 
+
+    /**
+     * Implemented method from the <code>Callback<Envelope></code> object. Indicates received response from GET call.
+     * Indicates GET request failed.
+     * Calls the <code>onFailure</code> through the <code>AvailabilityCallback</code> taken in during <code>makeCall</code>
+     * @param call
+     * @param t
+     */
     @Override
     public void onFailure(@NonNull Call<Envelope> call, @NonNull Throwable t) {
         Log.d("AvailabilityAPIController", "onFailure, error message: " + t.getMessage());

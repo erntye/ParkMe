@@ -1,9 +1,7 @@
 package com.example.chiilek.parkme.api.directions_api;
 
-import android.content.res.Resources;
 import android.util.Log;
 
-import com.example.chiilek.parkme.R;
 import com.example.chiilek.parkme.entity.directionsapi.GoogleMapsDirections;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -16,13 +14,21 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Controller class that makes use of <code>Retrofit</code> to make GET requests to the Directions API calls.
+ * Fits the JSON response into a <code>GoogleMapsDirections</code> object which is sent through the <code>DirectionsCallback</code> callback.
+ * To make a call to the API, use callDirectionsAPI method.
+ */
 public class DirectionsAPIController {
 
     static final private String GMAPS_DIRECTION_API_BASE_URL = "https://maps.googleapis.com/maps/api/directions/";
-    //TODO NOT HARDCODE THE STRING
     static final private String GMAPS_API_KEY = "AIzaSyCMcA56knRPYgayHU95ceIL2nNyLkpIeUo";
     private static DirectionsAPIController INSTANCE;
 
+    /**
+     * Singleton Pattern implemented to get instance of <code>DirectionsAPIController</code>
+     * @return Singleton instance of <code>DirectionsAPIController</code>.
+     */
     public static DirectionsAPIController getInstance(){
         if (INSTANCE == null)
             INSTANCE = new DirectionsAPIController();
@@ -30,6 +36,13 @@ public class DirectionsAPIController {
     }
 
 
+    /**
+     * Makes a call to the Directions API to calculate a route from a given origin and destination.
+     * Passes the response object as a <code>GoogleMapsDirections</code> through the <code>DirectionsCallback</code> object taken in this method.
+     * @param origin <code>LatLng</code> object defining the origin.
+     * @param destination <code>LatLng</code> object defining the destination.
+     * @param repoCallback <code>DirectionsCallback</code> to pass the response object through.
+     */
     public void callDirectionsAPI(LatLng origin, LatLng destination, DirectionsCallback repoCallback){
         Map<String, String> params = new HashMap<String,String>();
         params.put("origin", Double.toString(origin.latitude) + "," + Double.toString(origin.longitude));

@@ -13,15 +13,22 @@ import java.io.Serializable;
 
 /**
  * Created by QuekYufei on 27/3/18.
+ * GSON object corresponding to the CSV table provided by the HDB Car Park Information Data.
+ * <code>Room</code> Database fits the data from the .db file into these <code>CarParkInfo</code> objects.
+ * Contains declaration of variables and exposing them for <code>Room</code>
  */
 
 @Entity(tableName = "CarParkInfo")
 public class CarParkInfo implements Serializable{
 
+    /**
+     * Constructor for creating the objects, as used by <code>Room</code>
+     * @param CPNumber Primary Key of the table, the unique identifier for the car park
+     */
     public CarParkInfo(String CPNumber){
         this.CPNumber = CPNumber;
     }
-    //declaring variables (columns in table)
+
     @PrimaryKey
     @NonNull
     @ColumnInfo(name="car_park_no")
@@ -75,6 +82,10 @@ public class CarParkInfo implements Serializable{
     @ColumnInfo(name="total_heavy_lots")
     private String totalHeavyLots;
 
+    /**
+     * Sets availability information obtained from the Availability API.
+     * @param cpDatum <code>CarParkDatum</code> object which contains information of the availability in this particular car park.
+     */
     public void setAvailInfo(CarParkDatum cpDatum) {
         setLastUpdateDatetime(cpDatum.getUpdateDatetime());
         setTotalCarLots(Integer.toString(cpDatum.getCarParkInfo().get(0).getTotalLots()));

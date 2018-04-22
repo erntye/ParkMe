@@ -11,7 +11,7 @@ import com.example.chiilek.parkme.entity.CarParkInfo;
 import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
 
 /**
- * Created by QuekYufei on 27/3/18.
+ * Data Access Object which defines SQL Queries used to access and update objects in the db file.
  */
 
 @Dao

@@ -24,13 +24,16 @@ import java.util.List;
  *      "update_datetime": "2018-02-12T08:57:48"
  *  }
  *
- * Contains only get methods.
+ * Contains a constructor for creating default objects, with values indicating that the availability is unavailable.
  *
  */
 
 public class CarParkDatum implements Serializable {
 
-    //for generating default objects
+    /**
+     * Constructor for generating a <code>CarParkDatum</code> object with "Unavailable" values for the availability information.
+     * Used when Availability API calls fails.
+     */
     public CarParkDatum(){
         carParkInfo = new ArrayList<CarParkInfo>();
         carParkInfo.add(new CarParkInfo());

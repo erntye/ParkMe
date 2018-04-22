@@ -9,9 +9,10 @@ import java.util.List;
  * @author chiilek
  * @since 24/3/2018.
  *
- * The main envelope to unwrap.
+ * The main response object from the GET request to the Availability API.
+ * Contains just one <code>Item</code> object.
+ * Created due to extra set of braces from JSON response from the Availability API.
  */
-
 public class Envelope {
 
     @SerializedName("items")

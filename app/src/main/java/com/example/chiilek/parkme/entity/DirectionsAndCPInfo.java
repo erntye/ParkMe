@@ -9,6 +9,11 @@ import com.google.maps.android.SphericalUtil;
 
 import java.io.Serializable;
 
+/**
+ * Wrapper class which combines responses from Directions API, Availability API, and HDB Car Park Information Data:
+ * <code>GoogleMapsDirections</code>, <code>CarParkDatum</code>, and <code>CarParkInfo</code>
+ * Also contains scores assigned to each object for distance, trip duration, and availability, as well as the overall score.
+ */
 public class DirectionsAndCPInfo implements Serializable{
     private CarParkInfo carParkInfo;
     private GoogleMapsDirections googleMapsDirections;
@@ -23,70 +28,101 @@ public class DirectionsAndCPInfo implements Serializable{
     private double durationScoreWeight = 0.25;
     private double availabilityScoreWeight = 0.50;
 
+    /**
+     * Constructor which takes in the responses from:
+     * Directions API, and HDB Car Park Information Data.
+     * @param cpInfo <code>CarParkInfo</code> object created from HDB Car Park Information Data
+     * @param gmapsDir <code>GoogleMapsDirections</code> object created from the Directions API call.
+     * @param userChosenDestination
+     */
     public DirectionsAndCPInfo(CarParkInfo cpInfo, GoogleMapsDirections gmapsDir, LatLng userChosenDestination){
         this.carParkInfo = cpInfo;
         this.googleMapsDirections = gmapsDir;
         Log.d("DirectionsAndCPInfo", "gmapsDir status "+ gmapsDir.getStatus() + ", gmapsDir routes size " + gmapsDir.getRoutes().size());
-//        distance = getDistanceFromLatLngInM(userChosenDestination.latitude,
-//                userChosenDestination.longitude,
-//                Double.parseDouble(cpInfo.getLatitude()),
-//                Double.parseDouble(cpInfo.getLongitude()));
         distance = SphericalUtil.computeDistanceBetween(userChosenDestination,cpInfo.getLatLng());
         duration = gmapsDir.getRoutes().get(0).getLegs().get(0).getDuration().getValue();
     }
 
 
-    //TODO: remove method after confirming that no issues
-    private double getDistanceFromLatLngInM(double lat1, double lng1, double lat2, double lng2) {
-        double radiusAtEquator = 6378000; //in meters
-        double dLat = degToRad(lat2-lat1);  // deg2rad below
-        double dLng = degToRad(lng2-lng1);
-
-        double a =
-                Math.sin(dLat/2) * Math.sin(dLat/2) +
-                        Math.cos(degToRad(lat1)) * Math.cos(degToRad(lat2)) *
-                                Math.sin(dLng/2) * Math.sin(dLng/2)
-                ;
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        double distance = radiusAtEquator * c; // Distance in km
-        return distance;
-    }
-
-    //TODO: remove too
-    private double degToRad(double deg) {
-        return deg * (Math.PI/180);
-    }
-
+    /**
+     * Calculates and returns the overall score based on the individual scores of distance, travel duration, and availability.
+     * @return overall score as a <code>double</code>.
+     */
     public double getOverallScore(){
         return distanceScoreWeight * distanceScore +
                 durationScoreWeight * durationScore +
                 availabilityScoreWeight * availabilityScore;
     }
 
+    /**
+     * Gets the <code>LatLng</code> of the car park this object contains.
+     * @return
+     */
     public LatLng getDestinationLatLng(){
         return carParkInfo.getLatLng();
     }
 
+    /**
+     * This method can optionally be used to set the <code>CarParkDatum</code> object which is created
+     * from the Availability API call's response.
+     * @param carParkDatum <code>CarParkDatum</code> object to be set.
+     */
     public void setCarParkDatum(CarParkDatum carParkDatum) {
         this.carParkDatum = carParkDatum;
         this.availability = carParkDatum.getCarParkInfo().get(0).getLotsAvailable();
     }
 
+    /**
+     * Getter for <code>CarParkInfo</code>
+     * @return <code>CarParkInfo</code> object store in this wrapper class
+     */
     public CarParkInfo getCarParkInfo() { return carParkInfo; }
 
+    /**
+     * Getter for <code>GoogleMapsDirections</code>
+     * @return <code>GoogleMapsDirections</code> object store in this wrapper class
+     */
     public GoogleMapsDirections getGoogleMapsDirections() { return googleMapsDirections; }
 
+    /**
+     * Getter for <code>CarParkDatum</code>
+     * @return <code>CarParkDatum</code> object store in this wrapper class
+     */
     public CarParkDatum getCarParkDatum() { return carParkDatum; }
 
+    /**
+     * Gets the flying distance between the car park and the original chosen destination.
+     * @return flying distance as a <code>double</code>.
+     */
     public double getDistance(){ return distance; }
 
+    /**
+     * Gets the trip duration as calculated by Directions API from the <code>GoogleMapsDirections</code> object.
+     * @return duration as a <code>double</code>.
+     */
     public int getDuration(){ return duration; }
 
+    /**
+     * Gets the car park availability pulled from Availability API from the <code>CarParkDatum</code> object.
+     * @return availability as a <code>double</code>.
+     */
     public int getAvailability() { return availability; }
 
+    /**
+     * To assign a distance score for this <code>DirectionsAndCPInfo</code> object.
+     * @param distanceScore <code>double</code> score for distance.
+     */
     public void setDistanceScore(double distanceScore) { this.distanceScore = distanceScore; }
 
+    /**
+     * To assign a duration score for this <code>DirectionsAndCPInfo</code> object.
+     * @param durationScore <code>double</code> score for trip duration.
+     */
     public void setDurationScore(double durationScore) { this.durationScore = durationScore; }
 
+    /**
+     * To assign a availability score for this <code>DirectionsAndCPInfo</code> object.
+     * @param availabilityScore <code>double</code> score for availability.
+     */
     public void setAvailabilityScore(double availabilityScore) { this.availabilityScore = availabilityScore; }
 }
