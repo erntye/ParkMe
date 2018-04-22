@@ -332,7 +332,7 @@ public class ViewMapActivity extends FragmentActivity
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "permission granted", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "GPS Permission denied", Toast.LENGTH_LONG).show();
                 }
             }
 

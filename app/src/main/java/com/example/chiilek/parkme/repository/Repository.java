@@ -73,6 +73,7 @@ public class Repository {
         else
             Log.d("Repository", "In getDirectionsAndCPs: closestCarParks size: " + closestCarParks.size()) ;
 
+        //generates directions to each car park, stores in DirectionsAndCPInfo class
         List<DirectionsAndCPInfo> directionsAndCPList = new ArrayList<DirectionsAndCPInfo>();
         AvailabilityAPIController availAPIControl = new AvailabilityAPIController();
         AtomicInteger counter = new AtomicInteger(closestCarParks.size());
@@ -245,6 +246,9 @@ public class Repository {
             public void onFailure() {
                 Log.e("Repository", "searchNearbyCarParks() - Availability Callback onFailure");
                 Log.d("Repository", "searchNearbyCarParks() - Availability information will be null.");
+                for(CarParkInfo carPark : closestCarParks){
+                    carPark.setAvailInfo(new CarParkDatum());
+                }
             }
         });
         viewMapCPList.setValue(closestCarParks);

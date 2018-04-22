@@ -177,6 +177,7 @@ public class NavigationViewModel extends AndroidViewModel {
                 String oldCarParkNumber = chosenRoute.getCarParkInfo().getCPNumber();
                 if(directionsAndCPInfoList.size() == 1){
                     availabilityStatus.setValue(1);
+                    return;
                 } else if(directionsAndCPInfoList.get(0).getCarParkInfo().getCPNumber().equals(oldCarParkNumber)){
                     directionsAndCPInfoList.remove(0);
                 }
@@ -204,6 +205,10 @@ public class NavigationViewModel extends AndroidViewModel {
 
     /**
      * Exposes the availability status <code>LiveData</code> for observation by <code>NavigationActivity</code>
+     * 0 means below threshold
+     * 1 means no alternative car parks to reroute
+     * -1 means nothing
+     *
      * @return the <code>LiveData</code> object of the availability status of the car park lots
      */
     public MutableLiveData<Integer> getAvailabilityStatus() { return availabilityStatus; }

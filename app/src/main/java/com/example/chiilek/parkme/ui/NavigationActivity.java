@@ -133,7 +133,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
             marker.setPosition(newCurrentLoc);
             marker.setAnchor(0.5f, 0.5f);
             marker.setRotation(bearing);
-            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
                     .target(newCurrentLoc)
                     .zoom(18f)
                     .bearing(bearing)

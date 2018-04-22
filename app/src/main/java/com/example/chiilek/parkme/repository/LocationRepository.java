@@ -1,24 +1,15 @@
 package com.example.chiilek.parkme.repository;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.Service;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Binder;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.IBinder;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -32,6 +23,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+/**
+ * Uses the <code>FusedLocationProviderClient</code> in order to provide location updates through
+ * <code>MutableLiveData </code>to the various <code>Activity</code> and <code>ViewModel</code>
+ * classes. Adopts a singleton pattern.
+ * <p>
+ * This class defines a <code>LocationRequest</code> object with fixed parameters. It then
+ * determines what to do using the <code>LocationCallback</code> object.
+ * @see FusedLocationProviderClient
+ * @see MutableLiveData
+ *
+ */
 public class LocationRepository  {
 
     private FusedLocationProviderClient mFusedClient;
@@ -66,6 +68,12 @@ public class LocationRepository  {
         Log.d("LocationRepo", "LocationRepository constructed");
     }
 
+    /**
+     * Adopts a Singleton pattern to ensure that only one LocationRepository is created and that
+     * location updates are all synchronized
+     * @param context used to instantialize the <code>FusedLocationProviderClient</code>
+     * @return        a LocationRepository singleton object
+     */
     public static LocationRepository getLocationRepository(Context context){
         if (INSTANCE == null)
             INSTANCE = new LocationRepository(context.getApplicationContext());
@@ -91,35 +99,13 @@ public class LocationRepository  {
             Log.d("LocationRepo","update permission not granted");
         }
     }
+
+    /**
+     * Exposes the <code>MutableLiveData</code> current location object for observation
+     * @return <code>MutableLiveData</code> object
+     */
     public MutableLiveData<LatLng> getLocation(){
         Log.d("LocationRepo", "getLocation called, returning current location " + currentLocation.getValue().toString());
-        return this.currentLocation;
-    }
-
-    public MutableLiveData<LatLng> getLastLocation(){
-        Log.d("Location Repo", "Getting Last Location");
-        if (mFusedClient == null)
-            mFusedClient = LocationServices.getFusedLocationProviderClient(mContext);
-        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED){
-            mFusedClient.getLastLocation()
-                    .addOnSuccessListener(new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            if (location != null){
-                                Log.d("LocationRepo","getLastLocation is " + location.getLongitude() + location.getLatitude());
-                                currentLocation.setValue(new LatLng(location.getLatitude(),location.getLongitude()));
-                            }
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener(){
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.d("LocationRepo","Failed to get last location");
-                            e.printStackTrace();
-                        }
-                    });
-        }
         return this.currentLocation;
     }
 
