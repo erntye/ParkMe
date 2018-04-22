@@ -41,7 +41,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AvailabilityAPIController implements Callback<Envelope> {
 
-    static final private String BASE_URL = "https://api.data.gov.sg/v1/transport/";
+    static final private String BASE_URL = "https://api.data.gov.s/v1/transport/";
     AvailabilityCallback mavailabilityCallback;
 
     public void makeCall(AvailabilityCallback availCallback){
