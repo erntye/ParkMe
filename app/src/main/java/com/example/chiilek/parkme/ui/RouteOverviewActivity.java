@@ -112,9 +112,7 @@ public class RouteOverviewActivity extends FragmentActivity
                     .of(this, new RouteOverviewViewModelCarParkFactory(this.getApplication(), mChosenCarPark))
                     .get(RouteOverviewViewModel.class);
         }
-//        Bundle extras = getIntent().getExtras();
-//        LatLng startPoint = new LatLng(extras.getDouble("startPointLat"), extras.getDouble("startPointLong"));
-//        LatLng endPoint = new LatLng(extras.getDouble("endPointLat"), extras.getDouble("endPointLong"));
+
         ImageView startButton = findViewById(R.id.startButton);
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override

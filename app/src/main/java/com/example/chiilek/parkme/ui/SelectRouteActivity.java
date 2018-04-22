@@ -96,8 +96,6 @@ public class SelectRouteActivity extends AppCompatActivity{
                 .of(this, new SelectRouteViewModelFactory(this.getApplication(),destination))
                 .get(SelectRouteViewModel.class);
 
-//        searchFragment.setTexts(destinationName);
-
         model.getMediatorDirAndCPList().observe(this,newData->
                 Log.d("SelectRouteActivity", "observing mediator dir and CP list")
         );
