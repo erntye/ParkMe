@@ -36,7 +36,7 @@ import java.util.List;
 
 /**
  * This <code>Activity</code> is responsible for getting the user to their intended car park
- * through live turn-by-turn navigation based on their live locations. Does this observing the user's
+ * through live turn-by-turn navigation based on their live locations. It does this by observing the user's
  * current location, which is a <code>MutableLiveData</code> under <code>NavigationViewModel</code>.
  * If current location changes, it updates the marker position on the map, as well as plots the new
  * route through the new <code>PolylineOptions</code> object, also a <code>MutableLiveData</code>

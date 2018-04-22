@@ -16,6 +16,24 @@ import com.example.chiilek.parkme.repository.LocationRepository;
 import com.example.chiilek.parkme.repository.Repository;
 import com.google.android.gms.maps.model.LatLng;
 
+/**
+ * This <code>ViewModel</code> is created for <code>RouteOverviewActivity</code>. It uses
+ * the <code>RouteOverviewViewModelCarParkFactory</code> and <code>RouteOverviewViewModelRouteFactory</code>
+ * to overload its constructors in order to accept a CarParkInfo object if the object is created
+ * from <code>CarParkPopUpActivity</code> or a <code>DirectionsAndCPInfo</code> object if
+ * the activity is created from <code>SelectRouteActivity</code>. In the former case, it will call
+ * the <code>Repository</code> to generate a <code>DirectionsAndCPInfo</code> so that the route
+ * can be displayed in <code>RouteOverviewActivity</code>
+ *
+ * @see com.example.chiilek.parkme.ui.RouteOverviewActivity
+ * @see RouteOverviewViewModelCarParkFactory
+ * @see RouteOverviewViewModelRouteFactory
+ * @see Repository
+ * @see com.example.chiilek.parkme.database.AppDatabase
+ * @see LiveData
+ * @see DirectionsAndCPInfo
+ * @see CarParkInfo
+ */
 public class RouteOverviewViewModel extends AndroidViewModel {
 
     private MediatorLiveData mediatorCurrentLoc = new MediatorLiveData<>();
@@ -32,7 +50,11 @@ public class RouteOverviewViewModel extends AndroidViewModel {
     private MutableLiveData<GoogleMapsDirections> updatingRouteDirections;
     private boolean navigationStarted = false;
 
-    public RouteOverviewViewModel(Application application){
+    /**
+     * Default constructor which is to be used by the other constructors
+     * @param application To be passed into <code>Repository</code> to instantiate <code>AppDatabase</code>
+     */
+    private RouteOverviewViewModel(Application application){
         super(application);
         Log.d("RouteOverviewViewModel","creating Routeoverview view model");
         mLocationRepo = LocationRepository.getLocationRepository(application.getApplicationContext());
@@ -42,6 +64,11 @@ public class RouteOverviewViewModel extends AndroidViewModel {
         chosenRoute = new MutableLiveData<>();
     }
 
+    /**
+     * Overloaded constructor which takes in a <code>CarParkInfo</code> object passed from <code>CarParkPopUpActivity</code>
+     * @param application To be passed into <code>Repository</code> to instantiate <code>AppDatabase</code>
+     * @param carParkInfo To be used to create a <code>DirectionsAndCPInfo</code> object
+     */
     public RouteOverviewViewModel(Application application, CarParkInfo carParkInfo){
         this(application);
         Log.d("RouteOverviewViewModel", "constructor with static info");
@@ -51,7 +78,6 @@ public class RouteOverviewViewModel extends AndroidViewModel {
                 public void onSuccess(GoogleMapsDirections gMapsDirections) {
                     Log.d("RouteOverviewViewModel","succeeded in creating route from static info in constructor");
                     chosenRoute.setValue(new DirectionsAndCPInfo(carParkInfo,gMapsDirections,currentLocation.getValue()));
-                    createMediator();
                 }
 
                 @Override
@@ -61,56 +87,31 @@ public class RouteOverviewViewModel extends AndroidViewModel {
             });
     }
 
+    /**
+     * Overloaded constructor which takes in a <code>DirectionsAndCPInfo</code> object passed from
+     * <code>SelectRouteActivity</code>
+     * @param application To be passed into <code>Repository</code> to instantiate <code>AppDatabase</code>
+     * @param initialChosenRoute Used to display a route on the <code>RouteOverviewActivity</code>
+     */
     public RouteOverviewViewModel(@NonNull Application application, DirectionsAndCPInfo initialChosenRoute) {
         this(application);
         Log.d("RouteOverviewViewModel", "constructor with chosen route");
         chosenRoute.setValue(initialChosenRoute);
         updatingRouteDirections = new MutableLiveData<>();
         updatingRouteDirections.setValue(chosenRoute.getValue().getGoogleMapsDirections());
-        createMediator();
 
     }
 
+    /**
+     * Exposes the chosenRoute <code>LiveData</code> for observation by <code>RouteOverviewActivity</code>
+     * @return
+     */
     public LiveData<DirectionsAndCPInfo> getChosenRoute(){
         return chosenRoute;
     }
 
     public LiveData<GoogleMapsDirections> getUpdatingRoute(){
         return updatingRouteDirections;
-    }
-
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-        mLocationRepo.stopLocationUpdates();
-    }
-
-    private void createMediator(){
-        mediatorCurrentLoc.addSource(currentLocation, newCurrentLocation -> {
-            Log.d("SelectRouteViewModel", "mediatorCurrentLoc changed");
-            if(navigationStarted){
-                Log.d("SelectRouteViewModel", "current loc changed and  navigation started");
-                //if location is changed
-                if (!currentLocation.getValue().equals(previousLocation)){
-                    Log.d("SelectRouteViewModel", "current loc: " + currentLocation.getValue().toString() + " prev loc: " + previousLocation.toString());
-                    Log.d("SelectRouteViewModel", "current loc != previous loc, calling update routes");
-                    mRepository.updateRoutes((LatLng) newCurrentLocation, chosenRoute.getValue().getDestinationLatLng(),
-                            new DirectionsCallback() {
-                                @Override
-                                public void onSuccess(GoogleMapsDirections gMapsDirections) {
-                                    updatingRouteDirections.postValue(gMapsDirections);
-                                    Log.d("SelectRouteViewModel", "navigation: updated route directions with new current loc.");
-                                }
-
-                                @Override
-                                public void onFailure() {
-                                    Log.d("SelectRouteViewModel", "navigation: update route failed");
-                                }
-                            });
-                    previousLocation = currentLocation.getValue();
-                }else Log.d("SelectRouteViewModel", "location not changed, do not need to update route");
-            }
-        });
     }
 
     public LiveData<LatLng> getCurrentLoc(){

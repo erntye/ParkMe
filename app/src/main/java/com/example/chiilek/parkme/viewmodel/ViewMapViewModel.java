@@ -17,8 +17,23 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
+/**
+ * This <code>ViewModel</code> is created for <code>ViewMapActivity</code>. When the <code>Activity</code>
+ * is initialized or when the P button is pressed, this <code>ViewModel</code> makes an asynchronous call
+ * to the <code>Repository </code> for the list of nearest car park and subscribes to the notification
+ * using MediatorLiveData. After the <code>Repository </code> has been updated, it notifies
+ * <code>ViewMapActivity</code>, which will then update the information on the UI
+ * <p>
+ * The <code>ViewModel</code> also tracks the current location <code>LiveData</code> of the user from
+ * the <code>LocationRepository</code> to display on the map
+ *
+ * @see com.example.chiilek.parkme.ui.ViewMapActivity
+ * @see Repository
+ * @see com.example.chiilek.parkme.database.AppDatabase
+ * @see LiveData
+ * @see MediatorLiveData
+ */
 public class ViewMapViewModel extends AndroidViewModel{
-    private MutableLiveData<LatLng> msearchTerm;
     //list of nearest carparks to search term
     private MutableLiveData<List<CarParkInfo>> mcpListFromRepo;
     private MutableLiveData<List<CarParkInfo>> mcpListForActivity;
@@ -27,12 +42,14 @@ public class ViewMapViewModel extends AndroidViewModel{
     private Repository mRepository;
     private LocationRepository mLocationRepo;
 
-
+    /**
+     * Default constructor.
+     * @param application To be passed into <code>Repository</code> to instantiate <code>AppDatabase</code>
+     */
     public ViewMapViewModel(Application application){
         super(application);
         this.mRepository = Repository.getInstance(this.getApplication());
         mLocationRepo = LocationRepository.getLocationRepository(this.getApplication());
-        msearchTerm = new MutableLiveData<>();
         currentLocation = mLocationRepo.getLocation();
         mcpListForActivity = mRepository.searchNearbyCarParks(currentLocation.getValue(), new SearchNearbyCallback() {
             @Override
@@ -53,31 +70,17 @@ public class ViewMapViewModel extends AndroidViewModel{
         });
         Log.d("ViewMapViewModel", "calling repo searchNearbyCarparks");
 
-        //searches nearby everytime msearchterm changes, when called by VMMP.setSearchTerm()
-//        mcpListFromRepo = Transformations.switchMap(msearchTerm, (LatLng newDestination)->
-//                mRepository.searchNearbyCarParks(newDestination));
-        //update currentLocation
-        currentLocation = Transformations.map(mLocationRepo.getLocation(),newLocation->{
-            return newLocation;
-        });
-    }
-    //called by button in ViewMapActivity and triggers transformation
-    public void setSearchTerm(LatLng searchTerm){
-        msearchTerm.setValue(searchTerm);
     }
 
-    /*
-        // put this in the ViewMapActivity GMAP fragment with the search button to update searchTerm
-
-        model = ViewModelProviders.of(getActivity()).get(SharedViewModel.class);
-        searchButton.setOnClickListener(item -> {
-        model.setSearchTerm(item);
-        //create new SelectRouteActivity
-        }
+    /**
+     * First returns a static list from database and then makes an asynchronous call from <code>Repository</code>
+     * When the call is completed, mcpListFromRepo is updated and the <code>MediatorLiveData</code>
+     * is then notified, which in turn then notifies the <code>Activity</code> through mcpListForActivity
+     * which is being observed by the <code>getCarParkInfo()</code> method
+     * @return the <code>LiveData</code> object containing a list of CarParkInfo objects from
+     *          <code>Repository</code>
      */
-
-    //displays popup car park info
-    public MutableLiveData<List<CarParkInfo>> getCarParkInfo(LatLng location){
+    public LiveData<List<CarParkInfo>> getCarParkInfo(LatLng location){
         mcpListForActivity = mRepository.searchNearbyCarParks(location, new SearchNearbyCallback() {
             @Override
             public void onSuccess() {
@@ -93,21 +96,19 @@ public class ViewMapViewModel extends AndroidViewModel{
         return mcpListForActivity;
     }
 
+    /**
+     * Exposes the list of car park info <code>LiveData</code> for observation by <code>ViewMapActivity</code>
+     * @return the <code>LiveData</code> object containing a list of CarParkInfo objects
+     */
+    public LiveData<List<CarParkInfo>> getCarParkInfo() { return mcpListForActivity; }
 
-    public MutableLiveData<List<CarParkInfo>> getCarParkInfo() { return mcpListForActivity; }
-
+    /**
+     * Exposes the <code>MediatorLiveData</code> for observation by <code>ViewMapActivity</code>
+     * @return the <code>MediatorLiveData</code> object
+     */
     public MediatorLiveData getMcpListMediator() { return mcpListMediator; }
-
-    public LiveData<LatLng> getSearchTerm() {
-        return msearchTerm;
-    }
 
     public LiveData<LatLng> getCurrentLocation(){return currentLocation;}
 
-/*    @Override
-    protected void onCleared() {
-        super.onCleared();
-        mLocationRepo.stopLocationUpdates();
-    }*/
 }
 

@@ -124,11 +124,15 @@ public class RouteOverviewActivity extends FragmentActivity
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("RouteOverviewActivity","Start Button pressed");
-                Intent intent = new Intent(RouteOverviewActivity.this, NavigationActivity.class);
-                intent.putExtra("chosenRoute", model.getChosenRoute().getValue());
-                Log.d("RouteOverviewActivity","starting intent for Navigation Activity");
-                startActivity(intent);
+                if (model.getChosenRoute().getValue() == null){
+                    Toast.makeText(RouteOverviewActivity.this, "No Route Found", Toast.LENGTH_LONG).show();
+                }else {
+                    Log.d("RouteOverviewActivity", "Start Button pressed");
+                    Intent intent = new Intent(RouteOverviewActivity.this, NavigationActivity.class);
+                    intent.putExtra("chosenRoute", model.getChosenRoute().getValue());
+                    Log.d("RouteOverviewActivity", "starting intent for Navigation Activity");
+                    startActivity(intent);
+                }
             }
         });
 

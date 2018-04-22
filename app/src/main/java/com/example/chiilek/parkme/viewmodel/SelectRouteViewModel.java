@@ -8,9 +8,7 @@ import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
 
-import com.example.chiilek.parkme.api.directions_api.DirectionsCallback;
 import com.example.chiilek.parkme.entity.DirectionsAndCPInfo;
-import com.example.chiilek.parkme.entity.directionsapi.GoogleMapsDirections;
 import com.example.chiilek.parkme.repository.callbacks.GetRoutesCallback;
 import com.example.chiilek.parkme.repository.LocationRepository;
 import com.example.chiilek.parkme.repository.Repository;
@@ -27,9 +25,8 @@ public class SelectRouteViewModel extends AndroidViewModel {
     private Repository mRepository;
     private LocationRepository mLocationRepo;
     private MutableLiveData<LatLng> currentLocation;
-    private DirectionsAndCPInfo chosenRoute;
-    private MutableLiveData<GoogleMapsDirections> updatingRouteDirections;
-    private boolean navigationStarted = false;
+
+    //error code for the directions api call or the static carpark search
     private int status = 0;
 
 
@@ -38,9 +35,7 @@ public class SelectRouteViewModel extends AndroidViewModel {
         super(application);
         this.mRepository = Repository.getInstance(this.getApplication());
         mLocationRepo = LocationRepository.getLocationRepository(this.getApplication());
-        //TODO get endPoint from user from activity
         endPoint = new MutableLiveData<>();
-        //endPoint.setValue(new LatLng(1.378455, 103.755149));
         endPoint.setValue(chosenDestination);
         currentLocation = mLocationRepo.getLocation();
         //start point initializes at current location but the user can type into the bar to set it
@@ -48,6 +43,7 @@ public class SelectRouteViewModel extends AndroidViewModel {
         startPoint.setValue(currentLocation.getValue());
         directionsAndCarParksList = new MutableLiveData<>();
 
+        //create mediator to change search terms when start point changed
         mediatorDirAndCPList.addSource(startPoint,newStartPoint ->{
             Log.d("SelectRouteViewModel", "mediator activated on start point changed, get directions and CP called");
             mRepository.getDirectionsAndCPs((LatLng) newStartPoint, endPoint.getValue(),
@@ -66,11 +62,6 @@ public class SelectRouteViewModel extends AndroidViewModel {
         });
     }
 
-    //called by SelectRouteActivity whenever user inputs a new search term endPoint
-    public void setEndPoint(LatLng searchTerm){
-        if (searchTerm!= null)
-            endPoint.setValue(searchTerm);
-    }
     //called by SelectRouteActivity whenever user inputs a new search term start point
     public void setStartPoint(LatLng searchTerm){
         if (searchTerm!= null)
@@ -78,7 +69,12 @@ public class SelectRouteViewModel extends AndroidViewModel {
             startPoint.setValue(searchTerm);
     }
 
-    //expose for observation to viewmodel
+    /**
+     * Exposes the <code>LiveData</code> object containing the list of Directions and Info for the
+     * nearest car parks. If the list is not previously set, initialize list by making a call to the
+     * <code>Repository</code>
+     * @return
+     */
     public MutableLiveData<List<DirectionsAndCPInfo>> getDirectionsAndCarParks() {
         if (directionsAndCarParksList == null) {
             directionsAndCarParksList = new MutableLiveData<List<DirectionsAndCPInfo>>();
@@ -100,13 +96,21 @@ public class SelectRouteViewModel extends AndroidViewModel {
         return directionsAndCarParksList;
     }
 
-    //expose for observation to viewmodel
+    /**
+     * Exposes the <code>MediatorLiveData</code> for observation by <code>SelectRouteActivity</code>
+     * @return the <code>MediatorLiveData</code> object
+     */
     public MediatorLiveData getMediatorDirAndCPList() {
         return mediatorDirAndCPList;
     }
 
+    /**
+     * Returns the status for the route recommendation
+     * 1 is no car parks in the vicinity
+     * 2 is no directions from current location
+     * @return status for the Route Recommendation
+     */
     public int getStatus(){return status;}
 
-    public LiveData<GoogleMapsDirections> getGoogleMapsDirections(){ return updatingRouteDirections; }
 
 }

@@ -69,7 +69,8 @@ public class SelectRouteAdapter extends RecyclerView.Adapter<SelectRouteAdapter.
 
         holder.buttonImage.setImageResource(drawableID);
         holder.address.setText(CP.getCarParkInfo().getAddress());
-        holder.distance.setText(Double.toString(CP.getDistance()) + "m away");
+        //holder.distance.setText(String.format("%f m away",CP.getDistance()));
+        holder.distance.setText((int)CP.getDistance() + "m away");
         holder.availability.setText(CP.getAvailability() + " Available Lots");
         holder.timeToReach.setText(CP.getDuration() / 60 + " minutes away");
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {

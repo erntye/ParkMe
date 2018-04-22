@@ -6,6 +6,13 @@ import android.arch.lifecycle.ViewModelProvider;
 
 import com.example.chiilek.parkme.entity.CarParkInfo;
 
+/**
+ * This class is required by Android in order to pass in arguments to the <code>RouteOverviewViewModel</code>
+ * constructor. This particular Factory takes in a <code>CarParkInfo</code> object.
+ *
+ * @see RouteOverviewViewModel
+ * @see CarParkInfo
+ */
 public class RouteOverviewViewModelCarParkFactory extends ViewModelProvider.NewInstanceFactory {
     private Application mApplication;
     private CarParkInfo mInitialCarPark;

@@ -23,6 +23,31 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * This <code>ViewModel</code> is created for <code>NavigationActivity</code>. It tracks the current
+ * location of the user using <code>MutableLiveData</code> from the <code>LocationRepository</code>
+ * and refreshes the updatingRouteDirections <code>GoogleMapsDirections</code> object which is observed
+ * by <code>NavigationActivity</code> using <code>MediatorLiveData</code>. The <code>Activity </code>
+ * then will then use the new updatingRouteDirections object to plot a new PolyLine on the map
+ * <p>
+ * The <code>ViewModel</code> also calls the <code>Repository</code> to check the lot availability
+ * of the destination car park every 5 minutes. If the number of lots available is less than
+ * the threshold, it will notify the <code>Activity</code>, which will then trigger the
+ * <code>ReroutePopUpActivity</code>
+
+ * @see com.example.chiilek.parkme.ui.NavigationActivity
+ * @see NavigationViewModelFactory
+ * @see LocationRepository
+ * @see Repository
+ * @see com.example.chiilek.parkme.database.AppDatabase
+ * @see MutableLiveData
+ * @see MediatorLiveData
+ * @see LiveData
+ * @see PolylineOptions
+ * @see GoogleMapsDirections
+ * @see DirectionsAndCPInfo
+ * @see CarParkInfo
+ */
 public class NavigationViewModel extends AndroidViewModel {
 
     private MediatorLiveData mediatorCurrentLoc = new MediatorLiveData<>();
@@ -33,16 +58,18 @@ public class NavigationViewModel extends AndroidViewModel {
     private LocationRepository mLocationRepo;
     private Repository mRepository;
 
-    private MutableLiveData<LatLng> startPoint;
-    private MutableLiveData<LatLng> endPoint;
     private DirectionsAndCPInfo chosenRoute;
     private MutableLiveData<GoogleMapsDirections> updatingRouteDirections;
     private boolean navigationStarted = true;
     private DirectionsAndCPInfo alternativeRoute;
     private MutableLiveData<Integer> availabilityStatus;
-    private int carParkAvailabilityThreshold = 5;
+    private static int carParkAvailabilityThreshold = 5;
 
-    public NavigationViewModel(Application application){
+    /**
+     * Default constructor which is to be used by the other constructors
+     * @param application To be passed into <code>Repository</code> to instantiate <code>AppDatabase</code>
+     */
+    private NavigationViewModel(Application application){
         super(application);
         Log.d("NavigationViewModel","creating navigation view model");
         mLocationRepo = LocationRepository.getLocationRepository(application.getApplicationContext());
@@ -52,54 +79,39 @@ public class NavigationViewModel extends AndroidViewModel {
         availabilityStatus = new MutableLiveData<Integer>();
         availabilityStatus.setValue(-1);
     }
-
-    public NavigationViewModel(Application application, CarParkInfo carParkInfo){
-        this(application);
-        Log.d("NavigationViewModel", "constructor with static info");
-        mRepository.updateRoutes(currentLocation.getValue(), carParkInfo.getLatLng(),
-                new DirectionsCallback(){
-                    @Override
-                    public void onSuccess(GoogleMapsDirections gMapsDirections) {
-                        Log.d("NavigationViewModel","succeeded in creating route from static info in constructor");
-                        chosenRoute = new DirectionsAndCPInfo(carParkInfo,gMapsDirections,currentLocation.getValue());
-                        createMediator();
-                    }
-
-                    @Override
-                    public void onFailure() {
-                        Log.d("NavigationViewModel","failed to create route from static info in constructor");
-                    }
-                });
-    }
-
+    /**
+     * Overloaded constructor which takes in a <code>DirectionsAndCPInfo</code> from <code>RouteOverviewViewModel</code>
+     * @param application To be passed into <code>Repository</code> to instantiate <code>AppDatabase</code>
+     * @param initialChosenRoute To be stored in the <code>ViewModel</code>as the initial chosen route.
+     *                           This is used to get the initial <code>PolylineOptions</code> object and
+     *                           to track the number of available lots for the chosen car park
+     */
     public NavigationViewModel(@NonNull Application application, DirectionsAndCPInfo initialChosenRoute) {
         this(application);
         Log.d("NavigationViewModel", "constructor with chosen route");
         this.chosenRoute = initialChosenRoute;
         updatingRouteDirections = new MutableLiveData<>();
         updatingRouteDirections.setValue(chosenRoute.getGoogleMapsDirections());
-        createMediator();
+        initializeNavigation();
 
     }
 
-    public DirectionsAndCPInfo getChosenRoute(){
-        return chosenRoute;
-    }
-    public PolylineOptions getInitialRoute(){
-        return chosenRoute.getGoogleMapsDirections().getPolylineOptions();
-    }
-
+    /**
+     * Exposes the updatingRouteDirections <code>LiveData</code> for observation by
+     * <code>NavigationActivity</code>
+     * @return
+     */
     public LiveData<GoogleMapsDirections> getUpdatingRoute(){
         return updatingRouteDirections;
     }
 
-//    @Override
-//    protected void onCleared() {
-//        super.onCleared();
-//        mLocationRepo.stopLocationUpdates();
-//    }
-
-    private void createMediator(){
+    /**
+     * Uses the <code>MediatorLiveData</code> to observe the <code>MutableLiveData</code> currentLocation
+     * from the <code>LocationRepository</code>. Whenever the user changes his current location, the
+     * <code>ViewModel</code> will call the <code>Repository</code> to update the route
+     *
+     */
+    private void initializeNavigation(){
         mediatorCurrentLoc.addSource(currentLocation, newCurrentLocation -> {
             Log.d("NavigationViewModel", "mediatorCurrentLoc changed");
             if(navigationStarted){
@@ -149,10 +161,14 @@ public class NavigationViewModel extends AndroidViewModel {
                     }
                 });
             };
-            //check every 5 min (18,000 seconds)
-        },5000,18000000);
+            //check every 5 min (300 seconds)
+        },5000,300000);
     }
 
+    /**
+     * Calls the <code>Repository</code> to get a new list of DirectionsAndCPInfo objects when
+     * the current car park has less lots than the threshold
+     */
     private void onAvailZero(){
         Log.d("NavigationViewModel", "onAvailZero: in avail zero");
         mRepository.getDirectionsAndCPs(currentLocation.getValue(), chosenRoute.getDestinationLatLng(), new GetRoutesCallback() {
@@ -174,17 +190,22 @@ public class NavigationViewModel extends AndroidViewModel {
             }
         });
     }
+    /**
+     * Exposes the user's current location <code>LiveData</code> for observation by <code>NavigationActivity</code>
+     * @return the <code>LiveData</code> object of current location
+     */
+    public LiveData<LatLng> getCurrentLoc(){ return currentLocation; }
 
-    public MutableLiveData<LatLng> getCurrentLoc(){ return currentLocation; }
-
+    /**
+     Exposes the <code>MediatorLiveData</code> for observation by <code>NavigationActivity</code>
+     * @return the <code>MediatorLiveData</code> object
+     */
     public MediatorLiveData getMediatorCurrentLoc() { return mediatorCurrentLoc; }
 
-    //TODO: remove this method, dont think its being used for the rerouting.
-//    private void rerouteToNewCarPark(){
-//        chosenRoute = alternativeRoute;
-//        updatingRouteDirections.postValue(alternativeRoute.getGoogleMapsDirections());
-//    }
-
+    /**
+     * Exposes the availability status <code>LiveData</code> for observation by <code>NavigationActivity</code>
+     * @return the <code>LiveData</code> object of the availability status of the car park lots
+     */
     public MutableLiveData<Integer> getAvailabilityStatus() { return availabilityStatus; }
 
     public DirectionsAndCPInfo getAlternativeRoute() { return alternativeRoute; }

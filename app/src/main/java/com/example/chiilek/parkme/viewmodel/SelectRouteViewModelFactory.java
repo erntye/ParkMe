@@ -6,7 +6,13 @@ import android.arch.lifecycle.ViewModelProvider;
 
 import com.example.chiilek.parkme.viewmodel.SelectRouteViewModel;
 import com.google.android.gms.maps.model.LatLng;
-
+/**
+ * This class is required by Android in order to pass in arguments to the <code>SelectRouteViewModel</code>
+ * constructor. This particular Factory takes in a <code>LatLng</code> object.
+ *
+ * @see RouteOverviewViewModel
+ * @see LatLng
+ */
 public class SelectRouteViewModelFactory extends ViewModelProvider.NewInstanceFactory {
     private Application mApplication;
     private LatLng mDestination;

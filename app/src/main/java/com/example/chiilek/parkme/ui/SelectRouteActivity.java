@@ -105,10 +105,10 @@ public class SelectRouteActivity extends AppCompatActivity{
                 {
                     Log.d("SelectRouteActivity", "observer activated directionsandcarparklist changed");
                     if (newRoutes.size() == 0 && model.getStatus() == 1){
-                        errorText.setText("Could not find Car Park in the vicinity");
+                        errorText.setText("Could not find any car parks in the vicinity!");
                         errorText.setVisibility(View.VISIBLE);
                     }else if (newRoutes.size() == 0 && model.getStatus() == 2){
-                        errorText.setText("Could not find directions to Car Parks");
+                        errorText.setText("Could not find directions from your current location!");
                         errorText.setVisibility(View.VISIBLE);
                     }else{
                         mAdapter.addItems(newRoutes, model.getStatus());
