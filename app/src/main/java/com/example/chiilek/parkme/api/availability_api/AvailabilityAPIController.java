@@ -73,7 +73,7 @@ public class AvailabilityAPIController implements Callback<Envelope> {
     private String formatDateTime(){
         String year = Integer.toString(Calendar.getInstance().get(Calendar.YEAR));
 
-        String month = Integer.toString(Calendar.getInstance().get(Calendar.MONTH));
+        String month = Integer.toString(Calendar.getInstance().get(Calendar.MONTH) + 1);
         if (month.length() == 1)
             month = "0" + month;
 
