@@ -56,10 +56,11 @@
         android:id="@+id/parking_button"
         android:layout_width="43.5dp"
         android:layout_height="42.8dp"
-        android:layout_alignEnd="@+id/place_autocomplete_fragment"
         android:layout_below="@+id/imageView4"
+        android:layout_alignEnd="@+id/place_autocomplete_fragment"
+        android:layout_marginTop="82dp"
+        android:layout_marginEnd="-25dp"
         android:layout_marginRight="1.8dp"
-        android:layout_marginTop="41dp"
         android:background="@drawable/parking_selector"
         android:enabled="false"
         android:onClick="showCarParks" />
